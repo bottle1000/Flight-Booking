@@ -39,4 +39,11 @@ public class Ticket extends BaseEntity {
 		this.seat = seat;
 		this.user = user;
 	}
+
+	public void setSeat(Seat seat) {
+		this.seat = seat;
+		if (seat.getTicket() != this) {
+			seat.assignTicket(this);
+		}
+	}
 }

@@ -2,6 +2,7 @@ package flight_booking.demo.domain.airplane.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.domain.ticket.entity.Ticket;
+import flight_booking.demo.domain.user.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -40,10 +41,14 @@ public class Seat extends BaseEntity {
 	private Ticket ticket;
 
 	@Builder
-	public Seat(String line, SeatState state, Airplane airplane) {
+	public Seat(String line, SeatState state, Airplane airplane, User user) {
 		this.line = line;
 		this.state = state;
 		this.airplane = airplane;
+	}
 
+	public void assignTicket(Ticket ticket) {
+		this.ticket = ticket;
+		ticket.setSeat(this);
 	}
 }
