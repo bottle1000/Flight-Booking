@@ -27,12 +27,6 @@ public class Airplane extends BaseEntity {
 
 	private String name;
 
-	@OneToMany(mappedBy = "airplane")
-	private List<Seat> seatList = new ArrayList<>();
-
-	@OneToMany(mappedBy = "airplane")
-	private List<FlightPlan> flightPlanList = new ArrayList<>();
-
 	@Builder
 	public Airplane(String name) {
 		this.name = name;
