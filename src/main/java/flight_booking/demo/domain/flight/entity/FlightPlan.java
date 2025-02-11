@@ -1,9 +1,11 @@
 package flight_booking.demo.domain.flight.entity;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.domain.airplane.entity.Airplane;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,9 +31,11 @@ public class FlightPlan extends BaseEntity {
 	private int id;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "fromNational")
 	private National from;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "toNational")
 	private National to;
 
 	private LocalDateTime boardingAt;
