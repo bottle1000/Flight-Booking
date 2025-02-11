@@ -1,17 +1,42 @@
 package flight_booking.demo.domain.ticket.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
-import jakarta.persistence.*;
+import flight_booking.demo.domain.airplane.entity.Seat;
+import flight_booking.demo.domain.user.entity.User;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @Entity
-@NoArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Ticket extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "seat_id")
+	private Seat seat;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	@Builder
+	public Ticket(Seat seat, User user) {
+		this.seat = seat;
+		this.user = user;
+	}
 }

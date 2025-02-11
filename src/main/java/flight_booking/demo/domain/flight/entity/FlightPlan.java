@@ -1,7 +1,9 @@
-package flight_booking.demo.domain.airplane.entity;
+package flight_booking.demo.domain.flight.entity;
+
+import java.time.LocalDateTime;
 
 import flight_booking.demo.common.entity.BaseEntity;
-import flight_booking.demo.domain.ticket.entity.Ticket;
+import flight_booking.demo.domain.airplane.entity.Airplane;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -11,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,28 +23,34 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Seat extends BaseEntity {
+public class FlightPlan extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	private String line;
+	@Enumerated(EnumType.STRING)
+	private National from;
 
 	@Enumerated(EnumType.STRING)
-	private SeatState state;
+	private National to;
+
+	private LocalDateTime boardingAt;
+	private LocalDateTime landingAt;
+	private int price;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "airplane_id")
 	private Airplane airplane;
 
-	@OneToOne(mappedBy = "seat")
-	private Ticket ticket;
-
 	@Builder
-	public Seat(String line, SeatState state, Airplane airplane) {
-		this.line = line;
-		this.state = state;
+	public FlightPlan(Airplane airplane, National from, National to,
+		LocalDateTime boardingAt, LocalDateTime landingAt, int price) {
 		this.airplane = airplane;
-
+		this.from = from;
+		this.to = to;
+		this.boardingAt = boardingAt;
+		this.landingAt = landingAt;
+		this.price = price;
 	}
+
 }
