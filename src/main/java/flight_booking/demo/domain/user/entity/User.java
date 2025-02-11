@@ -1,20 +1,89 @@
 package flight_booking.demo.domain.user.entity;
 
-import flight_booking.demo.common.entity.BaseEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-@Getter
+import java.util.Collection;
+import java.util.List;
+
+
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
-public class User extends BaseEntity {
+@AllArgsConstructor
+@Table(name = "users")
+public class User implements UserDetails {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String id;
+
+
+    @Column(length = 20)
+    private String name;
+
+    @NotBlank
+    @Email
+    @Column(length = 100, unique = true)
+    private String email;
+
+    private String profile_url;
+
+
+    @Column(length = 255)
+    private String password;
+
+    @Column
+    private boolean isBlacklisted = false;
+
+    @Builder
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    public boolean getIsBlacklisted(){
+        return isBlacklisted;
+    }
+
+    //해당 User의 권한을 리턴하는곳!!
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return  List.of(new SimpleGrantedAuthority("user"));
+    }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
