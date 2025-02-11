@@ -2,7 +2,6 @@ package flight_booking.demo.security.common.config;
 
 
 import flight_booking.demo.domain.user.repository.UserRepository;
-import flight_booking.demo.security.common.filter.RefreshAuthenticationFilter;
 import flight_booking.demo.security.common.filter.TokenAuthenticationFilter;
 import flight_booking.demo.security.jwt.TokenProvider;
 import flight_booking.demo.security.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
@@ -55,7 +54,6 @@ public class WebOauthSecurityConfig {
 
         // JWT 인증 필터 추가
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(tokenRefreshFilter(), TokenAuthenticationFilter.class); // TokenRefreshFilter 추가
 
         // 접근 권한 설정
         http.authorizeHttpRequests(auth -> auth
@@ -105,10 +103,6 @@ public class WebOauthSecurityConfig {
     }
 
 
-    @Bean
-    public RefreshAuthenticationFilter tokenRefreshFilter() { // 새로 추가된 필터
-        return new RefreshAuthenticationFilter(tokenProvider, refreshTokenRepository, userRepository);
-    }
 
     @Bean
     public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {

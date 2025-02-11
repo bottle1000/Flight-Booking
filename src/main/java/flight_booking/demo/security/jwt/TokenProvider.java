@@ -5,6 +5,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,7 +23,8 @@ import java.util.Set;
 public class TokenProvider {
 
   private final JwtProperties jwtProperties;
-
+  private static final String HEADER_AUTHORIZATION = "Authorization";
+  private static final String TOKEN_PREFIX = "Bearer ";
   public String generateToken(User user, Duration expiredAt) {
     Date now = new Date();
     return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
@@ -88,6 +91,36 @@ public class TokenProvider {
           .parseClaimsJws(token)
           .getBody();
     }
+
+  public String getAccessToken(HttpServletRequest request) {
+    String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
+    if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
+      return authorizationHeader.substring(TOKEN_PREFIX.length()).trim();
+    }
+
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if ("access_token".equals(cookie.getName())) {
+          return cookie.getValue();
+        }
+      }
+    }
+    return null;
+  }
+
+  public String getRefreshToken(HttpServletRequest request) {
+
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if ("refresh_token".equals(cookie.getName())) {
+          return cookie.getValue();
+        }
+      }
+    }
+    return null;
+  }
 }
 
 

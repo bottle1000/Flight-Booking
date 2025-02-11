@@ -25,8 +25,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
-    private static final String HEADER_AUTHORIZATION = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -35,7 +34,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("TokenAuthenticationFilter 실행됨: " + request.getRequestURI());
 
         // 1️ access_token 가져오기
-        String accessToken = getAccessToken(request);
+        String accessToken = tokenProvider.getAccessToken(request);
         System.out.println("가져온 accessToken: " + accessToken);
 
         if (accessToken != null && tokenProvider.validToken(accessToken)) {
@@ -45,7 +44,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             System.out.println(" 유효하지 않은 accessToken, refreshToken 검토 중...");
 
             // 2️ refresh_token 가져오기
-            String refreshToken = getRefreshToken(request);
+            String refreshToken = tokenProvider.getRefreshToken(request);
             System.out.println(" 가져온 refreshToken: " + refreshToken);
 
             if (refreshToken != null) {
@@ -88,33 +87,5 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 
 
-    private String getAccessToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
-            return authorizationHeader.substring(TOKEN_PREFIX.length()).trim();
-        }
 
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("access_token".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    private String getRefreshToken(HttpServletRequest request) {
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("refresh_token".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
 }
