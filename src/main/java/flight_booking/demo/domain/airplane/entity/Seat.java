@@ -1,6 +1,7 @@
 package flight_booking.demo.domain.airplane.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
+import flight_booking.demo.domain.ticket.entity.Ticket;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
