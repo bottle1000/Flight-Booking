@@ -41,8 +41,6 @@ public class User implements UserDetails {
     @Column(length = 255)
     private String password;
 
-    @Column
-    private boolean isBlacklisted = false;
 
     @Builder
     public User(String name, String email, String password) {
@@ -56,9 +54,7 @@ public class User implements UserDetails {
         return email;
     }
 
-    public boolean getIsBlacklisted(){
-        return isBlacklisted;
-    }
+
 
     //해당 User의 권한을 리턴하는곳!!
     @Override

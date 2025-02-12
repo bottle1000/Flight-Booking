@@ -41,6 +41,9 @@ public class UserController {
         return tokenProvider.getUserId(accessToken);
     }
 
+    @GetMapping("/role")
+    public String getRole(HttpServletRequest request)
+
 
     @DeleteMapping("/{id}")
     public void deleteUser(@RequestBody DeleteUserRequestDto requestDto) {
