@@ -1,0 +1,43 @@
+
+<body>
+
+<div id="navbar-move-card">
+    <nav class="navbar navbar-expand navbar-dark bg-dark" id = "upbar" style="width: 100%; position: fixed;">
+        <div class="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
+            <ul class="navbar-nav ml-auto">
+                <!-- 사용자 정보가 표시될 dropdown -->
+                <li class="nav-item dropdown" id="userDropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" id="navbarDropdownMenuLink"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img class="rounded-circle" id="userAvatar" alt="User Avatar" width="25px"/>
+                        <span id="username"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="#" id="myProfileLink">내 정보</a></li>
+                        <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+                    </ul>
+                </li>
+                <!-- 로그인 버튼 -->
+                <li class="nav-item" id="loginNavItem">
+                    <a class="nav-link" href="/login">
+                        <ion-icon name="log-in-outline" ></ion-icon>
+                        Log In
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<script src="/js/upbar.js"></script>
+
+<script>
+    // DOM 로드 후 드롭다운 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropdownElement = document.getElementById('navbarDropdownMenuLink');
+        var dropdown = new bootstrap.Dropdown(dropdownElement);
+    });
+</script>
+
+</body>
+
