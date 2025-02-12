@@ -24,22 +24,22 @@ public class UserController {
     private final TokenProvider tokenProvider;
 
     @GetMapping("/email")
-    public String getEmail() {
+    public String findEmail() {
         return UserUtil.getCurrentUserEmail();
     }
 
     @GetMapping("/username")
-    public String getUserName() {
+    public String findUserName() {
         return UserUtil.getCurrentUserName();
     }
 
     @GetMapping("/id")
-    public String getId() {
+    public String findId() {
         return UserUtil.getCurrentUserId();
     }
 
     @GetMapping("/role")
-    public String getRole(HttpServletRequest request) {
+    public String findRole(HttpServletRequest request) {
         return UserUtil.getCurrentUserRole();
     }
 

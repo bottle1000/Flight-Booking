@@ -1,5 +1,6 @@
 package flight_booking.demo.security.jwt;
 
+import flight_booking.demo.domain.user.entity.MemberShip;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -28,8 +30,6 @@ public class TokenProvider {
     private final JwtProperties jwtProperties;
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
-
-    private final UserRepository userRepository;
 
 
     public String generateToken(User user, Duration expiredAt) {
@@ -50,6 +50,8 @@ public class TokenProvider {
                 .setSubject(user.getEmail()) //내용 sub : 유저의 이메일
                 .claim("id", user.getId()) //클레임 id : 유저 ID
                 .claim("userName", user.getName())
+                .claim("membership", user.getMembership())
+
                 // 서명 : 비밀값과 함께 해시값을 HS256 방식으로 암호화
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
@@ -58,12 +60,14 @@ public class TokenProvider {
 
     //JWT 토큰 유효성 검증 메서드
     public boolean validToken(String token) {
+        System.out.println("validToken으로 전달된 토큰: " + token);
         try {
             Jwts.parser()
                     .setSigningKey(jwtProperties.getSecretKey())
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {//복호화 과정에서 에러가 나면 유효하지 않은 토큰
+            System.out.println("잘못 만듬");
             return false;
         }
     }
@@ -75,34 +79,39 @@ public class TokenProvider {
     // 리턴의 이유는 권한 관리를 security가 대신 해주기 때문에 편하려고 하는거임.
     public Authentication getAuthentication(String token) {
         if (token == null || token.isEmpty()) {
-            return null; // ✅ 로그인하지 않았으면 null 반환
+            return null; //  로그인하지 않았으면 null 반환
         }
 
         try {
             Claims claims = getClaims(token); // JWT 토큰에서 Claims(페이로드) 추출
             String email = claims.getSubject(); // 토큰에서 이메일(subject) 추출
+            String id = claims.get("id", String.class);
+            String name = claims.get("userName", String.class);
+            String membership = claims.get("membership", String.class); //  JWT에서 membership 가져오기
 
-            if (email == null || email.isEmpty()) {
-                return null; // ✅ 이메일이 없으면 null 반환
+            if (email == null || email.isEmpty() || id == null || name == null || membership == null) {
+                return null; //  필수 정보가 없으면 null 반환
             }
 
-            // ✅ DB에서 사용자 조회
-            Optional<User> optionalUser = userRepository.findByEmail(email);
-            if (optionalUser.isEmpty()) {
-                return null; // ✅ 유저가 없으면 null 반환
-            }
+            //  JWT에서 가져온 정보로 User 객체 생성 (DB 조회 X)
+            User user = new User();
+            user.setId(id);
+            user.setEmail(email);
+            user.setName(name);
+            user.setMembership(MemberShip.valueOf(membership)); // Enum 변환
 
-            User user = optionalUser.get();
-
-            // ✅ 사용자 역할(Role) 설정
+            //  사용자 역할(Role) 설정
             Set<SimpleGrantedAuthority> authorities = Collections.singleton(
-                    new SimpleGrantedAuthority("ROLE_" + user.getMembership().name())
+                    new SimpleGrantedAuthority("ROLE_" + membership)
             );
 
-            // ✅ SecurityContextHolder에 저장할 Authentication 객체 생성
-            return new UsernamePasswordAuthenticationToken(user, token, authorities);
+            //  SecurityContextHolder에 저장할 Authentication 객체 생성
+            Authentication authentication = new UsernamePasswordAuthenticationToken(user, token, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication); //  SecurityContextHolder에 저장
+
+            return authentication;
         } catch (Exception e) {
-            return null; // ✅ 토큰이 유효하지 않거나 에러 발생 시 null 반환
+            return null; //  토큰이 유효하지 않거나 에러 발생 시 null 반환
         }
     }
 
@@ -113,8 +122,8 @@ public class TokenProvider {
     }
 
     public String getUsernameFromToken(String token) {
-      Claims claims = getClaims(token);
-      return claims.get("userName", String.class);
+        Claims claims = getClaims(token);
+        return claims.get("userName", String.class);
     }
 
     public Claims getClaims(String token) {
@@ -125,11 +134,13 @@ public class TokenProvider {
     }
 
     public String getAccessToken(HttpServletRequest request) {
+        //헤더에서 토큰을 가져온다.
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
             return authorizationHeader.substring(TOKEN_PREFIX.length()).trim();
         }
 
+        //쿠키에서 토큰을 가져온다.
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
