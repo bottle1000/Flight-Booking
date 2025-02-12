@@ -1,6 +1,7 @@
 package flight_booking.demo.domain.airplane.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
+import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.ticket.entity.Ticket;
 import flight_booking.demo.domain.user.entity.User;
 import jakarta.persistence.Entity;
@@ -34,21 +35,7 @@ public class Seat extends BaseEntity {
 	private SeatState state;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "airplane_id")
-	private Airplane airplane;
+	@JoinColumn(name = "flight_id")
+	private FlightPlan flightPlan;
 
-	@OneToOne(mappedBy = "seat")
-	private Ticket ticket;
-
-	@Builder
-	public Seat(String line, SeatState state, Airplane airplane, User user) {
-		this.line = line;
-		this.state = state;
-		this.airplane = airplane;
-	}
-
-	public void assignTicket(Ticket ticket) {
-		this.ticket = ticket;
-		ticket.setSeat(this);
-	}
 }

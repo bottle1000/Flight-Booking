@@ -34,12 +34,6 @@ public class Ticket extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@Builder
-	public Ticket(Seat seat, User user) {
-		this.seat = seat;
-		this.user = user;
-	}
-
 	public void setSeat(Seat seat) {
 		this.seat = seat;
 		if (seat.getTicket() != this) {

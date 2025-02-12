@@ -32,11 +32,11 @@ public class FlightPlan extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "fromNational")
-	private National from;
+	private AirTerminal from;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "toNational")
-	private National to;
+	private AirTerminal to;
 
 	private LocalDateTime boardingAt;
 	private LocalDateTime landingAt;
@@ -46,15 +46,6 @@ public class FlightPlan extends BaseEntity {
 	@JoinColumn(name = "airplane_id")
 	private Airplane airplane;
 
-	@Builder
-	public FlightPlan(Airplane airplane, National from, National to,
-		LocalDateTime boardingAt, LocalDateTime landingAt, int price) {
-		this.airplane = airplane;
-		this.from = from;
-		this.to = to;
-		this.boardingAt = boardingAt;
-		this.landingAt = landingAt;
-		this.price = price;
-	}
+
 
 }
