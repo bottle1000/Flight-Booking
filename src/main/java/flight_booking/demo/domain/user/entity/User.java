@@ -1,9 +1,6 @@
 package flight_booking.demo.domain.user.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -11,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.lang.reflect.Member;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,12 +39,23 @@ public class User implements UserDetails {
     @Column(length = 255)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MemberShip membership = MemberShip.BASIC;
+
 
     @Builder
-    public User(String name, String email, String password) {
+    public User(String name, String email, String password, MemberShip membership) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.membership = membership;
+    }
+
+    public void updateMembership(MemberShip newMembershipType) {
+        if (newMembershipType != null && !this.membership.equals(newMembershipType)) {
+            this.membership = newMembershipType;
+        }
     }
 
     @Override
@@ -55,11 +64,10 @@ public class User implements UserDetails {
     }
 
 
-
     //해당 User의 권한을 리턴하는곳!!
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return  List.of(new SimpleGrantedAuthority("user"));
+        return List.of(new SimpleGrantedAuthority("user"));
     }
 
 

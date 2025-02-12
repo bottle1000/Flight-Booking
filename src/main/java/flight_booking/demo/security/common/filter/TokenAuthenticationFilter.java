@@ -56,11 +56,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     // 3 유저 정보 가져와서 새로운 access_token 발급
                     User user = userRepository.findById(storedRefreshToken.getUserId()).orElse(null);
 
-                    // 블랙리스트 체크
-                    if(user.getIsBlacklisted()){
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "당신은 블랙되었습니다");
-                        return;
-                    }
+
                     if (user != null) {
                         String newAccessToken = tokenProvider.generateToken(user, OAuth2SuccessHandler.ACCESS_TOKEN_DURATION);
                         System.out.println(" 새로운 accessToken 발급됨!");

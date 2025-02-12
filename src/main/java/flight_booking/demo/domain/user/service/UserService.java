@@ -24,18 +24,6 @@ public class UserService {
         return user.get();
     }
 
-    public void updateBlackList(UpdateBlackListRequestDto requestDto) {
-        Optional<User> optionalUser = userRepository.findByEmail(requestDto.getEmail());
-        if (optionalUser.isEmpty()) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found");
-        } else {
-            User user = optionalUser.get();
-            user.setBlacklisted(true);
-            userRepository.save(user);
-            ResponseEntity.ok("User blacklisted successfully");
-        }
-    }
-
     public void deleteUser(String email) {
         // 사용자 조회
         User user = userRepository.findByEmail(email)

@@ -1,6 +1,7 @@
 package flight_booking.demo.security.jwt;
 
 import flight_booking.demo.domain.user.entity.User;
+import flight_booking.demo.domain.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
@@ -8,6 +9,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -25,6 +28,9 @@ public class TokenProvider {
     private final JwtProperties jwtProperties;
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
+
+    private final UserRepository userRepository;
+
 
     public String generateToken(User user, Duration expiredAt) {
         Date now = new Date();
@@ -68,11 +74,36 @@ public class TokenProvider {
     //굳이 JWT토큰을 사용하면서 세션을 만들 이유가 없음. 근데 단지 권한 처리 때문에 sesstion넣어줌
     // 리턴의 이유는 권한 관리를 security가 대신 해주기 때문에 편하려고 하는거임.
     public Authentication getAuthentication(String token) {
+        if (token == null || token.isEmpty()) {
+            return null; // ✅ 로그인하지 않았으면 null 반환
+        }
 
-        Claims claims = getClaims(token);
-        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
-        //JWT토큰 서명을 통해서 서명이 정상이면 Authentication객체를 만들어준다.
-        return new UsernamePasswordAuthenticationToken(new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token, authorities);
+        try {
+            Claims claims = getClaims(token); // JWT 토큰에서 Claims(페이로드) 추출
+            String email = claims.getSubject(); // 토큰에서 이메일(subject) 추출
+
+            if (email == null || email.isEmpty()) {
+                return null; // ✅ 이메일이 없으면 null 반환
+            }
+
+            // ✅ DB에서 사용자 조회
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            if (optionalUser.isEmpty()) {
+                return null; // ✅ 유저가 없으면 null 반환
+            }
+
+            User user = optionalUser.get();
+
+            // ✅ 사용자 역할(Role) 설정
+            Set<SimpleGrantedAuthority> authorities = Collections.singleton(
+                    new SimpleGrantedAuthority("ROLE_" + user.getMembership().name())
+            );
+
+            // ✅ SecurityContextHolder에 저장할 Authentication 객체 생성
+            return new UsernamePasswordAuthenticationToken(user, token, authorities);
+        } catch (Exception e) {
+            return null; // ✅ 토큰이 유효하지 않거나 에러 발생 시 null 반환
+        }
     }
 
     //토큰 기반으로 유저 ID를 가져오는 메서드
