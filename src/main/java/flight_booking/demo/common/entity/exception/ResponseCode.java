@@ -6,10 +6,6 @@ import lombok.Getter;
 @Getter
 public enum ResponseCode {
 
-    //  비밀번호 관련
-    PASSWORD_MISMATCH(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다. 다시 입력해주세요."),
-    PASSWORD_SAME_AS_BEFORE(HttpStatus.BAD_REQUEST, "바꾸려는 비밀번호가 이전과 동일하거나, 입력한 비밀번호가 서로 다릅니다."),
-
     //  사용자 관련
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 사용 중인 이메일입니다."),
@@ -30,7 +26,6 @@ public enum ResponseCode {
 
     //  OAuth 2.0 관련
     OAUTH2_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "OAuth2.0 로그인에 실패했습니다."),
-    OAUTH2_PROVIDER_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 OAuth2.0 제공업체입니다."),
     OAUTH2_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "OAuth2.0 사용자 정보를 찾을 수 없습니다."),
     OAUTH2_ACCESS_DENIED(HttpStatus.FORBIDDEN, "OAuth2.0 인증에 실패했습니다."),
     OAUTH2_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "OAuth2.0 액세스 토큰이 만료되었습니다."),
