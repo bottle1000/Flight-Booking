@@ -24,8 +24,8 @@ public class UserController {
     private final TokenProvider tokenProvider;
 
     @GetMapping("/email")
-    public String getEmail(Principal principal) {
-        return principal.getName();
+    public String getEmail() {
+        return UserUtil.getCurrentUserEmail();
     }
 
     @GetMapping("/username")
@@ -44,8 +44,8 @@ public class UserController {
     }
 
     @PatchMapping("/role")
-    public String updateRole(@RequestBody UpdateUserRoleRequestDto requestDto) {
-            return null;
+    public void updateRole(@RequestBody UpdateUserRoleRequestDto requestDto) {
+        userService.updateUserRole(requestDto);
     }
 
     @DeleteMapping("/{id}")
