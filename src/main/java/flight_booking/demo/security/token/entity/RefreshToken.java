@@ -18,10 +18,12 @@ public class RefreshToken implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private int id;
 
   private String userId;
 
+  //리프레쉬 토큰이 길어서 설정해줌
+  @Column(columnDefinition = "TEXT")
   private String refreshToken;
 
 
