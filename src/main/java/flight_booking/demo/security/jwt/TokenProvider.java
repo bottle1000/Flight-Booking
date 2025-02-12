@@ -147,6 +147,7 @@ public class TokenProvider {
                 if ("access_token".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
+                System.out.println("쿠키: "+cookie.getName());
             }
         }
         return null;

@@ -59,6 +59,7 @@ function getProfilePictureUrlFromCookie() {
 
 // DOM 로딩 완료 시 프로필 URL 읽어와서 이미지 엘리먼트에 설정
 function httpRequest(method, url, body, success, fail) {
+    alert(getCookie('access_token'));
     fetch(url, {
         method: method,
         headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
@@ -130,5 +131,4 @@ document.addEventListener('DOMContentLoaded', function () {
         const userAvatarImg = document.getElementById('userAvatar');
         userAvatarImg.src = profilePictureUrl;
     }
-
 });
