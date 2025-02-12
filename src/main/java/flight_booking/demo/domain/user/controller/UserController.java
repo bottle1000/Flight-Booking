@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping("/role")
-    public String findRole(HttpServletRequest request) {
+    public String findRole() {
         return UserUtil.getCurrentUserRole();
     }
 
