@@ -2,8 +2,7 @@ package flight_booking.demo.domain.airplane.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
-import flight_booking.demo.domain.ticket.entity.Ticket;
-import flight_booking.demo.domain.user.entity.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,10 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,18 +21,29 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Seat extends BaseEntity {
+public class Ticket extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
-	private String line;
+	@Column(nullable = false)
+	private String seat;
 
 	@Enumerated(EnumType.STRING)
-	private SeatState state;
+	private SeatState state = SeatState.AVAILABLE;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id")
 	private FlightPlan flightPlan;
+
+	public Ticket(String seat, FlightPlan flightPlan) {
+		this.seat = seat;
+		this.flightPlan = flightPlan;
+	}
+
+	// 주문 취소 시 좌석을 "이용 가능" 상태로 변경하는 메서드
+	public void makeAvailable() {
+		this.state = SeatState.AVAILABLE;
+	}
 
 }

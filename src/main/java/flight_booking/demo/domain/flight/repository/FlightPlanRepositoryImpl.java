@@ -1,6 +1,7 @@
 package flight_booking.demo.domain.flight.repository;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,8 +12,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
-import flight_booking.demo.domain.flight.entity.National;
 import flight_booking.demo.domain.flight.entity.QFlightPlan;
 import lombok.RequiredArgsConstructor;
 
@@ -23,16 +24,18 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 	private final QFlightPlan flightPlan = QFlightPlan.flightPlan;
 
 	@Override
-	public Page<FlightPlan> findByFilters(National from, National to, LocalDateTime boardingAt, LocalDateTime landingAt,
+	public Page<FlightPlan> findByFilters(String departure, String arrival, LocalDateTime boardingAt,
+		LocalDateTime landingAt,
 		Pageable pageable) {
+
+		BooleanExpression conditions = departureEq(departure)
+			.and(arrivalEq(arrival))
+			.and(boardingAtGoe(boardingAt))
+			.and(landingAtLoe(landingAt));
+
 		List<FlightPlan> results = queryFactory
 			.selectFrom(flightPlan)
-			.where(
-				fromEq(from),
-				toEq(to),
-				boardingAt != null ? flightPlan.boardingAt.goe(boardingAt) : null,
-				landingAt != null ? flightPlan.landingAt.loe(landingAt) : null
-			)
+			.where(conditions)
 			.orderBy(flightPlan.createdAt.asc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -41,25 +44,23 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 		JPAQuery<Long> countQuery = queryFactory
 			.select(flightPlan.count())
 			.from(flightPlan)
-			.where(
-				fromEq(from),
-				toEq(to),
-				boardingAt != null ? flightPlan.boardingAt.goe(boardingAt) : null,
-				landingAt != null ? flightPlan.landingAt.loe(landingAt) : null
-			);
+			.where(conditions);
 		return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
 	}
 
-	private BooleanExpression fromEq(National from) {
-		return from != null ?
-			flightPlan.from.eq(from)
-			: null;
+	private BooleanExpression departureEq(String departure) {
+		return departure != null ? flightPlan.departure.eq(Airport.valueOf(departure)) : null;
 	}
 
-	private BooleanExpression toEq(National to) {
-		return to != null ?
-			flightPlan.from.eq(to)
-			: null;
+	private BooleanExpression arrivalEq(String arrival) {
+		return arrival != null ? flightPlan.arrival.eq(Airport.valueOf(arrival)) : null;
 	}
 
+	private BooleanExpression boardingAtGoe(LocalDateTime boardingAt) {
+		return boardingAt != null ? flightPlan.boardingAt.goe(boardingAt) : null;
+	}
+
+	private BooleanExpression landingAtLoe(LocalDateTime landingAt) {
+		return landingAt != null ? flightPlan.landingAt.loe(landingAt) : null;
+	}
 }
