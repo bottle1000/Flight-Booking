@@ -1,4 +1,8 @@
 package flight_booking.demo.domain.discount.dto.request;
 
-public class DiscountEndAtUpdateRequest {
+import java.time.LocalDateTime;
+
+public record DiscountEndAtUpdateRequest(
+        LocalDateTime end_at
+) {
 }
