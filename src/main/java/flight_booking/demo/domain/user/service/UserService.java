@@ -1,5 +1,6 @@
 package flight_booking.demo.domain.user.service;
 
+import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.common.entity.exception.ResponseCode;
 import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
 import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
@@ -23,7 +24,7 @@ public class UserService {
     public User findById(String userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            ResponseCode.ID_MISMATCH.getMessage();
+            throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         return user.get();
     }
@@ -31,7 +32,7 @@ public class UserService {
     public void deleteUser(String email) {
         // 사용자 조회
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND);
         userRepository.delete(user);
     }
 
@@ -39,11 +40,11 @@ public class UserService {
     //OWNER 전용
     public void updateRole(UpdateRoleRequestDto requestDto, String userId) {
         if (Role.valueOf(UserUtil.getCurrentRole()) != Role.OWNER) {
-            ResponseCode.ID_MISMATCH.getMessage();
+            throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            ResponseCode.USER_NOT_FOUND.getMessage();
+            throw new CustomException(ResponseCode.USER_NOT_FOUND);
         }
         User findUser = optionalUser.get();
         findUser.updateRole(requestDto.getRole());
@@ -53,11 +54,11 @@ public class UserService {
     //OWNER 전용
     public void updateMemberShip(UpdateMemberShipRequestDto requestDto, String userId) {
         if (Role.valueOf(UserUtil.getCurrentRole()) != Role.OWNER) {
-            ResponseCode.ID_MISMATCH.getMessage();
+            throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isPresent()) {
-            ResponseCode.USER_NOT_FOUND.getMessage();
+            throw new CustomException(ResponseCode.USER_NOT_FOUND);
         }
         User findUser = optionalUser.get();
         findUser.updateMembership(requestDto.getMemberShip());
@@ -66,7 +67,7 @@ public class UserService {
 
     public List<User> findUserAll() {
         if (Role.valueOf(UserUtil.getCurrentRole()) != Role.OWNER) {
-            ResponseCode.ID_MISMATCH.getMessage();
+            throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         return userRepository.findAll();
     }
