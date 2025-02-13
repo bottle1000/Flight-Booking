@@ -36,6 +36,16 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public void updateRoleMe(UpdateRoleRequestDto requestDto) {
+        String userId = UserUtil.getCurrentUserId();
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new CustomException(ResponseCode.USER_NOT_FOUND);
+        }
+        User findUser = optionalUser.get();
+        findUser.updateRole(requestDto.getRole());
+        userRepository.save(findUser);
+    }
 
     //OWNER 전용
     public void updateRole(UpdateRoleRequestDto requestDto, String userId) {
@@ -43,7 +53,7 @@ public class UserService {
             throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
+        if (optionalUser.isEmpty()) {
             throw new CustomException(ResponseCode.USER_NOT_FOUND);
         }
         User findUser = optionalUser.get();
@@ -57,7 +67,7 @@ public class UserService {
             throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
+        if (optionalUser.isEmpty()) {
             throw new CustomException(ResponseCode.USER_NOT_FOUND);
         }
         User findUser = optionalUser.get();

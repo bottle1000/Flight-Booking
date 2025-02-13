@@ -45,6 +45,10 @@ public class UserController {
     public void deleteUser(@RequestBody DeleteUserRequestDto requestDto) {
         userService.deleteUser(requestDto.getEmail());
     }
+    @PatchMapping("/role")
+    public void updateRoleMe(@RequestBody UpdateRoleRequestDto requestDto){
+        userService.updateRoleMe(requestDto);
+    }
 
 
     //OWNER전용
@@ -60,4 +64,5 @@ public class UserController {
     public void updateMemberShip(@RequestBody UpdateMemberShipRequestDto requestDto, @PathVariable String userId) {
         userService.updateMemberShip(requestDto,userId);
     }
+
 }

@@ -69,7 +69,6 @@ public class TokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {//복호화 과정에서 에러가 나면 유효하지 않은 토큰
-            System.out.println("잘못 만듬");
             return false;
         }
     }
