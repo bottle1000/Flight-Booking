@@ -1,4 +1,4 @@
-package flight_booking.demo.domain.receipt.entity;
+package flight_booking.demo.domain.payment.entity;
 
 import flight_booking.demo.domain.discount.entity.Discount;
 import jakarta.persistence.*;
@@ -10,21 +10,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReceiptDiscount {
+public class PaymentDiscount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "receipt_id", nullable = false)
-    private Receipt receipt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id", nullable = false)
+    private Payment payment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_id", nullable = false)
     private Discount discount;
 
-    public ReceiptDiscount(Receipt receipt, Discount discount) {
-        this.receipt = receipt;
+    public PaymentDiscount(Payment payment, Discount discount) {
+        this.payment = payment;
         this.discount = discount;
     }
 }

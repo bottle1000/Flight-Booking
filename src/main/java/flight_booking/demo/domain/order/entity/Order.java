@@ -1,7 +1,7 @@
 package flight_booking.demo.domain.order.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
-import flight_booking.demo.domain.receipt.entity.Receipt;
+import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.ticket.entity.Ticket;
 import flight_booking.demo.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -26,8 +26,12 @@ public class Order extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Ticket ticket;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Receipt receipt;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Payment payment;
+
+    @Convert(converter = OrderState.Convertor.class)
+    @Column(nullable = false)
+    private OrderState state = OrderState.NOT_PAID;
 
     private int price;
 
@@ -35,14 +39,6 @@ public class Order extends BaseEntity {
         this.user = user;
         this.ticket = ticket;
         this.price = price;
-
-        /**
-         * TODO
-         * ticket.registerOrder(this);
-         */
-    }
-
-    public void registerReceipt(Receipt receipt) {
-        this.receipt = receipt;
+        this.payment = new Payment(this);
     }
 }

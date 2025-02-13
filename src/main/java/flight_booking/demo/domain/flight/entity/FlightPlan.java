@@ -43,8 +43,14 @@ public class FlightPlan extends BaseEntity {
 	private Airplane airplane;
 
 	@Builder
-	public FlightPlan(Airplane airplane, National from, National to,
-		LocalDateTime boardingAt, LocalDateTime landingAt, int price) {
+	public FlightPlan(
+			Airplane airplane,
+			National from,
+			National to,
+			LocalDateTime boardingAt,
+			LocalDateTime landingAt,
+			int price
+	) {
 		this.airplane = airplane;
 		this.from = from;
 		this.to = to;

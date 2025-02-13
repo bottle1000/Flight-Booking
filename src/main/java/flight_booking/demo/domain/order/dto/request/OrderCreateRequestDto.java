@@ -4,5 +4,5 @@ import java.util.List;
 
 public record OrderCreateRequestDto (
         Long ticketId,
-        List<Integer> discountIds
+        List<Long> discountIds
 ){}
