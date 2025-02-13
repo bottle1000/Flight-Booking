@@ -32,7 +32,7 @@ public class UserService {
     public void deleteUser(String email) {
         // 사용자 조회
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND);
+                .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
         userRepository.delete(user);
     }
 
