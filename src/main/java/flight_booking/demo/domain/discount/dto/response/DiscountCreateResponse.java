@@ -4,7 +4,6 @@ import flight_booking.demo.domain.discount.entity.Discount;
 import flight_booking.demo.domain.discount.entity.DiscountType;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public record DiscountCreateResponse(
         int id,
