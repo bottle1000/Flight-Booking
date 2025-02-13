@@ -1,6 +1,7 @@
 package flight_booking.demo.security.jwt;
 
 import flight_booking.demo.domain.user.entity.MemberShip;
+import flight_booking.demo.domain.user.entity.Role;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -49,8 +50,9 @@ public class TokenProvider {
                 .setExpiration(expiry) //내용 exp : expiry 멤버 변숫값
                 .setSubject(user.getEmail()) //내용 sub : 유저의 이메일
                 .claim("id", user.getId()) //클레임 id : 유저 ID
-                .claim("userName", user.getName())
+                .claim("username", user.getName())
                 .claim("membership", user.getMembership())
+                .claim("role", user.getRole())
 
                 // 서명 : 비밀값과 함께 해시값을 HS256 방식으로 암호화
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
@@ -86,8 +88,9 @@ public class TokenProvider {
             Claims claims = getClaims(token); // JWT 토큰에서 Claims(페이로드) 추출
             String email = claims.getSubject(); // 토큰에서 이메일(subject) 추출
             String id = claims.get("id", String.class);
-            String name = claims.get("userName", String.class);
+            String name = claims.get("username", String.class);
             String membership = claims.get("membership", String.class); //  JWT에서 membership 가져오기
+            String role = claims.get("role", String.class);
 
             if (email == null || email.isEmpty() || id == null || name == null || membership == null) {
                 return null; //  필수 정보가 없으면 null 반환
@@ -99,10 +102,11 @@ public class TokenProvider {
             user.setEmail(email);
             user.setName(name);
             user.setMembership(MemberShip.valueOf(membership)); // Enum 변환
+            user.setRole(Role.valueOf(role));
 
             //  사용자 역할(Role) 설정
             Set<SimpleGrantedAuthority> authorities = Collections.singleton(
-                    new SimpleGrantedAuthority("ROLE_" + membership)
+                    new SimpleGrantedAuthority("ROLE_" + role)
             );
 
             //  SecurityContextHolder에 저장할 Authentication 객체 생성

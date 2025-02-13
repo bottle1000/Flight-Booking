@@ -36,8 +36,12 @@ public class UserUtil {
     }
 
     // 현재 로그인된 사용자의 권한(Role) 가져오기
-    public static String getCurrentUserRole() {
+    public static String getCurrentMemberShip() {
         User user = getCurrentUser();
         return (user != null) ? user.getMembership().name() : null;
+    }
+    public static String getCurrentRole() {
+        User user = getCurrentUser();
+        return (user != null) ? user.getRole().name() : null;
     }
 }
