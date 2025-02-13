@@ -6,12 +6,15 @@ import flight_booking.demo.domain.discount.dto.request.DiscountEndAtUpdateReques
 import flight_booking.demo.domain.discount.dto.request.DiscountRateUpdateRequest;
 import flight_booking.demo.domain.discount.dto.response.DiscountCreateResponse;
 import flight_booking.demo.domain.discount.dto.response.DiscountEndAtResponse;
+import flight_booking.demo.domain.discount.dto.response.DiscountListResponse;
 import flight_booking.demo.domain.discount.dto.response.DiscountRateUpdateResponse;
 import flight_booking.demo.domain.discount.service.DiscountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/discount")
@@ -49,8 +52,14 @@ public class DiscountController {
     public ResponseEntity<ApiResponse<DiscountEndAtResponse>> updateEventEndAt(
             @PathVariable Long discount_id,
             @RequestBody DiscountEndAtUpdateRequest request
-            ) {
+    ) {
         DiscountEndAtResponse updatedEventDate = discountService.updateEndAt(discount_id, request);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.toString(), "할인 종료일 수정 성공", updatedEventDate));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<DiscountListResponse>>> findEventList() {
+        List<DiscountListResponse> eventToList = discountService.findEventToList();
+        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.toString(), "할인 목록 조회 성공", eventToList));
     }
 }
