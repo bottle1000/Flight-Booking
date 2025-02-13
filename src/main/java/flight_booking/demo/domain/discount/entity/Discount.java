@@ -48,8 +48,7 @@ public class Discount extends BaseEntity {
         this.end_at = end_at;
     }
 
-    public Discount from(LocalDateTime end_at) {
+    public void from(LocalDateTime end_at) {
         this.end_at = end_at;
-        return new Discount();
     }
 }

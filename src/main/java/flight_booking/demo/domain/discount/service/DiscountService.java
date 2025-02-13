@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class DiscountService {
@@ -52,7 +50,6 @@ public class DiscountService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "할인 정보가 없습니다."));
 
         foundEvent.from(request.end_at());
-//        Discount updateEvent = new Discount(request.end_at());
 
         Discount savedEvent = discountRepository.save(foundEvent);
 
