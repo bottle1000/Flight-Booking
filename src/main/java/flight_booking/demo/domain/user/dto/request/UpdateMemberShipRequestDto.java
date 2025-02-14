@@ -4,6 +4,6 @@ import flight_booking.demo.domain.user.entity.MemberShip;
 import lombok.Getter;
 
 @Getter
-public class UpdateUserRoleRequestDto {
+public class UpdateMemberShipRequestDto {
    private MemberShip memberShip;
 }

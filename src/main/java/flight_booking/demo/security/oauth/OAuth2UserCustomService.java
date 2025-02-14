@@ -1,5 +1,7 @@
 package flight_booking.demo.security.oauth;
 
+import flight_booking.demo.domain.user.entity.MemberShip;
+import flight_booking.demo.domain.user.entity.Role;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +49,8 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService { //google
             user.setEmail(email);
             user.setName(name);
             user.setProfile_url(profile_url);
+            user.setRole(Role.CUSTOMER);
+            user.setMembership(MemberShip.BASIC);
             return userRepository.save(user);
         } else {
             return optionalUser.get();
