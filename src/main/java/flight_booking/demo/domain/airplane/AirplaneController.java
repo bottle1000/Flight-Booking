@@ -18,6 +18,8 @@ import flight_booking.demo.domain.airplane.dto.response.AirplaneCreateResponse;
 import flight_booking.demo.domain.airplane.dto.response.AirplaneGetResponse;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
+import flight_booking.demo.domain.flight.dto.request.FlightPlanCreateRequest;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +35,16 @@ public class AirplaneController {
 		AirplaneCreateResponse response = airplaneService.createAirplane(request);
 		return ResponseEntity.ok(ApiResponse.success("항공기가 성공적으로 등록되었습니다.", response));
 	}
+
+
+	@PostMapping
+	public ResponseEntity<ApiResponse<FlightPlanCreateResponse>> createFlightPlan(
+		@Valid @RequestBody FlightPlanCreateRequest flightPlanCreateRequest
+	) {
+		FlightPlanCreateResponse response = airplaneService.createFlightPlan(flightPlanCreateRequest);
+		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴이 성공적으로 등록되었습니다", response));
+	}
+
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<Page<AirplaneGetResponse>>> getAirplaneList(
