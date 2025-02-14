@@ -39,4 +39,7 @@ application.yml
 
 ### Mac OS ###
 .DS_Store
-src/main/resources/application.properties
+
+### Properties Files ###
+*.properties
+!*.properties.example

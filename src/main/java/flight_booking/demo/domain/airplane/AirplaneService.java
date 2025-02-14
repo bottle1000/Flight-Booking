@@ -68,7 +68,7 @@ public class AirplaneService {
 	}
 
 
-	public Page<AirplaneGetResponse> getAirplaneList(Pageable pageable) {
+	public Page<AirplaneGetResponse> findAirplaneList(Pageable pageable) {
 		Page<Airplane> airplaneList = airplaneRepository.findAll(pageable);
 		return airplaneList.map(airplane -> new AirplaneGetResponse(airplane.getId(), airplane.getName()));
 	}

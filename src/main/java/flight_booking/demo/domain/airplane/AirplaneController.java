@@ -45,10 +45,10 @@ public class AirplaneController {
 	}
 
 	@GetMapping
-	public ResponseEntity<ApiResponse<Page<AirplaneGetResponse>>> getAirplaneList(
+	public ResponseEntity<ApiResponse<Page<AirplaneGetResponse>>> findAirplaneList(
 		@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
 	) {
-		Page<AirplaneGetResponse> response = airplaneService.getAirplaneList(pageable);
+		Page<AirplaneGetResponse> response = airplaneService.findAirplaneList(pageable);
 		return ResponseEntity.ok(ApiResponse.success("항공기 목록 조회 성공", response));
 	}
 }
