@@ -9,17 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.Airplane;
-import flight_booking.demo.domain.airplane.entity.SeatColumn;
-import flight_booking.demo.domain.airplane.entity.Ticket;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
 import flight_booking.demo.domain.airplane.repository.TicketRepository;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanCreateRequest;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanGetRequest;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanUpdateRequest;
-import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlaneUpdateResponse;
-import flight_booking.demo.domain.flight.dto.response.TicketResponse;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.repository.FlightPlanRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +29,7 @@ public class FlightPlanService {
 	private final AirplaneRepository airplaneRepository;
 	private final TicketRepository ticketRepository;
 
-	public Page<FlightPlanGetResponse> getFilteredFlightsPlanList(
+	public Page<FlightPlanGetResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
 		Pageable pageable
 	) {
@@ -47,9 +43,9 @@ public class FlightPlanService {
 		return FlightPlanGetResponse.from(flightPlan);
 	}
 
-
 	@Transactional
-	public FlightPlaneUpdateResponse updateFlightPlan(Long flightPlanId, FlightPlanUpdateRequest flightPlanUpdateRequest) {
+	public FlightPlaneUpdateResponse updateFlightPlan(Long flightPlanId,
+		FlightPlanUpdateRequest flightPlanUpdateRequest) {
 
 		FlightPlan foundFlightPlan = flightPlanRepository.findById(flightPlanId)
 			.orElseThrow(() -> new CustomException(FLIGHTPLAN_NOT_FOUND));
