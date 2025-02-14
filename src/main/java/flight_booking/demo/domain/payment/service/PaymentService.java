@@ -2,6 +2,8 @@ package flight_booking.demo.domain.payment.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.common.entity.exception.ResponseCode;
 import flight_booking.demo.domain.invoice.entity.Invoice;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
 import flight_booking.demo.domain.payment.entity.Payment;
@@ -39,8 +41,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findByUid(orderId)
                 .orElseThrow();
         if (payment.getAmount() != amount) {
-            //TODO: GlobalExceptionHandler
-            throw new IllegalStateException("가격이 같지 않습니다. 결제가 취소되었습니다.");
+            throw new CustomException(ResponseCode.PAYMENT_AMOUNT_MISMATCH);
         }
     }
 
@@ -69,9 +70,8 @@ public class PaymentService {
         restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, requestEntity, String.class);
 
-        // TODO : GlobalExceptionHandler
         Payment payment = paymentRepository.findByUid(orderId)
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ResponseCode.ORDER_UUID_NOT_FOUND));
 
         // 결제 성공 및 실패 비즈니스 로직을 구현.
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
@@ -88,16 +88,15 @@ public class PaymentService {
         } else {
             payment.getOrder().updateOrderStatus("CANCELED");
             payment.updatePaymentStatus("FAIL");
-            //TODO: GlobalExceptionHandler
+            //TODO: 토스 예외처리 만들기
             throw new IllegalStateException("토스 페이 최종 결제 실패 : " + responseEntity.getStatusCode());
         }
     }
 
     @Transactional
     public void userFail(String orderId) {
-        //TODO : GlobalExceptionHandler
         Payment payment = paymentRepository.findByUid(orderId)
-                .orElseThrow();
+                .orElseThrow(() -> new CustomException(ResponseCode.ORDER_UUID_NOT_FOUND));
         payment.getOrder().updateOrderStatus("CANCELED");
         payment.updatePaymentStatus("FAIL");
     }
