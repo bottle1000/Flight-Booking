@@ -49,7 +49,7 @@ public class UserService {
 
     //OWNER 전용
     public void updateRole(UpdateRoleRequestDto requestDto, String userId) {
-        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.OWNER) {
+        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
             throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -63,7 +63,7 @@ public class UserService {
 
     //OWNER 전용
     public void updateMemberShip(UpdateMemberShipRequestDto requestDto, String userId) {
-        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.OWNER) {
+        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
             throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -76,7 +76,7 @@ public class UserService {
     }
 
     public List<User> findUserAll() {
-        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.OWNER) {
+        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
             throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         return userRepository.findAll();
