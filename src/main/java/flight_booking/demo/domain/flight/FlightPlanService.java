@@ -47,33 +47,6 @@ public class FlightPlanService {
 		return FlightPlanGetResponse.from(flightPlan);
 	}
 
-	@Transactional
-	public FlightPlanCreateResponse createFlightPlan(FlightPlanCreateRequest flightPlanCreateRequest) {
-
-		Airplane foundAirplane = airplaneRepository.findById(flightPlanCreateRequest.airplaneId())
-			.orElseThrow(() -> new CustomException(AIRPLANE_NOT_FOUND));
-
-		// todo 항공 스케쥴 검증 메서드 ( 구현 중 )
-		// existsOverlappingSchedule(foundAirplane, flightPlanCreateRequest);
-
-		FlightPlan newFlightPlan = FlightPlan.create(
-			flightPlanCreateRequest.departure(),
-			flightPlanCreateRequest.arrival(),
-			flightPlanCreateRequest.price(),
-			flightPlanCreateRequest.boardingAt(),
-			flightPlanCreateRequest.landingAt(),
-			foundAirplane
-		);
-
-		for (int row = 1; row <= 10; row++) {
-			for (SeatColumn column : SeatColumn.values()) {
-				Ticket ticket = new Ticket(row + column.name(), newFlightPlan);
-				ticketRepository.save(ticket);
-			}
-		}
-		FlightPlan savedFlightPlan = flightPlanRepository.save(newFlightPlan);
-		return FlightPlanCreateResponse.from(savedFlightPlan);
-	}
 
 	@Transactional
 	public FlightPlaneUpdateResponse updateFlightPlan(Long flightPlanId, FlightPlanUpdateRequest flightPlanUpdateRequest) {

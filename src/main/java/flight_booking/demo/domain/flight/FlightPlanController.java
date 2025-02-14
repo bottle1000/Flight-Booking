@@ -43,15 +43,6 @@ public class FlightPlanController {
 	}
 
 
-	@PostMapping
-	public ResponseEntity<ApiResponse<FlightPlanCreateResponse>> createFlightPlan(
-		@Valid @RequestBody FlightPlanCreateRequest flightPlanCreateRequest
-	) {
-		FlightPlanCreateResponse response = flightPlanService.createFlightPlan(flightPlanCreateRequest);
-		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴이 성공적으로 등록되었습니다", response));
-	}
-
-
 	@PutMapping("/{flight-plan_id}")
 	public ResponseEntity<ApiResponse<FlightPlaneUpdateResponse>> updateFlightPlan(
 		@PathVariable("flight-plan_id") Long flightPlanId,
