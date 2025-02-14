@@ -24,12 +24,12 @@ public class Payment extends BaseEntity {
     @OneToOne(fetch = FetchType.EAGER)
     private Order order;
 
-    @Convert(converter = PaymentState.Convertor.class)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentState state;
 
     @Column(nullable = false)
-    private UUID uid;
+    private String uid;
 
     @Column(nullable = false)
     private String name;
@@ -51,10 +51,15 @@ public class Payment extends BaseEntity {
 
     public Payment(Order order) {
         this.order = order;
-        this.uid = UUID.randomUUID();
+        this.uid = UUID.randomUUID().toString();
         //TODO: this.name = order.getTicket().getFlightPlan().getDescription() + order.getTicket().getSeat();
         this.name = "";
         this.state = PaymentState.IN_PROGRESS;
         this.amount = order.getPrice();
     }
+
+    public void updatePaymentStatus(String string) {
+        this.state = PaymentState.fromString(string);
+    }
+
 }

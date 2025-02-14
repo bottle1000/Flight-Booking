@@ -1,42 +1,20 @@
 package flight_booking.demo.domain.payment.entity;
 
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
+
+import java.util.Arrays;
 
 public enum PaymentState {
-    NONE(0),
-    IN_PROGRESS(1),
-    COMPLETE(2),
-    FAIL(3),
-    CANCEL(4);
+    NONE,
+    IN_PROGRESS,
+    COMPLETE,
+    FAIL,
+    CANCEL;
 
-
-    public final int id;
-
-    PaymentState(int value) {
-        this.id = value;
-    }
-
-    public static PaymentState of(int id) {
-        for (PaymentState state : values()) {
-            if (state.id == id) {
-                return state;
-            }
-        }
-
-        //TODO: GlobalExceptionHandler
-        throw new RuntimeException("해당 타입: " + id + " 은 지원하지 않는 주문상태입니다 : ");
-    }
-
-    @Converter
-    static class Convertor implements AttributeConverter<PaymentState, Integer> {
-        @Override
-        public Integer convertToDatabaseColumn(PaymentState state) {
-            return state.id;
-        }
-        @Override
-        public PaymentState convertToEntityAttribute(Integer id) {
-            return of(id);
-        }
+    public static PaymentState fromString(String status) {
+        return Arrays.stream(PaymentState.values())
+                .filter(p -> p.toString().equalsIgnoreCase(status))
+                .findFirst()
+                //Todo : GlobalException
+                .orElseThrow(() -> new IllegalArgumentException("결제 상태가 존재하지 않습니다."));
     }
 }
