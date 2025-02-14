@@ -20,12 +20,10 @@ public class Discount extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private DiscountType discountType;
-
     private int rate;
     private int amount;
     private String description;
-
-    private LocalDateTime start_at = null;
+    private LocalDateTime start_at;
     private LocalDateTime end_at = null;
 
     public Discount(
@@ -36,10 +34,6 @@ public class Discount extends BaseEntity {
             LocalDateTime start_at,
             LocalDateTime end_at
     ) {
-        //TODO: GlobalExceptionHandler 적용 이후 변경 요망
-        if(rate < 0 || rate > 100) {
-            throw new IllegalArgumentException("할인 비율은 0~100 사이여야 합니다.");
-        }
         this.discountType = discountType;
         this.rate = rate;
         this.amount = amount;
@@ -48,7 +42,7 @@ public class Discount extends BaseEntity {
         this.end_at = end_at;
     }
 
-    public void from(LocalDateTime end_at) {
+    public void closeAt(LocalDateTime end_at) {
         this.end_at = end_at;
     }
 }

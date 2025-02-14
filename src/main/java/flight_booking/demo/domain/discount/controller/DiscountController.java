@@ -3,11 +3,9 @@ package flight_booking.demo.domain.discount.controller;
 import flight_booking.demo.common.entity.dto.ApiResponse;
 import flight_booking.demo.domain.discount.dto.request.DiscountCreateRequest;
 import flight_booking.demo.domain.discount.dto.request.DiscountEndAtUpdateRequest;
-import flight_booking.demo.domain.discount.dto.request.DiscountRateUpdateRequest;
 import flight_booking.demo.domain.discount.dto.response.DiscountCreateResponse;
 import flight_booking.demo.domain.discount.dto.response.DiscountEndAtResponse;
 import flight_booking.demo.domain.discount.dto.response.DiscountListResponse;
-import flight_booking.demo.domain.discount.dto.response.DiscountRateUpdateResponse;
 import flight_booking.demo.domain.discount.service.DiscountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,18 +32,6 @@ public class DiscountController {
                 HttpStatus.CREATED.toString(),
                 "할인 이벤트 생성 성공",
                 createdEvent
-        ));
-    }
-
-    @PostMapping("/rate")
-    public ResponseEntity<ApiResponse<DiscountRateUpdateResponse>> updateDiscountRate(
-            @Valid @RequestBody DiscountRateUpdateRequest request
-    ) {
-        DiscountRateUpdateResponse updatedEvent = discountService.updateDiscountRate(request);
-        return ResponseEntity.ok(new ApiResponse<>(
-                HttpStatus.CREATED.toString(),
-                "할인율 수정 성공",
-                updatedEvent
         ));
     }
 
