@@ -17,10 +17,7 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
-
-    //CUSTOMER 전용
     @GetMapping("/email")
     public String findEmail() {
         return UserUtil.getCurrentUserEmail();
@@ -49,20 +46,4 @@ public class UserController {
     public void updateRoleMe(@RequestBody UpdateRoleRequestDto requestDto){
         userService.updateRoleMe(requestDto);
     }
-
-
-    //OWNER전용
-    @GetMapping("/")
-    public List<User> findUsersAll(){
-       return userService.findUserAll();
-    }
-    @PatchMapping("/role/{userId}")
-    public void updateRole(@RequestBody UpdateRoleRequestDto requestDto, @PathVariable String userId){
-        userService.updateRole(requestDto, userId);
-    }
-    @PatchMapping("/membership/{userId}")
-    public void updateMemberShip(@RequestBody UpdateMemberShipRequestDto requestDto, @PathVariable String userId) {
-        userService.updateMemberShip(requestDto,userId);
-    }
-
 }
