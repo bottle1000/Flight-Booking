@@ -24,6 +24,9 @@ public enum ResponseCode {
     PAYMENT_REQUIRED(HttpStatus.PAYMENT_REQUIRED, "결제를 완료해야 예약이 확정됩니다."),
     EXCEED_MAX_TICKETS(HttpStatus.BAD_REQUEST, "최대 예매 가능한 항공권 개수를 초과했습니다."),
 
+    // 비행기, 비행기 일정 관련
+    AIRPLANE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 항공기를 찾을 수 없습니다."),
+
     //  OAuth 2.0 관련
     OAUTH2_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "OAuth2.0 로그인에 실패했습니다."),
     OAUTH2_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "OAuth2.0 사용자 정보를 찾을 수 없습니다."),
