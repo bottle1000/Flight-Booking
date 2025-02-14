@@ -1,5 +1,6 @@
 package flight_booking.demo.domain.user.entity;
 
+import flight_booking.demo.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
 
     @Id
     private String id;
@@ -35,13 +36,17 @@ public class User implements UserDetails {
 
     private String profile_url;
 
-
     @Column(length = 255)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MemberShip membership = MemberShip.BASIC;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.CUSTOMER;
+
 
 
     @Builder
@@ -55,6 +60,11 @@ public class User implements UserDetails {
     public void updateMembership(MemberShip newMembershipType) {
         if (newMembershipType != null && !this.membership.equals(newMembershipType)) {
             this.membership = newMembershipType;
+        }
+    }
+    public void updateRole(Role newRole) {
+        if (newRole != null && !this.role.equals(newRole)) {
+            this.role = newRole;
         }
     }
 

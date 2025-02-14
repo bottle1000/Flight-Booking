@@ -1,15 +1,17 @@
 package flight_booking.demo.domain.user.service;
 
-import flight_booking.demo.domain.user.dto.request.UpdateBlackListRequestDto;
-import flight_booking.demo.domain.user.dto.request.UpdateUserRoleRequestDto;
+import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.common.entity.exception.ResponseCode;
+import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
+import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
+import flight_booking.demo.domain.user.entity.Role;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,29 +20,65 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    //CUSTOMER 전용
     public User findById(String userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new IllegalArgumentException("User not found with email: " + userId);
+            throw new CustomException(ResponseCode.ID_MISMATCH);
         }
         return user.get();
     }
 
-    public void updateUserRole(UpdateUserRoleRequestDto requestDto){
-      String userId =  UserUtil.getCurrentUserId();
-        Optional<User> optionalUser  = userRepository.findById(userId);
-        if(optionalUser.isEmpty()){
-            throw new IllegalArgumentException("User not find ID: "+userId);
+    public void deleteUser(String email) {
+        // 사용자 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
+        userRepository.delete(user);
+    }
+
+    public void updateRoleMe(UpdateRoleRequestDto requestDto) {
+        String userId = UserUtil.getCurrentUserId();
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new CustomException(ResponseCode.USER_NOT_FOUND);
+        }
+        User findUser = optionalUser.get();
+        findUser.updateRole(requestDto.getRole());
+        userRepository.save(findUser);
+    }
+
+    //OWNER 전용
+    public void updateRole(UpdateRoleRequestDto requestDto, String userId) {
+        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
+            throw new CustomException(ResponseCode.ID_MISMATCH);
+        }
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new CustomException(ResponseCode.USER_NOT_FOUND);
+        }
+        User findUser = optionalUser.get();
+        findUser.updateRole(requestDto.getRole());
+        userRepository.save(findUser);
+    }
+
+    //OWNER 전용
+    public void updateMemberShip(UpdateMemberShipRequestDto requestDto, String userId) {
+        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
+            throw new CustomException(ResponseCode.ID_MISMATCH);
+        }
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new CustomException(ResponseCode.USER_NOT_FOUND);
         }
         User findUser = optionalUser.get();
         findUser.updateMembership(requestDto.getMemberShip());
         userRepository.save(findUser);
     }
 
-    public void deleteUser(String email) {
-        // 사용자 조회
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        userRepository.delete(user);
+    public List<User> findUserAll() {
+        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
+            throw new CustomException(ResponseCode.ID_MISMATCH);
+        }
+        return userRepository.findAll();
     }
 }
