@@ -9,6 +9,7 @@ import flight_booking.demo.domain.discount.dto.response.DiscountEndAtResponse;
 import flight_booking.demo.domain.discount.dto.response.DiscountListResponse;
 import flight_booking.demo.domain.discount.dto.response.DiscountRateUpdateResponse;
 import flight_booking.demo.domain.discount.service.DiscountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,9 @@ public class DiscountController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<DiscountCreateResponse>> createDiscountEvent(
-            @RequestBody DiscountCreateRequest request
+            @Valid @RequestBody DiscountCreateRequest request
     ) {
-
+        //Todo: 변수명과 메서드명 겹침 -> 어떻게 바꾸지..?
         DiscountCreateResponse createdEvent = discountService.createEvent(request);
 
         return ResponseEntity.ok(new ApiResponse<>(
@@ -38,7 +39,7 @@ public class DiscountController {
 
     @PostMapping("/rate")
     public ResponseEntity<ApiResponse<DiscountRateUpdateResponse>> updateDiscountRate(
-            @RequestBody DiscountRateUpdateRequest request
+            @Valid @RequestBody DiscountRateUpdateRequest request
     ) {
         DiscountRateUpdateResponse updatedEvent = discountService.updateDiscountRate(request);
         return ResponseEntity.ok(new ApiResponse<>(
@@ -48,18 +49,30 @@ public class DiscountController {
         ));
     }
 
+    // Todo: discount_id or discountId -> 뭐가 맞을까...?
     @PatchMapping("/{discount_id}")
     public ResponseEntity<ApiResponse<DiscountEndAtResponse>> updateEventEndAt(
             @PathVariable Long discount_id,
-            @RequestBody DiscountEndAtUpdateRequest request
+            @Valid @RequestBody DiscountEndAtUpdateRequest request
     ) {
+
         DiscountEndAtResponse updatedEventDate = discountService.updateEndAt(discount_id, request);
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.toString(), "할인 종료일 수정 성공", updatedEventDate));
+
+        return ResponseEntity.ok(new ApiResponse<>(
+                HttpStatus.OK.toString(),
+                "할인 종료일 수정 성공",
+                updatedEventDate
+        ));
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<DiscountListResponse>>> findEventList() {
+
         List<DiscountListResponse> eventToList = discountService.findEventToList();
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.toString(), "할인 목록 조회 성공", eventToList));
+
+        return ResponseEntity.ok(new ApiResponse<>(
+                HttpStatus.OK.toString(),
+                "할인 목록 조회 성공",
+                eventToList));
     }
 }
