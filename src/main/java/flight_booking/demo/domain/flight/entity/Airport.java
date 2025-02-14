@@ -15,9 +15,4 @@ public enum Airport {
 	JFK("JFK");
 
 	private final String code;
-
-	@JsonValue
-	public String getCode() {
-		return code;
-	}
 }
