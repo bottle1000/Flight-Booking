@@ -1,10 +1,13 @@
 package flight_booking.demo.domain.flight;
 
+import static flight_booking.demo.common.entity.exception.ResponseCode.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.entity.SeatColumn;
 import flight_booking.demo.domain.airplane.entity.Ticket;
@@ -45,10 +48,11 @@ public class FlightPlanService {
 
 	@Transactional
 	public FlightPlanCreateResponse createFlightPlan(FlightPlanCreateRequest flightPlanCreateRequest) {
-		// todo 커스텀 예외 적용해야 함
-		Airplane foundAirplane = airplaneRepository.findById(flightPlanCreateRequest.airplaneId()).orElseThrow();
 
-		// todo 항공 스케쥴 오생성 방지
+		Airplane foundAirplane = airplaneRepository.findById(flightPlanCreateRequest.airplaneId())
+			.orElseThrow(() -> new CustomException(AIRPLANE_NOT_FOUND));
+
+		// todo 항공 스케쥴 검증 메서드 ( 구현 중 )
 		// existsOverlappingSchedule(foundAirplane, flightPlanCreateRequest);
 
 		FlightPlan newFlightPlan = FlightPlan.create(
@@ -71,9 +75,10 @@ public class FlightPlanService {
 	}
 
 	public FlightPlaneUpdateResponse updateFlightPlan(Long id, FlightPlanUpdateRequest flightPlanUpdateRequest) {
-		// todo 커스텀 예외 적용해야 함
+
 		FlightPlan foundFlightPlan = flightPlanRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("비행 스케쥴이 존재하지 않습니다: " + id));
+			.orElseThrow(() -> new CustomException(FLIGHTPLAN_NOT_FOUND));
+
 		foundFlightPlan.update(
 			flightPlanUpdateRequest.departure(), flightPlanUpdateRequest.arrival(),
 			flightPlanUpdateRequest.boardingAt(), flightPlanUpdateRequest.landingAt()
