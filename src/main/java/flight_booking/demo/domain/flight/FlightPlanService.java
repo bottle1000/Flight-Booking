@@ -19,6 +19,7 @@ import flight_booking.demo.domain.flight.dto.request.FlightPlanUpdateRequest;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlaneUpdateResponse;
+import flight_booking.demo.domain.flight.dto.response.TicketResponse;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.repository.FlightPlanRepository;
 import lombok.RequiredArgsConstructor;
@@ -74,9 +75,10 @@ public class FlightPlanService {
 		return FlightPlanCreateResponse.from(savedFlightPlan);
 	}
 
-	public FlightPlaneUpdateResponse updateFlightPlan(Long id, FlightPlanUpdateRequest flightPlanUpdateRequest) {
+	@Transactional
+	public FlightPlaneUpdateResponse updateFlightPlan(Long flightPlanId, FlightPlanUpdateRequest flightPlanUpdateRequest) {
 
-		FlightPlan foundFlightPlan = flightPlanRepository.findById(id)
+		FlightPlan foundFlightPlan = flightPlanRepository.findById(flightPlanId)
 			.orElseThrow(() -> new CustomException(FLIGHTPLAN_NOT_FOUND));
 
 		foundFlightPlan.update(
@@ -90,6 +92,5 @@ public class FlightPlanService {
 		Airplane foundAirplane,
 		FlightPlanCreateRequest flightPlanCreateRequest
 	) {
-
 	}
 }
