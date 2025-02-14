@@ -29,7 +29,7 @@ public class FlightPlanService {
 	private final AirplaneRepository airplaneRepository;
 	private final TicketRepository ticketRepository;
 
-	public Page<FlightPlanGetResponse> getFilteredFlightsPlanList(
+	public Page<FlightPlanGetResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
 		Pageable pageable
 	) {
