@@ -30,7 +30,7 @@ public class FlightPlanController {
 
 	private final FlightPlanService flightPlanService;
 
-	@GetMapping()
+	@GetMapping
 	public ResponseEntity<ApiResponse<Page<FlightPlanGetResponse>>> getFlightPlanList(
 		@Valid @ModelAttribute FlightPlanGetRequest flightPlanGetRequest,
 		@PageableDefault Pageable pageable
@@ -42,20 +42,13 @@ public class FlightPlanController {
 		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴 목록을 성공적으로 조회했습니다", response));
 	}
 
-	@PostMapping
-	public ResponseEntity<ApiResponse<FlightPlanCreateResponse>> createFlightPlan(
-		@Valid @RequestBody FlightPlanCreateRequest flightPlanCreateRequest
-	) {
-		FlightPlanCreateResponse response = flightPlanService.createFlightPlan(flightPlanCreateRequest);
-		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴이 성공적으로 등록되었습니다", response));
-	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/{flight-plan_id}")
 	public ResponseEntity<ApiResponse<FlightPlaneUpdateResponse>> updateFlightPlan(
-		@PathVariable Long id,
+		@PathVariable("flight-plan_id") Long flightPlanId,
 		@Valid @RequestBody FlightPlanUpdateRequest flightPlanUpdateRequest
 	) {
-		FlightPlaneUpdateResponse response = flightPlanService.updateFlightPlan(id, flightPlanUpdateRequest);
+		FlightPlaneUpdateResponse response = flightPlanService.updateFlightPlan(flightPlanId, flightPlanUpdateRequest);
 		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴이 성공적으로 수정되었습니다.", response));
 	}
 }

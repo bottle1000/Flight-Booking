@@ -1,10 +1,13 @@
 package flight_booking.demo.domain.flight;
 
+import static flight_booking.demo.common.entity.exception.ResponseCode.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.entity.SeatColumn;
 import flight_booking.demo.domain.airplane.entity.Ticket;
@@ -16,6 +19,7 @@ import flight_booking.demo.domain.flight.dto.request.FlightPlanUpdateRequest;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlaneUpdateResponse;
+import flight_booking.demo.domain.flight.dto.response.TicketResponse;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.repository.FlightPlanRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,37 +47,13 @@ public class FlightPlanService {
 		return FlightPlanGetResponse.from(flightPlan);
 	}
 
+
 	@Transactional
-	public FlightPlanCreateResponse createFlightPlan(FlightPlanCreateRequest flightPlanCreateRequest) {
-		// todo 커스텀 예외 적용해야 함
-		Airplane foundAirplane = airplaneRepository.findById(flightPlanCreateRequest.airplaneId()).orElseThrow();
+	public FlightPlaneUpdateResponse updateFlightPlan(Long flightPlanId, FlightPlanUpdateRequest flightPlanUpdateRequest) {
 
-		// todo 항공 스케쥴 오생성 방지
-		// existsOverlappingSchedule(foundAirplane, flightPlanCreateRequest);
+		FlightPlan foundFlightPlan = flightPlanRepository.findById(flightPlanId)
+			.orElseThrow(() -> new CustomException(FLIGHTPLAN_NOT_FOUND));
 
-		FlightPlan newFlightPlan = FlightPlan.create(
-			flightPlanCreateRequest.departure(),
-			flightPlanCreateRequest.arrival(),
-			flightPlanCreateRequest.price(),
-			flightPlanCreateRequest.boardingAt(),
-			flightPlanCreateRequest.landingAt(),
-			foundAirplane
-		);
-
-		for (int row = 1; row <= 10; row++) {
-			for (SeatColumn column : SeatColumn.values()) {
-				Ticket ticket = new Ticket(row + column.name(), newFlightPlan);
-				ticketRepository.save(ticket);
-			}
-		}
-		FlightPlan savedFlightPlan = flightPlanRepository.save(newFlightPlan);
-		return FlightPlanCreateResponse.from(savedFlightPlan);
-	}
-
-	public FlightPlaneUpdateResponse updateFlightPlan(Long id, FlightPlanUpdateRequest flightPlanUpdateRequest) {
-		// todo 커스텀 예외 적용해야 함
-		FlightPlan foundFlightPlan = flightPlanRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("비행 스케쥴이 존재하지 않습니다: " + id));
 		foundFlightPlan.update(
 			flightPlanUpdateRequest.departure(), flightPlanUpdateRequest.arrival(),
 			flightPlanUpdateRequest.boardingAt(), flightPlanUpdateRequest.landingAt()
@@ -85,6 +65,5 @@ public class FlightPlanService {
 		Airplane foundAirplane,
 		FlightPlanCreateRequest flightPlanCreateRequest
 	) {
-
 	}
 }
