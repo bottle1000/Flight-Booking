@@ -16,22 +16,32 @@ import flight_booking.demo.common.ApiResponse;
 import flight_booking.demo.domain.airplane.dto.request.AirplaneCreateRequest;
 import flight_booking.demo.domain.airplane.dto.response.AirplaneCreateResponse;
 import flight_booking.demo.domain.airplane.dto.response.AirplaneGetResponse;
-import flight_booking.demo.domain.airplane.entity.Airplane;
-import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
+import flight_booking.demo.domain.flight.dto.request.FlightPlanCreateRequest;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/airplanes")
+@RequestMapping("admin/airplanes")
 public class AirplaneController {
 
 	private final AirplaneService airplaneService;
 
 	@PostMapping
-	public ResponseEntity<ApiResponse<AirplaneCreateResponse>> createAirplane(@Valid  @RequestBody AirplaneCreateRequest request) {
+	public ResponseEntity<ApiResponse<AirplaneCreateResponse>> createAirplane(
+		@Valid @RequestBody AirplaneCreateRequest request) {
 		AirplaneCreateResponse response = airplaneService.createAirplane(request);
 		return ResponseEntity.ok(ApiResponse.success("항공기가 성공적으로 등록되었습니다.", response));
+	}
+
+	@PostMapping("/{airplane_id}/flight-plans")
+	public ResponseEntity<ApiResponse<FlightPlanCreateResponse>> createFlightPlan(
+		@PathVariable("airplane_id") Long airplaneId,
+		@Valid @RequestBody FlightPlanCreateRequest flightPlanCreateRequest
+	) {
+		FlightPlanCreateResponse response = airplaneService.createFlightPlan(airplaneId, flightPlanCreateRequest);
+		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴이 성공적으로 등록되었습니다", response));
 	}
 
 	@GetMapping
