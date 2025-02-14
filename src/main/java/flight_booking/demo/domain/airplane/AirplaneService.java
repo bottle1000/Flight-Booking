@@ -1,10 +1,13 @@
 package flight_booking.demo.domain.airplane;
 
+import static flight_booking.demo.common.entity.exception.ResponseCode.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.domain.airplane.dto.request.AirplaneCreateRequest;
 import flight_booking.demo.domain.airplane.dto.response.AirplaneCreateResponse;
 import flight_booking.demo.domain.airplane.dto.response.AirplaneGetResponse;
