@@ -40,9 +40,9 @@ public class AirplaneService {
 
 
 	@Transactional
-	public FlightPlanCreateResponse createFlightPlan(FlightPlanCreateRequest flightPlanCreateRequest) {
+	public FlightPlanCreateResponse createFlightPlan(Long airplaneId, FlightPlanCreateRequest flightPlanCreateRequest) {
 
-		Airplane foundAirplane = airplaneRepository.findById(flightPlanCreateRequest.airplaneId())
+		Airplane foundAirplane = airplaneRepository.findById(airplaneId)
 			.orElseThrow(() -> new CustomException(AIRPLANE_NOT_FOUND));
 
 		// todo 항공 스케쥴 검증 메서드 ( 구현 중 )
