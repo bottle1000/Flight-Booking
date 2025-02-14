@@ -1,4 +1,4 @@
-package flight_booking.demo.domain.user.entity;
+package flight_booking.demo.domain.flight.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Receipt extends BaseEntity {
+public class Flight extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
