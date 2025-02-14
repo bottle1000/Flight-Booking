@@ -8,7 +8,7 @@ import flight_booking.demo.domain.order.dto.request.OrderUpdateRequestDto;
 import flight_booking.demo.domain.order.entity.Order;
 import flight_booking.demo.domain.order.repository.OrderRepository;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
-import flight_booking.demo.domain.receipt.repository.InvoiceRepository;
+import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
 import flight_booking.demo.domain.ticket.entity.Ticket;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.security.utils.UserUtil;
@@ -60,10 +60,10 @@ public class OrderService {
         return order;
     }
 
-    public Order update(Long id, OrderUpdateRequestDto dto) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 주문내역을 찾을 수 없습니다."));
-
-    }
+//    public Order update(Long id, OrderUpdateRequestDto dto) {
+//        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 주문내역을 찾을 수 없습니다."));
+//
+//    }
 
     private int calculatePrice(int price, List<Discount> discounts) {
         int totalDiscountRate = 0;

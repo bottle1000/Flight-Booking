@@ -1,43 +1,23 @@
 package flight_booking.demo.domain.order.entity;
 
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
+
+import java.util.Arrays;
 
 public enum OrderState {
-    NONE(0),
-    NOT_PAID(1),
-    PAID(2),
-    CANCELING(3),
-    CANCELED(4);
+    NONE,
+    NOT_PAID,
+    PAID,
+    CANCELING,
+    CANCELED;
 
-
-    public final int id;
-
-    OrderState(int value) {
-        this.id = value;
+    public static OrderState fromString(String status) {
+        return Arrays.stream(OrderState.values())
+                .filter(o -> o.toString().equalsIgnoreCase(status))
+                .findFirst()
+                //Todo : GlobalException
+                .orElseThrow(() -> new IllegalArgumentException("결제 상태가 존재하지 않습니다."));
     }
 
-    public static OrderState of(int id) {
-        for (OrderState state : values()) {
-            if (state.id == id) {
-                return state;
-            }
-        }
 
-        //TODO: GlobalExceptionHandler
-        throw new RuntimeException("해당 타입: " + id + " 은 지원하지 않는 주문상태입니다 : ");
-    }
 
-    @Converter
-    static class Convertor implements AttributeConverter<OrderState, Integer> {
-
-        @Override
-        public Integer convertToDatabaseColumn(OrderState state) {
-            return state.id;
-        }
-        @Override
-        public OrderState convertToEntityAttribute(Integer id) {
-            return of(id);
-        }
-    }
 }

@@ -29,7 +29,7 @@ public class Order extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Payment payment;
 
-    @Convert(converter = OrderState.Convertor.class)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderState state = OrderState.NOT_PAID;
 
@@ -40,5 +40,9 @@ public class Order extends BaseEntity {
         this.ticket = ticket;
         this.price = price;
         this.payment = new Payment(this);
+    }
+
+    public void updateOrderStatus(String string) {
+        this.state = OrderState.fromString(string);
     }
 }
