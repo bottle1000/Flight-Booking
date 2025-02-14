@@ -9,7 +9,6 @@ import flight_booking.demo.domain.discount.dto.response.DiscountListResponse;
 import flight_booking.demo.domain.discount.service.DiscountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
