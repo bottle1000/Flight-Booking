@@ -28,11 +28,11 @@ public class FlightPlanController {
 	private final FlightPlanService flightPlanService;
 
 	@GetMapping
-	public ResponseEntity<ApiResponse<Page<FlightPlanGetResponse>>> getFlightPlanList(
+	public ResponseEntity<ApiResponse<Page<FlightPlanGetResponse>>> findFlightPlanPage(
 		@Valid @ModelAttribute FlightPlanGetRequest flightPlanGetRequest,
 		@PageableDefault Pageable pageable
 	) {
-		Page<FlightPlanGetResponse> response = flightPlanService.getFilteredFlightsPlanList(
+		Page<FlightPlanGetResponse> response = flightPlanService.findFilteredFlightsPlanPage(
 			flightPlanGetRequest,
 			pageable
 		);
