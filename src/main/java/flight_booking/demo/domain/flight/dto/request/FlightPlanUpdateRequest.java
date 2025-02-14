@@ -8,8 +8,7 @@ import flight_booking.demo.domain.flight.entity.Airport;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
-public record FlightPlanCreateRequest(
-	Long airplaneId,
+public record FlightPlanUpdateRequest(
 
 	@NotNull(message = "출발지는 필수입니다")
 	Airport departure,
@@ -21,7 +20,5 @@ public record FlightPlanCreateRequest(
 	LocalDateTime boardingAt,
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime landingAt,
-	int price
-) {
+	LocalDateTime landingAt) {
 }

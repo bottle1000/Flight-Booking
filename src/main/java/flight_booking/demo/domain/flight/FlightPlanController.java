@@ -1,22 +1,23 @@
 package flight_booking.demo.domain.flight;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import flight_booking.demo.domain.flight.entity.FlightPlan;
-import flight_booking.demo.domain.flight.entity.National;
+import flight_booking.demo.common.ApiResponse;
+import flight_booking.demo.domain.flight.dto.request.FlightPlanGetRequest;
+import flight_booking.demo.domain.flight.dto.request.FlightPlanUpdateRequest;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
+import flight_booking.demo.domain.flight.dto.response.FlightPlaneUpdateResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -26,16 +27,24 @@ public class FlightPlanController {
 
 	private final FlightPlanService flightPlanService;
 
-	// 항공권 검색
-	@GetMapping()
-	public ResponseEntity<Page<FlightPlan>> getFlightPlanList(
-		@RequestParam(required = false) National from,
-		@RequestParam(required = false) National to,
-		@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate boardingAt,
-		@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate landingAt,
+	@GetMapping
+	public ResponseEntity<ApiResponse<Page<FlightPlanGetResponse>>> findFlightPlanPage(
+		@Valid @ModelAttribute FlightPlanGetRequest flightPlanGetRequest,
 		@PageableDefault Pageable pageable
 	) {
-		Page<FlightPlan> results = flightPlanService.getFilteredFlightsPlanList(from, to, boardingAt, landingAt, pageable);
-		return ResponseEntity.ok().body(results);
+		Page<FlightPlanGetResponse> response = flightPlanService.findFilteredFlightsPlanPage(
+			flightPlanGetRequest,
+			pageable
+		);
+		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴 목록을 성공적으로 조회했습니다", response));
+	}
+
+	@PutMapping("/{flight-plan_id}")
+	public ResponseEntity<ApiResponse<FlightPlaneUpdateResponse>> updateFlightPlan(
+		@PathVariable("flight-plan_id") Long flightPlanId,
+		@Valid @RequestBody FlightPlanUpdateRequest flightPlanUpdateRequest
+	) {
+		FlightPlaneUpdateResponse response = flightPlanService.updateFlightPlan(flightPlanId, flightPlanUpdateRequest);
+		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴이 성공적으로 수정되었습니다.", response));
 	}
 }
