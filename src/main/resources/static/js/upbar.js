@@ -130,5 +130,4 @@ document.addEventListener('DOMContentLoaded', function () {
         const userAvatarImg = document.getElementById('userAvatar');
         userAvatarImg.src = profilePictureUrl;
     }
-
 });

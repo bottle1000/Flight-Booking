@@ -23,7 +23,7 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 	private final QFlightPlan flightPlan = QFlightPlan.flightPlan;
 
 	@Override
-	public Page<FlightPlan> findByFilters(String departure, String arrival, LocalDateTime boardingAt,
+	public Page<FlightPlan> findByFilters(Airport departure, Airport arrival, LocalDateTime boardingAt,
 		LocalDateTime landingAt,
 		Pageable pageable) {
 
@@ -47,12 +47,12 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 		return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
 	}
 
-	private BooleanExpression departureEq(String departure) {
-		return departure != null ? flightPlan.departure.eq(Airport.valueOf(departure)) : null;
+	private BooleanExpression departureEq(Airport departure) {
+		return departure != null ? flightPlan.departure.eq(departure) : null;
 	}
 
-	private BooleanExpression arrivalEq(String arrival) {
-		return arrival != null ? flightPlan.arrival.eq(Airport.valueOf(arrival)) : null;
+	private BooleanExpression arrivalEq(Airport arrival) {
+		return arrival != null ? flightPlan.arrival.eq(arrival) : null;
 	}
 
 	private BooleanExpression boardingAtGoe(LocalDateTime boardingAt) {

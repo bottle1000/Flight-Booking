@@ -14,6 +14,7 @@ public record FlightPlanGetResponse(
 ) {
 
 	public static Page<FlightPlanGetResponse> from(Page<FlightPlan> flightPlan) {
+		//todo PageImpl 직렬화 문제 있음.
 		return flightPlan.map(plan -> new FlightPlanGetResponse(
 			plan.getId(),
 			plan.getDeparture().getCode(),
