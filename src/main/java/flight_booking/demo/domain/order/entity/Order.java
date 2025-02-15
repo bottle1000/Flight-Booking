@@ -5,6 +5,7 @@ import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.SeatState;
 import flight_booking.demo.domain.airplane.entity.Ticket;
 import flight_booking.demo.domain.payment.entity.Payment;
+import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "orders")
 public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,20 +49,26 @@ public class Order extends BaseEntity {
     }
 
     public void changeTicket(Ticket ticket) {
-        if(this.ticket.getId() == ticket.getId()) {
+        if (this.ticket.getId() == ticket.getId()) {
             throw new CustomException(CANNOT_CHANGE_SAME_SEAT);
         }
         this.ticket.updateState(SeatState.IDLE);
 
-        if(ticket.getState() == SeatState.UNAVAILABLE)
+        if (ticket.getState() == SeatState.UNAVAILABLE)
             throw new CustomException(UNAVAILABLE_SEAT);
         this.ticket = ticket;
         this.ticket.updateState(SeatState.BOOKED);
     }
 
     public void updateState(OrderState orderState) {
-        if(this.state == OrderState.CANCEL)
+        if (this.state == OrderState.CANCEL)
             throw new CustomException(ALREADY_CANCELED);
+
+        //TODO: 결제 Flow 의 완벽한 파악이 필요합니다. 아직 미완성된 처리입니다.
+        if (this.state != OrderState.PAID && orderState == OrderState.PAID)
+            if (this.payment.getState() != PaymentState.COMPLETE)
+                throw new CustomException(NOT_PAID);
+
         this.state = orderState;
     }
 }
