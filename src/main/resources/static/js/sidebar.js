@@ -148,7 +148,6 @@ function httpRequest1(method, url, body, subfunction) {
             return fail();
         }
     }).then(data => {
-    alert(data);
         subfunction(data)
     });
 }
