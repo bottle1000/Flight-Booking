@@ -1,5 +1,6 @@
-package flight_booking.demo.domain.flight;
+package flight_booking.demo.domain.flight.controller;
 
+import flight_booking.demo.domain.flight.service.FlightPlanService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -21,7 +22,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/flightplans")
+@RequestMapping("/flight-plans")
 @RequiredArgsConstructor
 public class FlightPlanController {
 
@@ -39,6 +40,10 @@ public class FlightPlanController {
 		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴 목록을 성공적으로 조회했습니다", response));
 	}
 
+	/**
+	 * SINWOO
+	 * 해당 메소드는 ADMIN 전용으로 보입니다.
+	 */
 	@PutMapping("/{flight-plan_id}")
 	public ResponseEntity<ApiResponse<FlightPlaneUpdateResponse>> updateFlightPlan(
 		@PathVariable("flight-plan_id") Long flightPlanId,

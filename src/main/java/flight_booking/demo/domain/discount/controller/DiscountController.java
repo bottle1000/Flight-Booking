@@ -25,6 +25,9 @@ public class DiscountController {
             @Valid @RequestBody DiscountCreateRequest request
     ) {
         //Todo: 변수명과 메서드명 겹침 -> 어떻게 바꾸지..?
+        // JUNIL
+        // DiscountCreateResponse responseDto = discountService.createEvent(request);
+        // createdEvent 는 Event 객체로 해석됩니다. DTO 인 경우에는 DTO 로 네이밍해주시면 좋을듯 합니다.
         DiscountCreateResponse createdEvent = discountService.createEvent(request);
 
         return ResponseEntity.ok(ApiResponse

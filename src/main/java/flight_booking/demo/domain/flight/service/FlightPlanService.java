@@ -1,4 +1,4 @@
-package flight_booking.demo.domain.flight;
+package flight_booking.demo.domain.flight.service;
 
 import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 

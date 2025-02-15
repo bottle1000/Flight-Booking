@@ -1,4 +1,4 @@
-package flight_booking.demo.domain.airplane;
+package flight_booking.demo.domain.airplane.service;
 
 import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 
@@ -32,13 +32,16 @@ public class AirplaneService {
 	private final FlightPlanRepository flightPlanRepository;
 
 	@Transactional
-	public AirplaneCreateResponse createAirplane(AirplaneCreateRequest request) {
+	public AirplaneCreateResponse create(AirplaneCreateRequest request) {
 		Airplane airplane = Airplane.from(request.name());
 		airplaneRepository.save(airplane);
 		return AirplaneCreateResponse.from(airplane);
 	}
 
-
+	/**
+	 * SINWOO
+	 * CreateFlightPlan 은 FlightPlan Controller 에서 진행해야합니다.
+	 */
 	@Transactional
 	public FlightPlanCreateResponse createFlightPlan(Long airplaneId, FlightPlanCreateRequest flightPlanCreateRequest) {
 
