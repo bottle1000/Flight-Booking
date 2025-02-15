@@ -1,7 +1,6 @@
-package flight_booking.demo.domain.receipt.entity;
+package flight_booking.demo.domain.invoice.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
-import flight_booking.demo.domain.order.entity.Order;
 import flight_booking.demo.domain.payment.entity.Payment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -43,7 +43,10 @@ public class QuerydslUtil {
             Pageable pageable
     ) {
         JPQLQuery<T> paginatedQuery = applyPagination(query, from, pageable);
-        var results = paginatedQuery.fetchResults();
-        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+        //Deprecated 되어 두번의 쿼리로 나눠서 실행하도록 변경
+        //var results = paginatedQuery.fetchResults();
+        List<T> content = paginatedQuery.fetch();
+        long total = query.fetchCount();
+        return new PageImpl<>(content, pageable, total);
     }
 }

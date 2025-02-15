@@ -29,8 +29,8 @@ public class Order extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Payment payment;
 
-    @Convert(converter = OrderState.Convertor.class)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private OrderState state = OrderState.NOT_PAID;
 
     private int price;
@@ -40,5 +40,21 @@ public class Order extends BaseEntity {
         this.ticket = ticket;
         this.price = price;
         this.payment = new Payment(this);
+    }
+
+    public void changeTicket(Ticket ticket) {
+        if(this.ticket.getId() == ticket.getId()) {
+            return;
+        }
+        /**
+         * TODO
+         * this.ticket.updateState(BOOKED to IDLE);
+         * this.ticket = ticket;
+         * this.ticket.updateState(IDLE to BOOKED);
+         */
+    }
+
+    public void updateState(OrderState orderState) {
+        this.state = orderState;
     }
 }
