@@ -43,6 +43,9 @@ public class FlightPlanController {
 	/**
 	 * SINWOO
 	 * 해당 메소드는 ADMIN 전용으로 보입니다.
+	 * 1. Admin 전용 컨트롤러를 생성하거나,
+	 * 2. ADMIN 전용 URL 로 설정하거나,
+	 * 3. FlightPlan Service 에서 Role 확인 작업을 진행해주시기 바랍니다.
 	 */
 	@PutMapping("/{flight-plan_id}")
 	public ResponseEntity<ApiResponse<FlightPlaneUpdateResponse>> updateFlightPlan(

@@ -5,6 +5,11 @@ import java.time.LocalDateTime;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 
+/**
+ * SINWOO
+ * 현재 모든 ResponseDto 클래스가 네이밍 이외에 같은 클래스인것으로 보입니다.
+ * 통합 바랍니다.
+ */
 public record FlightPlanCreateResponse(
 	Long id,
 	String airplaneName,

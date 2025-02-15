@@ -74,7 +74,6 @@ public class DiscountService {
     }
 
     public List<DiscountListResponse> findEventToList() {
-
         /**
          * JUNIL
          * 1.

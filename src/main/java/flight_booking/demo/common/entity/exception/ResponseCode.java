@@ -54,6 +54,7 @@ public enum ResponseCode {
     // 주문 관련
     CANNOT_FIND_ORDER(HttpStatus.NOT_FOUND, "요청하신 주문내역은 존재하지 않습니다."),
     ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 주문은 변경할 수 없습니다."),
+    NOT_PAID(HttpStatus.BAD_REQUEST, "결제가 완료되지 않아 진행할 수 없습니다."),
 
     //  기타 공통 예외
     URL_NOT_FOUND(HttpStatus.NOT_FOUND, "잘못된 경로입니다."),

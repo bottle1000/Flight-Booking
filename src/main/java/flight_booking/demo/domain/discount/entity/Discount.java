@@ -20,6 +20,7 @@ public class Discount extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private DiscountType discountType;
+
     private int rate;
     private int amount;
     private String description;

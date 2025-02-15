@@ -25,9 +25,11 @@ public class DiscountController {
             @Valid @RequestBody DiscountCreateRequest request
     ) {
         //Todo: 변수명과 메서드명 겹침 -> 어떻게 바꾸지..?
-        // JUNIL
-        // DiscountCreateResponse responseDto = discountService.createEvent(request);
-        // createdEvent 는 Event 객체로 해석됩니다. DTO 인 경우에는 DTO 로 네이밍해주시면 좋을듯 합니다.
+        /**
+         * JUNIL
+         * DiscountCreateResponse responseDto = discountService.createEvent(request);
+         * createdEvent 는 Event 객체로 해석됩니다. DTO 인 경우에는 DTO 로 네이밍해주시면 좋을듯 합니다.
+         */
         DiscountCreateResponse createdEvent = discountService.createEvent(request);
 
         return ResponseEntity.ok(ApiResponse
@@ -36,6 +38,16 @@ public class DiscountController {
     }
 
     // Todo: discount_id or discountId -> 뭐가 맞을까...?
+    /**
+     * JUNIL
+     * 프로젝트 코드컨벤션은 Notion 문서를 확인하시기 바랍니다.
+     * ㄴ 클래스 및 파일명은 PascalCase
+     * ㄴ 변수명 및 메소드명은 camelCase
+     * ㄴ DB 관련 네이밍은 snake_case
+     *
+     * URL 에서 {} 기호는 Java 컨벤션을 따라갑니다.
+     * 다른 컨트롤러에서 어떻게 사용하는지 확인바랍니다.
+     */
     @PatchMapping("/{discount_id}")
     public ResponseEntity<ApiResponse<DiscountEndAtResponse>> updateEventEndAt(
             @PathVariable Long discount_id,

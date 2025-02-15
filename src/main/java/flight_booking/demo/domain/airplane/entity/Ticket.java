@@ -19,8 +19,11 @@ import lombok.NoArgsConstructor;
 
 /**
  * SINWOO
+ * 1.
  * Ticket 은 FlightPlan 에 종속됩니다.
  * FlightPlan Entity 폴더에 있어야 합니다.
+ *
+ * 2. 사용되지 않는 메소드는 삭제바랍니다.
  */
 @Getter
 @Entity
