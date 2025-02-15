@@ -1,13 +1,17 @@
 package flight_booking.demo.domain.order.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
+import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.domain.airplane.entity.SeatState;
+import flight_booking.demo.domain.airplane.entity.Ticket;
 import flight_booking.demo.domain.payment.entity.Payment;
-import flight_booking.demo.domain.ticket.entity.Ticket;
 import flight_booking.demo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 
 
 @Getter
@@ -44,17 +48,19 @@ public class Order extends BaseEntity {
 
     public void changeTicket(Ticket ticket) {
         if(this.ticket.getId() == ticket.getId()) {
-            return;
+            throw new CustomException(CANNOT_CHANGE_SAME_SEAT);
         }
-        /**
-         * TODO
-         * this.ticket.updateState(BOOKED to IDLE);
-         * this.ticket = ticket;
-         * this.ticket.updateState(IDLE to BOOKED);
-         */
+        this.ticket.updateState(SeatState.IDLE);
+
+        if(ticket.getState() == SeatState.UNAVAILABLE)
+            throw new CustomException(UNAVAILABLE_SEAT);
+        this.ticket = ticket;
+        this.ticket.updateState(SeatState.BOOKED);
     }
 
     public void updateState(OrderState orderState) {
+        if(this.state == OrderState.CANCEL)
+            throw new CustomException(ALREADY_CANCELED);
         this.state = orderState;
     }
 }

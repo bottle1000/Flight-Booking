@@ -1,55 +1,60 @@
 package flight_booking.demo.domain.order.service;
 
+import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.domain.airplane.entity.Ticket;
+import flight_booking.demo.domain.airplane.repository.TicketRepository;
 import flight_booking.demo.domain.discount.entity.Discount;
 import flight_booking.demo.domain.discount.repository.DiscountRepository;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
 import flight_booking.demo.domain.order.dto.request.OrderCreateRequestDto;
 import flight_booking.demo.domain.order.dto.request.OrderUpdateRequestDto;
+import flight_booking.demo.domain.order.dto.response.OrderResponseDto;
 import flight_booking.demo.domain.order.entity.Order;
 import flight_booking.demo.domain.order.repository.OrderRepository;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
-import flight_booking.demo.domain.ticket.entity.Ticket;
+
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.security.utils.UserUtil;
+import flight_booking.demo.utils.Page;
+import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static flight_booking.demo.common.entity.exception.ResponseCode.*;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     private final DiscountRepository discountRepository;
-    private final InvoiceRepository invoiceRepository;
-    private final PaymentRepository paymentRepository;
+    private final TicketRepository ticketRepository;
 
-    public Order find(long id) {
-        //TODO: GlobalExceptionHandler
-        return orderRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 주문내역을 찾을 수 없습니다."));
+    public OrderResponseDto find(long id) {
+        return OrderResponseDto.from(
+                orderRepository.findById(id)
+                        .orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER)));
     }
 
-    public List<Order> findAll(long userId) {
-        return orderRepository.findAllByUserId(String.valueOf(userId));
+    public Page<OrderResponseDto> findAll(PageQuery pageQuery) {
+        org.springframework.data.domain.Page<Order> page =
+                orderRepository.findAllByUserId(pageQuery.toPageable(), UserUtil.getCurrentUserId());
+
+        return Page.from(page.map(OrderResponseDto::from));
     }
 
     @Transactional
-    public Order create(OrderCreateRequestDto dto) {
+    public OrderResponseDto create(OrderCreateRequestDto dto) {
         User user = UserUtil.getCurrentUser();
-        /**
-         * TODO
-         * Ticket ticket = flightRepository.findTicket(dto.ticketId);
-         * FlightPlan flightPlan = ticket.getFlightPlan();
-         */
-        Ticket ticket = new Ticket(null, null);
-        FlightPlan flightPlan = new FlightPlan(null, null, null, null, null, 50000);
 
+        Ticket ticket = ticketRepository.findById(dto.ticketId()).orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
+        FlightPlan flightPlan = ticket.getFlightPlan();
         List<Discount> discounts = dto.discountIds().stream()
                 .map(discountRepository::findById)
-                //TODO: GlobalExceptionHandler
-                .map(discount -> discount.orElseThrow(() -> new RuntimeException("유효한 할인 항목이 아닙니다.")))
+                .map(discount -> discount.orElseThrow(() -> new CustomException(DISCOUNT_NOT_FOUND)))
                 .toList();
 
         Order order = new Order(
@@ -59,25 +64,26 @@ public class OrderService {
         );
 
         discounts.forEach(discount -> order.getPayment().addDiscount(discount));
-        orderRepository.save(order);
 
-        return order;
+        return OrderResponseDto.from(orderRepository.save(order));
     }
 
-    //결제취소 및 좌석변경 및
+    //결제취소 및 좌석변경
     @Transactional
-    public Order update(Long id, OrderUpdateRequestDto dto) {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 주문내역을 찾을 수 없습니다."));
+    public OrderResponseDto update(Long id, OrderUpdateRequestDto dto) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER));
 
-        //TODO: Ticket changedTicket = ticketRepository.find(dto.ticketId)
-        // .orElseThrow(() -> new RuntimeException("해당 티켓: " + dto.ticketId() +" 을 찾을 수 없습니다."));;
-        Ticket ticket = new Ticket(null, null);
+        Ticket ticketForChange = ticketRepository.findById(dto.ticketId())
+                .orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
 
-        order.changeTicket(ticket);
+        order.changeTicket(ticketForChange);
         order.updateState(dto.orderState());
-        //TODO: 결제정보 변경(결제 취소 등)의 경우, Payment 에서 EventHandler 로 작업
 
-        return orderRepository.save(order);
+        //TODO: 결제정보 변경(결제 취소 등)은 EventHandler 로 작업해야 합니다. Payment 병합 후 작업예정입니다.
+
+        order = orderRepository.save(order);
+        return OrderResponseDto.from(order);
     }
 
     private int calculatePrice(int price, List<Discount> discounts) {
