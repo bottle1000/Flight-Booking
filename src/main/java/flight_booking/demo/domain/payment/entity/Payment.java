@@ -24,7 +24,7 @@ public class Payment extends BaseEntity {
     @OneToOne(fetch = FetchType.EAGER)
     private Order order;
 
-    @Convert(converter = PaymentState.Convertor.class)
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentState state;
 
@@ -57,4 +57,9 @@ public class Payment extends BaseEntity {
         this.state = PaymentState.IN_PROGRESS;
         this.amount = order.getPrice();
     }
+
+    public void updatePaymentStatus(String string) {
+        this.state = PaymentState.fromString(string);
+    }
+
 }

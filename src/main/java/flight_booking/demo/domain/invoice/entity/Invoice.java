@@ -1,5 +1,6 @@
 package flight_booking.demo.domain.invoice.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.domain.payment.entity.Payment;
 import jakarta.persistence.*;
@@ -24,4 +25,9 @@ public class Invoice extends BaseEntity {
 
     @Column(columnDefinition = "json")
     private String meta;
+
+    public Invoice(JsonNode jsonNode) {
+        this.paymentKey = jsonNode.get("paymentKey").asText();
+        this.meta = String.valueOf(jsonNode);
+    }
 }
