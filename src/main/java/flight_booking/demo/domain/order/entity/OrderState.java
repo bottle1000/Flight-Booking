@@ -1,6 +1,10 @@
 package flight_booking.demo.domain.order.entity;
 
+import flight_booking.demo.common.entity.exception.CustomException;
+
 import java.util.Arrays;
+
+import static flight_booking.demo.common.entity.exception.ResponseCode.INVALID_ORDER_STATE;
 
 public enum OrderState {
     NONE("NONE"),
@@ -14,11 +18,10 @@ public enum OrderState {
         this.code = code;
     }
 
-    public static OrderState fromString(String status) {
+    public static OrderState from(String code) {
         return Arrays.stream(OrderState.values())
-                .filter(o -> o.toString().equalsIgnoreCase(status))
+                .filter(o -> o.toString().equalsIgnoreCase(code))
                 .findFirst()
-                //Todo : GlobalException
-                .orElseThrow(() -> new IllegalArgumentException("결제 상태가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(INVALID_ORDER_STATE));
     }
 }
