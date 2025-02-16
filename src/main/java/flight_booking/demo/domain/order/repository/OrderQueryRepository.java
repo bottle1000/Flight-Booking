@@ -1,7 +1,9 @@
 package flight_booking.demo.domain.order.repository;
 
 import flight_booking.demo.domain.order.entity.Order;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-public interface OrderQueryRepository extends JpaRepository<Order, Long> {
+public interface OrderQueryRepository {
+    Page<Order> findAllByUserId(Pageable pageable, String userId);
 }

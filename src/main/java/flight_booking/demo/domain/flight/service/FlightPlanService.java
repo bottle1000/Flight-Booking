@@ -1,4 +1,4 @@
-package flight_booking.demo.domain.flight;
+package flight_booking.demo.domain.flight.service;
 
 import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 
@@ -57,6 +57,10 @@ public class FlightPlanService {
 		return FlightPlaneUpdateResponse.from(foundFlightPlan);
 	}
 
+	/**
+	 * SINWOO
+	 * 사용되지 않는 메소드는 삭제 바랍니다.
+	 */
 	private void existsOverlappingSchedule(
 		Airplane foundAirplane,
 		FlightPlanCreateRequest flightPlanCreateRequest

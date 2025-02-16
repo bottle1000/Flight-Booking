@@ -1,20 +1,25 @@
 package flight_booking.demo.domain.payment.entity;
 
-
 import java.util.Arrays;
 
 public enum PaymentState {
-    NONE,
-    IN_PROGRESS,
-    COMPLETE,
-    FAIL,
-    CANCEL;
+    NONE("NONE"),
+    IN_PROGRESS("IN_PROGRESS"),
+    COMPLETE("COMPLETE"),
+    FAIL("FAIL"),
+    CANCEL("CANCEL");
 
-    public static PaymentState fromString(String status) {
+
+    public final String code;
+    PaymentState(String value) {
+        this.code = value;
+    }
+
+    public static PaymentState from(String code) {
         return Arrays.stream(PaymentState.values())
-                .filter(p -> p.toString().equalsIgnoreCase(status))
+                .filter(o -> o.toString().equalsIgnoreCase(code))
                 .findFirst()
-                //Todo : GlobalException
+                //TODO: GlobalHandlerException
                 .orElseThrow(() -> new IllegalArgumentException("결제 상태가 존재하지 않습니다."));
     }
 }

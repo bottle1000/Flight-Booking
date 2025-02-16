@@ -1,5 +1,6 @@
-package flight_booking.demo.domain.airplane;
+package flight_booking.demo.domain.airplane.controller;
 
+import flight_booking.demo.domain.airplane.service.AirplaneService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -31,7 +32,7 @@ public class AirplaneController {
 	@PostMapping
 	public ResponseEntity<ApiResponse<AirplaneCreateResponse>> createAirplane(
 		@Valid @RequestBody AirplaneCreateRequest request) {
-		AirplaneCreateResponse response = airplaneService.createAirplane(request);
+		AirplaneCreateResponse response = airplaneService.create(request);
 		return ResponseEntity.ok(ApiResponse.success("항공기가 성공적으로 등록되었습니다.", response));
 	}
 

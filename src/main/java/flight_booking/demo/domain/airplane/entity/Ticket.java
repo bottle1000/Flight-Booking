@@ -17,6 +17,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * SINWOO
+ * 1.
+ * Ticket 은 FlightPlan 에 종속됩니다.
+ * FlightPlan Entity 폴더에 있어야 합니다.
+ *
+ * 2. 사용되지 않는 메소드는 삭제바랍니다.
+ */
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,10 +38,10 @@ public class Ticket extends BaseEntity {
 	private String seat;
 
 	@Enumerated(EnumType.STRING)
-	private SeatState state = SeatState.AVAILABLE;
+	private SeatState state = SeatState.IDLE;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "flight_id")
+	@JoinColumn(name = "flightplan_id")
 	private FlightPlan flightPlan;
 
 	public Ticket(String seat, FlightPlan flightPlan) {
@@ -43,7 +51,11 @@ public class Ticket extends BaseEntity {
 
 	// 주문 취소 시 좌석을 "이용 가능" 상태로 변경하는 메서드
 	public void makeAvailable() {
-		this.state = SeatState.AVAILABLE;
+		this.state = SeatState.IDLE;
+	}
+
+	public void updateState(SeatState to) {
+		this.state = to;
 	}
 
 }

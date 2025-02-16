@@ -1,19 +1,25 @@
 package flight_booking.demo.domain.order.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
+import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.domain.airplane.entity.SeatState;
+import flight_booking.demo.domain.airplane.entity.Ticket;
 import flight_booking.demo.domain.payment.entity.Payment;
-import flight_booking.demo.domain.ticket.entity.Ticket;
+import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static flight_booking.demo.common.entity.exception.ResponseCode.*;
+
 
 @Getter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "orders")
 public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +35,8 @@ public class Order extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Payment payment;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private OrderState state = OrderState.NOT_PAID;
 
     private int price;
@@ -42,7 +48,27 @@ public class Order extends BaseEntity {
         this.payment = new Payment(this);
     }
 
-    public void updateOrderStatus(String string) {
-        this.state = OrderState.fromString(string);
+    public void changeTicket(Ticket ticket) {
+        if (this.ticket.getId() == ticket.getId()) {
+            throw new CustomException(CANNOT_CHANGE_SAME_SEAT);
+        }
+        this.ticket.updateState(SeatState.IDLE);
+
+        if (ticket.getState() == SeatState.UNAVAILABLE)
+            throw new CustomException(UNAVAILABLE_SEAT);
+        this.ticket = ticket;
+        this.ticket.updateState(SeatState.BOOKED);
+    }
+
+    public void updateState(OrderState orderState) {
+        if (this.state == OrderState.CANCELED)
+            throw new CustomException(ALREADY_CANCELED);
+
+        //TODO: 결제 Flow 의 완벽한 파악이 필요합니다. 아직 미완성된 처리입니다.
+        if (this.state != OrderState.PAID && orderState == OrderState.PAID)
+            if (this.payment.getState() != PaymentState.COMPLETE)
+                throw new CustomException(NOT_PAID);
+
+        this.state = orderState;
     }
 }

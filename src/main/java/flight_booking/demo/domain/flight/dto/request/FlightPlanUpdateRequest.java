@@ -8,6 +8,14 @@ import flight_booking.demo.domain.flight.entity.Airport;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * SINWOO
+ * 항공스케줄이 생성된 후의 Update Flow 에 대한 고찰이 필요해 보입니다.
+ *
+ * 1. 항공스케줄의 Update 가 가능한 시점은 언제인가
+ * 2. 만약 Update 된다면, 어떤 Property 들이 Update 될 수 있는가
+ * 3. Update 이후, 처리해야 될 것은 무엇인가
+ */
 public record FlightPlanUpdateRequest(
 
 	@NotNull(message = "출발지는 필수입니다")
