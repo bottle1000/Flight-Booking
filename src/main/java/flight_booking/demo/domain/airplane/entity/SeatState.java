@@ -6,9 +6,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum SeatState {
-	AVAILABLE("이용가능"),
-	UNAVAILABLE("이용불가"),
-	OCCUPIED("점유중");
+	NONE("NONE"),
+	IDLE("이용가능"),
+	BOOKED("예약됨"),
+	UNAVAILABLE("이용불가");
 
 	private final String description;
 }

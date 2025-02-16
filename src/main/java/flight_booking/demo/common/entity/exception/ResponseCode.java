@@ -15,7 +15,10 @@ public enum ResponseCode {
 
     //  비행기 예매 관련
     FLIGHT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 항공편을 찾을 수 없습니다."),
+    SEAT_NOT_FOUND(HttpStatus.BAD_REQUEST, "해당 좌석을 찾을 수 없습니다."),
+    UNAVAILABLE_SEAT(HttpStatus.NOT_ACCEPTABLE, "해당 좌석은 이용하실 수 없습니다."),
     SEAT_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "선택한 좌석이 이미 예약되었습니다."),
+    CANNOT_CHANGE_SAME_SEAT(HttpStatus.BAD_REQUEST, "좌석변경은 예약한 좌석과 다른 좌석으로만 변경이 가능합니다."),
     INVALID_FLIGHT_DATE(HttpStatus.BAD_REQUEST, "유효하지 않은 출발 날짜입니다."),
     BOOKING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "항공권 예매 중 오류가 발생했습니다."),
     BOOKING_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예약입니다."),
@@ -46,8 +49,15 @@ public enum ResponseCode {
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.PAYMENT_REQUIRED, "결제 금액 불일치: 요청된 금액과 저장된 금액이 다릅니다."),
 
-    // 주문 관련 예외
-    ORDER_UUID_NOT_FOUND(HttpStatus.NOT_FOUND, "주문한 상품의 UUID를 찾을 수 없습니다."),
+    // 할인 정보 관련
+    DISCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 할인 정보를 찾을 수 없습니다."),
+
+    // 주문 관련
+    CANNOT_FIND_ORDER(HttpStatus.NOT_FOUND, "요청하신 주문내역은 존재하지 않습니다."),
+    ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 주문은 변경할 수 없습니다."),
+    NOT_PAID(HttpStatus.BAD_REQUEST, "결제가 완료되지 않아 진행할 수 없습니다."),
+    ORDER_UUID_NOT_FOUND(HttpStatus.NOT_FOUND, "주문한 상품의 UUID 를 찾을 수 없습니다."),
+    INVALID_ORDER_STATE(HttpStatus.BAD_REQUEST, "유효하지 않은 주문 상태 요청입니다."),
 
     //  기타 공통 예외
     URL_NOT_FOUND(HttpStatus.NOT_FOUND, "잘못된 경로입니다."),
