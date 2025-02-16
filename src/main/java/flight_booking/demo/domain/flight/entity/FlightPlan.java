@@ -46,6 +46,12 @@ public class FlightPlan extends BaseEntity {
 	@JoinColumn(name = "airplane_id")
 	private Airplane airplane;
 
+	/**
+	 * SINWOO
+	 * 현재 결제 정보에서 결제 상품명을 FlightPlan 의 Description + Ticket 의 Seat 정보를 합쳐서 만들고 있습니다.
+	 * FlightPlan 에 어떤 비행스케줄인지에 대한 Description 혹은 FlightPlan 의 Name 을 추가해 주시기 바랍니다.
+	 */
+
 	private FlightPlan(Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
 		LocalDateTime landingAt, Airplane airplane) {
 		this.departure = departure;
