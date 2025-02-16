@@ -46,6 +46,7 @@ public class FlightPlan extends BaseEntity {
 	@JoinColumn(name = "airplane_id")
 	private Airplane airplane;
 
+
 	private FlightPlan(Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
 		LocalDateTime landingAt, Airplane airplane) {
 		this.departure = departure;
