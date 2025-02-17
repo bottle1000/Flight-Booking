@@ -51,6 +51,10 @@ public enum ResponseCode {
 
     // 할인 정보 관련
     DISCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 할인 정보를 찾을 수 없습니다."),
+    DISCOUNT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "지원하지 않는 할인 유형입니다."),
+    RATE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "할인 비율은 0~100 사이여야 합니다."),
+    AMOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "금액은 0 이상의 숫자여야합니다."),
+    INVALID_END_AT(HttpStatus.BAD_REQUEST, "종료일은 시작일과 같거나 앞설 수 없습니다."),
 
     // 주문 관련
     CANNOT_FIND_ORDER(HttpStatus.NOT_FOUND, "요청하신 주문내역은 존재하지 않습니다."),

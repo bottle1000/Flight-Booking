@@ -5,30 +5,24 @@ import flight_booking.demo.domain.discount.entity.DiscountType;
 
 import java.time.LocalDateTime;
 
-/**
- *
- * JUNIL
- * DiscountCreateResponse 와 DiscountEndAtResponse 는 네이밍 이외에는 완전히 동일한 클래스로 보입니다.
- * 통합 바랍니다.
- */
-public record DiscountCreateResponse(
+public record DiscountResponseDto(
         int id,
         DiscountType discountType,
         int rate,
         int amount,
         String description,
-        LocalDateTime started_at,
-        LocalDateTime end_at
+        LocalDateTime startAt,
+        LocalDateTime endAt
 ) {
-    public static DiscountCreateResponse from(Discount discount) {
-        return new DiscountCreateResponse(
+    public static DiscountResponseDto from(Discount discount) {
+        return new DiscountResponseDto(
                 discount.getId(),
                 discount.getDiscountType(),
                 discount.getRate(),
                 discount.getAmount(),
                 discount.getDescription(),
-                discount.getStart_at(),
-                discount.getEnd_at()
+                discount.getStartAt(),
+                discount.getEndAt()
         );
     }
 }

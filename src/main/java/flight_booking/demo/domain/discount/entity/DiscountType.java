@@ -1,5 +1,8 @@
 package flight_booking.demo.domain.discount.entity;
 
+import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.common.entity.exception.ResponseCode;
+
 public enum DiscountType {
     NONE(0),
     ADMIN(1),
@@ -18,8 +21,6 @@ public enum DiscountType {
                 return type;
             }
         }
-
-        //TODO: GlobalExceptionHandler
-        throw new RuntimeException("해당 타입: " + id + " 은 지원하지 않는 할인 타입입니다 : ");
+        throw new CustomException(ResponseCode.DISCOUNT_TYPE_NOT_FOUND);
     }
 }

@@ -1,17 +1,18 @@
 package flight_booking.demo.domain.discount.service;
 
-import flight_booking.demo.domain.discount.dto.request.DiscountCreateRequest;
-import flight_booking.demo.domain.discount.dto.request.DiscountEndAtUpdateRequest;
-import flight_booking.demo.domain.discount.dto.response.DiscountCreateResponse;
-import flight_booking.demo.domain.discount.dto.response.DiscountEndAtResponse;
-import flight_booking.demo.domain.discount.dto.response.DiscountListResponse;
+import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.common.entity.exception.ResponseCode;
+import flight_booking.demo.domain.discount.dto.request.DiscountCreateRequestDto;
+import flight_booking.demo.domain.discount.dto.request.DiscountEndAtUpdateRequestDto;
+import flight_booking.demo.domain.discount.dto.response.DiscountResponseDto;
+import flight_booking.demo.domain.discount.dto.response.DiscountListResponseDto;
 import flight_booking.demo.domain.discount.entity.Discount;
+import flight_booking.demo.domain.discount.entity.DiscountType;
 import flight_booking.demo.domain.discount.repository.DiscountRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,60 +21,59 @@ public class DiscountService {
 
     private final DiscountRepository discountRepository;
 
-    public DiscountCreateResponse createEvent(DiscountCreateRequest request) {
+//    public void validRate(int rate) {
+//        if (rate < 0 || rate > 100) {
+//            throw new CustomException(ResponseCode.RATE_BAD_REQUEST);
+//        }
+//    }
+//    public void validAmount(int amount) {
+//        if (amount < 0) {
+//            throw new CustomException(ResponseCode.AMOUNT_BAD_REQUEST);
+//        }
+//    }
+    private static void validParams(int rate, int amount, LocalDateTime startAt, LocalDateTime endAt) {
+        if (rate < 0 || rate > 100) {
+            throw new CustomException(ResponseCode.RATE_BAD_REQUEST);
+        }
+        if (amount < 0) {
+            throw new CustomException(ResponseCode.AMOUNT_BAD_REQUEST);
+        }
+        if (startAt.isEqual(endAt) || startAt.isAfter(endAt)) {
+            throw new CustomException(ResponseCode.INVALID_END_AT);
+        }
+    }
 
-        /**
-         * TODO: GlobalExceptionHandler 적용 이후 변경 요망
-         * JUNIL
-         * 1.
-         * 다중 if 문은 모두 RequestDto 의 Valid 를 확인하는 것으로 보입니다.
-         * 해당 부분은 method 로 분리하여 가독성을 높이면 좋을듯 합니다.
-         *
-         * 2.
-         * 시작일과 종료일의 에러메시지가 명확하지 않습니다.
-         * 어째서 다시 설정해야하는지 메시지에 기재하여 주십시오.
-         *
-         * 3.
-         * 무분별한 줄들임이 많이 사용되고 있습니다.
-         * 코드의 문맥을 기준으로 줄들임을 적용시키면 가독성이 올라갈 것으로 생각됩니다.
-         */
-        if (request.rate() < 0 || request.rate() > 100) {
-            throw new IllegalArgumentException("할인 비율은 0~100 사이여야 합니다.");
+    private static void validDate(LocalDateTime startAt, LocalDateTime endAt) {
+        if (startAt.isEqual(endAt) || startAt.isAfter(endAt)) {
+            throw new CustomException(ResponseCode.INVALID_END_AT);
         }
-        if (request.amount() < 0) {
-            throw new IllegalArgumentException("금액은 0 이상의 숫자여야합니다.");
-        }
-        if (request.started_at().isEqual(request.end_at()) || request.started_at().isAfter(request.end_at())) {
-            throw new IllegalArgumentException("시작일과 종료일을 다시 설정해주세요.");
-        }
+    }
 
+    public DiscountResponseDto createEvent(DiscountCreateRequestDto request) {
+        DiscountType discountType = DiscountType.of(request.typeValue());
+        validParams(request.rate(), request.amount(), request.startAt(), request.endAt());
         Discount newEvent = new Discount(
-                request.discountType(),
+                discountType,
                 request.rate(),
                 request.amount(),
                 request.description(),
-                request.started_at(),
-                request.end_at()
+                request.startAt(),
+                request.endAt()
         );
-
         Discount savedEvent = discountRepository.save(newEvent);
-
-        return DiscountCreateResponse.from(savedEvent);
+        return DiscountResponseDto.from(savedEvent);
     }
 
-    public DiscountEndAtResponse updateEndAt(Long id, DiscountEndAtUpdateRequest request) {
-
+    public DiscountResponseDto updateEndAt(Long id, DiscountEndAtUpdateRequestDto request){
         Discount foundEvent = discountRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "할인 정보가 없습니다."));
-
-        foundEvent.closeAt(request.end_at());
-
+                .orElseThrow(() -> new CustomException(ResponseCode.DISCOUNT_NOT_FOUND));
+        validDate(foundEvent.getStartAt(), request.endAt());
+        foundEvent.closeAt(request.endAt());
         Discount savedEvent = discountRepository.save(foundEvent);
-
-        return DiscountEndAtResponse.from(savedEvent);
+        return DiscountResponseDto.from(savedEvent);
     }
 
-    public List<DiscountListResponse> findEventToList() {
+    public List<DiscountListResponseDto> findEventToList() {
         /**
          * JUNIL
          * 1.
@@ -85,11 +85,10 @@ public class DiscountService {
          * 단일 객체가 아닌 결과는 Page<T> 형태로 반환해야 하므로, findAllBy~~ 형식의 메소드명이 좋아보입니다.
          * 어떤 조건에 의해서 어떤 결과값이 나오는지 명확히 이해되지 않는다면 "팀장과의 회의"를 통하여 정함이 옳게 보입니다.
          */
-        List<DiscountListResponse> eventList = discountRepository.findAll()
+        List<DiscountListResponseDto> eventList = discountRepository.findAll()
                 .stream()
-                .map(DiscountListResponse::from)
+                .map(DiscountListResponseDto::from)
                 .toList();
-
         return eventList;
     }
 }

@@ -14,24 +14,24 @@ import java.time.LocalDateTime;
  * 해당 DTO 객체는 List 형태가 아니지만, 이름에는 List 가 들어가 있습니다.
  * 어떠한 의도에서 해당 네이밍으로 정했는지 확인이 필요합니다.
  */
-public record DiscountListResponse(
+public record DiscountListResponseDto(
         int id,
         DiscountType discountType,
         int rate,
         int amount,
         String description,
-        LocalDateTime started_at,
-        LocalDateTime end_at
+        LocalDateTime startAt,
+        LocalDateTime endAt
 ) {
-    public static DiscountListResponse from(Discount discount) {
-        return new DiscountListResponse(
+    public static DiscountListResponseDto from(Discount discount) {
+        return new DiscountListResponseDto(
                 discount.getId(),
                 discount.getDiscountType(),
                 discount.getRate(),
                 discount.getAmount(),
                 discount.getDescription(),
-                discount.getStart_at(),
-                discount.getEnd_at()
+                discount.getStartAt(),
+                discount.getEndAt()
         );
     }
 }
