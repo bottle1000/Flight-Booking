@@ -1,7 +1,7 @@
-package flight_booking.demo.domain.airplane.entity;
+package flight_booking.demo.domain.flight.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
-import flight_booking.demo.domain.flight.entity.FlightPlan;
+import flight_booking.demo.domain.airplane.entity.SeatState;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,10 +30,10 @@ public class Ticket extends BaseEntity {
 	private String seat;
 
 	@Enumerated(EnumType.STRING)
-	private SeatState state = SeatState.AVAILABLE;
+	private SeatState state = SeatState.IDLE;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "flight_id")
+	@JoinColumn(name = "flightplan_id")
 	private FlightPlan flightPlan;
 
 	public Ticket(String seat, FlightPlan flightPlan) {
@@ -41,9 +41,8 @@ public class Ticket extends BaseEntity {
 		this.flightPlan = flightPlan;
 	}
 
-	// 주문 취소 시 좌석을 "이용 가능" 상태로 변경하는 메서드
-	public void makeAvailable() {
-		this.state = SeatState.AVAILABLE;
+	public void updateState(SeatState to) {
+		this.state = to;
 	}
 
 }
