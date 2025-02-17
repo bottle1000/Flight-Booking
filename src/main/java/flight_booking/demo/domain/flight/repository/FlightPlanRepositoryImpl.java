@@ -57,14 +57,14 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 
 	@Override
 	public List<FlightPlanGetResponse> findTicketInfoByFlightPlanId(Long flightPlanId) {
-		// Projections.constructor로 DTO 생성
+
 		return queryFactory
 			.select(Projections.constructor(FlightPlanGetResponse.class,
-				// Ticket 리스트 조회
+
 				(Expression<?>)JPAExpressions.selectFrom(ticket)
 					.where(ticket.flightPlan.id.eq(flightPlanId))
 					.fetch(),
-				// 티켓의 IDLE 상태 개수 조회
+
 				JPAExpressions.select(ticket.count())
 					.from(ticket)
 					.where(ticket.flightPlan.id.eq(flightPlanId)
@@ -72,7 +72,7 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 			))
 			.from(ticket)
 			.where(ticket.flightPlan.id.eq(flightPlanId))
-			.fetch(); // List 형태로 반환
+			.fetch();
 	}
 
 	private BooleanExpression departureEq(Airport departure) {
