@@ -21,17 +21,17 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     @GetMapping("/me")
-    public User findEmail() {
+    public User findUserMe() {
         return UserUtil.getCurrentUser();
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteUser(@RequestBody DeleteUserRequestDto requestDto) {
-        userService.deleteUser(requestDto.getEmail());
+    @DeleteMapping("/{userid}")
+    public void deleteUser(@PathVariable String userId) {
+        userService.deleteUser(userId);
     }
 
-    @PatchMapping("/role")
-    public void updateRoleMe(@RequestBody UpdateRoleRequestDto requestDto, HttpServletRequest request, HttpServletResponse response){
-        userService.updateRoleMe(requestDto,request,response);
+    @PatchMapping("/role/me")
+    public void updateRoleMe(@RequestBody UpdateRoleRequestDto requestDto){
+        userService.updateRoleMe(requestDto);
     }
 }

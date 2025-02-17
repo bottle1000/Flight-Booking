@@ -26,13 +26,20 @@ public class AdminController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/role/{userId}")
-    public void updateRole(@RequestBody UpdateRoleRequestDto requestDto, @PathVariable String userId, HttpServletRequest request, HttpServletResponse response){
-        userService.updateRole(requestDto, userId,request,response);
+    public void updateRole(@RequestBody UpdateRoleRequestDto requestDto, @PathVariable String userId){
+        userService.updateRole(requestDto, userId);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/membership/{userId}")
-    public void updateMemberShip(@RequestBody UpdateMemberShipRequestDto requestDto, @PathVariable String userId, HttpServletRequest request, HttpServletResponse response) {
-        userService.updateMemberShip(requestDto,userId,request,response);
+    @PatchMapping("/membership/{userid}")
+    public void updateMemberShip(@RequestBody UpdateMemberShipRequestDto requestDto, @PathVariable String userid) {
+        userService.updateMemberShip(requestDto,userid);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/membership/me")
+    public void updateMemberShipMe(@RequestBody UpdateMemberShipRequestDto requestDto) {
+        userService.updateMemberShipMe(requestDto);
+    }
+
 }
