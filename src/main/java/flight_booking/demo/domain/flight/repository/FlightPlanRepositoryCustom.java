@@ -1,12 +1,15 @@
 package flight_booking.demo.domain.flight.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
+import flight_booking.demo.domain.flight.entity.Ticket;
 
 public interface FlightPlanRepositoryCustom {
 	Page<FlightPlan> findByFilters(
@@ -16,4 +19,7 @@ public interface FlightPlanRepositoryCustom {
 		LocalDateTime landingAt,
 		Pageable pageable
 	);
+
+	List<FlightPlanGetResponse> findTicketInfoByFlightPlanId(Long flightPlanId);
+
 }

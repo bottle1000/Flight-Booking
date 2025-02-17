@@ -7,13 +7,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import flight_booking.demo.domain.airplane.entity.SeatState;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.entity.QFlightPlan;
+import flight_booking.demo.domain.flight.entity.QTicket;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -21,6 +27,7 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
 	private final QFlightPlan flightPlan = QFlightPlan.flightPlan;
+	private final QTicket ticket = QTicket.ticket;
 
 	@Override
 	public Page<FlightPlan> findByFilters(Airport departure, Airport arrival, LocalDateTime boardingAt,
@@ -45,6 +52,27 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 			.from(flightPlan)
 			.where(conditions);
 		return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
+	}
+
+
+	@Override
+	public List<FlightPlanGetResponse> findTicketInfoByFlightPlanId(Long flightPlanId) {
+		// Projections.constructor로 DTO 생성
+		return queryFactory
+			.select(Projections.constructor(FlightPlanGetResponse.class,
+				// Ticket 리스트 조회
+				(Expression<?>)JPAExpressions.selectFrom(ticket)
+					.where(ticket.flightPlan.id.eq(flightPlanId))
+					.fetch(),
+				// 티켓의 IDLE 상태 개수 조회
+				JPAExpressions.select(ticket.count())
+					.from(ticket)
+					.where(ticket.flightPlan.id.eq(flightPlanId)
+						.and(ticket.state.eq(SeatState.IDLE)))
+			))
+			.from(ticket)
+			.where(ticket.flightPlan.id.eq(flightPlanId))
+			.fetch(); // List 형태로 반환
 	}
 
 	private BooleanExpression departureEq(Airport departure) {

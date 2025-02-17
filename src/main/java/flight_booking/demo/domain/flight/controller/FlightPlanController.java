@@ -1,7 +1,10 @@
 package flight_booking.demo.domain.flight.controller;
 
+import java.util.List;
+
 import flight_booking.demo.domain.flight.dto.request.FlightPlanCreateRequest;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.service.FlightPlanService;
 import org.springframework.data.domain.Page;
@@ -53,12 +56,17 @@ public class FlightPlanController {
 		return ResponseEntity.ok(response);
 	}
 
-
-	// @GetMapping("/flight-plans/{flight-plans_id}")
-	// public ResponseEntity<FlightPlan> findFlightPlan(
-	// 	@PathVariable("flight-plan_id") Long flightPlanId) {
-	//
-	// }
+	/**
+	 * 클라이언트에게 티켓 정보를 제공하기 위해 사용되는 API입니다.
+	 * @param flightPlanId
+	 * @return
+	 */
+	@GetMapping("/flight-plans/{flight-plans_id}")
+	public ResponseEntity<List<FlightPlanGetResponse>> findFlightPlan(
+		@PathVariable("flight-plan_id") Long flightPlanId) {
+		List<FlightPlanGetResponse> response = flightPlanService.findFlightPlan(flightPlanId);
+		return ResponseEntity.ok(response);
+	}
 
 
 	@PutMapping("admin/flight-plans/{flight-plan_id}")

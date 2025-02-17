@@ -2,6 +2,8 @@ package flight_booking.demo.domain.flight.service;
 
 import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.entity.SeatColumn;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.entity.Ticket;
 import flight_booking.demo.domain.flight.repository.TicketRepository;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanCreateRequest;
@@ -61,6 +64,7 @@ public class FlightPlanService {
 		return FlightPlanCreateResponse.from(savedFlightPlan);
 	}
 
+
 	public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
 		Pageable pageable
@@ -74,6 +78,12 @@ public class FlightPlanService {
 		);
 		return FlightPlanGetListResponse.from(flightPlan);
 	}
+
+
+	public List<FlightPlanGetResponse> findFlightPlan(Long flightPlanId) {
+		return flightPlanRepository.findTicketInfoByFlightPlanId(flightPlanId);
+	}
+
 
 	@Transactional
 	public FlightPlaneUpdateResponse updateFlightPlan(Long flightPlanId,
@@ -98,4 +108,5 @@ public class FlightPlanService {
 		FlightPlanCreateRequest flightPlanCreateRequest
 	) {
 	}
+
 }
