@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 
-public record FlightPlanGetResponse(
+public record FlightPlanGetListResponse(
 	Long id,
 	String departure,
 	String arrival,
@@ -13,9 +13,9 @@ public record FlightPlanGetResponse(
 	int price
 ) {
 
-	public static Page<FlightPlanGetResponse> from(Page<FlightPlan> flightPlan) {
+	public static Page<FlightPlanGetListResponse> from(Page<FlightPlan> flightPlan) {
 		//todo PageImpl 직렬화 문제 있음.
-		return flightPlan.map(plan -> new FlightPlanGetResponse(
+		return flightPlan.map(plan -> new FlightPlanGetListResponse(
 			plan.getId(),
 			plan.getDeparture().getCode(),
 			plan.getArrival().getCode(),
