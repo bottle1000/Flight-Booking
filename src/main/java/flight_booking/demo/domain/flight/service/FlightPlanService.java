@@ -45,7 +45,7 @@ public class FlightPlanService {
 		// existsOverlappingSchedule(foundAirplane, flightPlanCreateRequest);
 
 		FlightPlan newFlightPlan = FlightPlan.create(
-			flightPlanCreateRequest.description(),
+			flightPlanCreateRequest.name(),
 			flightPlanCreateRequest.departure(),
 			flightPlanCreateRequest.arrival(),
 			flightPlanCreateRequest.price(),

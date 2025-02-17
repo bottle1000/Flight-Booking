@@ -29,7 +29,7 @@ public class FlightPlan extends BaseEntity {
 	private Long id;
 
 	@Column(nullable = false)
-	private String description;
+	private String name;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -50,9 +50,9 @@ public class FlightPlan extends BaseEntity {
 	private Airplane airplane;
 
 
-	private FlightPlan(String description, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
+	private FlightPlan(String name, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
 		LocalDateTime landingAt, Airplane airplane) {
-		this.description = description;
+		this.name = name;
 		this.departure = departure;
 		this.arrival = arrival;
 		this.price = price;
@@ -61,9 +61,9 @@ public class FlightPlan extends BaseEntity {
 		this.airplane = airplane;
 	}
 
-	public static FlightPlan create(String description, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
+	public static FlightPlan create(String name, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
 		LocalDateTime landingAt, Airplane airplane) {
-		return new FlightPlan(description, departure, arrival, price, boardingAt, landingAt, airplane);
+		return new FlightPlan(name, departure, arrival, price, boardingAt, landingAt, airplane);
 	}
 
 	public void update(Airport departure, Airport arrival, LocalDateTime boardingAt, LocalDateTime landingAt) {

@@ -15,7 +15,7 @@ import jakarta.validation.constraints.NotNull;
  * 통합 바랍니다.
  */
 public record FlightPlanCreateRequest(
-	String description,
+	String name,
 	@NotNull(message = "출발지는 필수입니다")
 	Airport departure,
 	@NotNull(message = "도착지는 필수입니다")
