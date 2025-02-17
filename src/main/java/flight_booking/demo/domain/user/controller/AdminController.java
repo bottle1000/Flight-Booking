@@ -1,13 +1,14 @@
 package flight_booking.demo.domain.user.controller;
 
+import flight_booking.demo.domain.order.dto.response.OrderResponseDto;
 import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
 import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,25 +19,21 @@ import java.util.List;
 public class AdminController {
     private final UserService userService;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
-    public List<User> findUsersAll(){
-        return userService.findUserAll();
+    public ResponseEntity<Page<User>> findUsersAll(PageQuery pageQuery){
+        return ResponseEntity.ok(userService.findUserAll(pageQuery));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/role/{userId}")
     public void updateRole(@RequestBody UpdateRoleRequestDto requestDto, @PathVariable String userId){
         userService.updateRole(requestDto, userId);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/membership/{userid}")
     public void updateMemberShip(@RequestBody UpdateMemberShipRequestDto requestDto, @PathVariable String userid) {
         userService.updateMemberShip(requestDto,userid);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/membership/me")
     public void updateMemberShipMe(@RequestBody UpdateMemberShipRequestDto requestDto) {
         userService.updateMemberShipMe(requestDto);
