@@ -5,6 +5,7 @@ import flight_booking.demo.common.entity.exception.ResponseCode;
 import flight_booking.demo.domain.order.dto.response.OrderResponseDto;
 import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
 import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
+import flight_booking.demo.domain.user.dto.response.FindAllUserResponseDto;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.token.entity.RefreshToken;
@@ -42,7 +43,6 @@ public class UserService {
        RefreshToken refreshToken = refreshTokenRepository.findByUserId(userId);
        refreshTokenRepository.delete(refreshToken);
         userRepository.delete(user);
-
     }
 
     public void updateRole(UpdateRoleRequestDto requestDto, String userId) {
@@ -76,7 +76,9 @@ public class UserService {
     }
 
 
-    public Page<User> findUserAll(PageQuery pageQuery) {
-        return userRepository.findAllByUserId(pageQuery.toPageable());
+    public flight_booking.demo.utils.Page<FindAllUserResponseDto> findUserAll(PageQuery pageQuery) {
+        Page<User> page = userRepository.findAllByUserId(pageQuery.toPageable());
+
+      return flight_booking.demo.utils.Page.from(page.map(FindAllUserResponseDto::from));
     }
 }

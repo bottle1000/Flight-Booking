@@ -3,11 +3,12 @@ package flight_booking.demo.domain.user.controller;
 import flight_booking.demo.domain.order.dto.response.OrderResponseDto;
 import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
 import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
+import flight_booking.demo.domain.user.dto.response.FindAllUserResponseDto;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.service.UserService;
+import flight_booking.demo.utils.Page;
 import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class AdminController {
     private final UserService userService;
 
     @GetMapping("/")
-    public ResponseEntity<Page<User>> findUsersAll(PageQuery pageQuery){
+    public ResponseEntity<Page<FindAllUserResponseDto>> findUsersAll(PageQuery pageQuery){
         return ResponseEntity.ok(userService.findUserAll(pageQuery));
     }
 
