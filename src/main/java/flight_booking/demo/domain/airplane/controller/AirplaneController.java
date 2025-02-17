@@ -1,10 +1,12 @@
-package flight_booking.demo.domain.airplane;
+package flight_booking.demo.domain.airplane.controller;
 
+import flight_booking.demo.domain.airplane.service.AirplaneService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,26 +31,18 @@ public class AirplaneController {
 	private final AirplaneService airplaneService;
 
 	@PostMapping
-	public ResponseEntity<ApiResponse<AirplaneCreateResponse>> createAirplane(
+	public ResponseEntity<AirplaneCreateResponse> createAirplane(
 		@Valid @RequestBody AirplaneCreateRequest request) {
-		AirplaneCreateResponse response = airplaneService.createAirplane(request);
-		return ResponseEntity.ok(ApiResponse.success("항공기가 성공적으로 등록되었습니다.", response));
+		AirplaneCreateResponse response = airplaneService.create(request);
+		return ResponseEntity.ok(response);
 	}
 
-	@PostMapping("/{airplane_id}/flight-plans")
-	public ResponseEntity<ApiResponse<FlightPlanCreateResponse>> createFlightPlan(
-		@PathVariable("airplane_id") Long airplaneId,
-		@Valid @RequestBody FlightPlanCreateRequest flightPlanCreateRequest
-	) {
-		FlightPlanCreateResponse response = airplaneService.createFlightPlan(airplaneId, flightPlanCreateRequest);
-		return ResponseEntity.ok(ApiResponse.success("항공 스케쥴이 성공적으로 등록되었습니다", response));
-	}
 
 	@GetMapping
-	public ResponseEntity<ApiResponse<Page<AirplaneGetResponse>>> getAirplaneList(
+	public ResponseEntity<Page<AirplaneGetResponse>> findAirplaneList(
 		@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
 	) {
-		Page<AirplaneGetResponse> response = airplaneService.getAirplaneList(pageable);
-		return ResponseEntity.ok(ApiResponse.success("항공기 목록 조회 성공", response));
+		Page<AirplaneGetResponse> response = airplaneService.findAirplaneList(pageable);
+		return ResponseEntity.ok(response);
 	}
 }

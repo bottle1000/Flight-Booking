@@ -1,4 +1,4 @@
-package flight_booking.demo.domain.airplane;
+package flight_booking.demo.domain.airplane.service;
 
 import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 
@@ -13,9 +13,9 @@ import flight_booking.demo.domain.airplane.dto.response.AirplaneCreateResponse;
 import flight_booking.demo.domain.airplane.dto.response.AirplaneGetResponse;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.entity.SeatColumn;
-import flight_booking.demo.domain.airplane.entity.Ticket;
+import flight_booking.demo.domain.flight.entity.Ticket;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
-import flight_booking.demo.domain.airplane.repository.TicketRepository;
+import flight_booking.demo.domain.flight.repository.TicketRepository;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanCreateRequest;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
@@ -28,47 +28,16 @@ import lombok.RequiredArgsConstructor;
 public class AirplaneService {
 
 	private final AirplaneRepository airplaneRepository;
-	private final TicketRepository ticketRepository;
-	private final FlightPlanRepository flightPlanRepository;
 
 	@Transactional
-	public AirplaneCreateResponse createAirplane(AirplaneCreateRequest request) {
+	public AirplaneCreateResponse create(AirplaneCreateRequest request) {
 		Airplane airplane = Airplane.from(request.name());
 		airplaneRepository.save(airplane);
 		return AirplaneCreateResponse.from(airplane);
 	}
 
 
-	@Transactional
-	public FlightPlanCreateResponse createFlightPlan(Long airplaneId, FlightPlanCreateRequest flightPlanCreateRequest) {
-
-		Airplane foundAirplane = airplaneRepository.findById(airplaneId)
-			.orElseThrow(() -> new CustomException(AIRPLANE_NOT_FOUND));
-
-		// todo 항공 스케쥴 검증 메서드 ( 구현 중 )
-		// existsOverlappingSchedule(foundAirplane, flightPlanCreateRequest);
-
-		FlightPlan newFlightPlan = FlightPlan.create(
-			flightPlanCreateRequest.departure(),
-			flightPlanCreateRequest.arrival(),
-			flightPlanCreateRequest.price(),
-			flightPlanCreateRequest.boardingAt(),
-			flightPlanCreateRequest.landingAt(),
-			foundAirplane
-		);
-
-		for (int row = 1; row <= 10; row++) {
-			for (SeatColumn column : SeatColumn.values()) {
-				Ticket ticket = new Ticket(row + column.name(), newFlightPlan);
-				ticketRepository.save(ticket);
-			}
-		}
-		FlightPlan savedFlightPlan = flightPlanRepository.save(newFlightPlan);
-		return FlightPlanCreateResponse.from(savedFlightPlan);
-	}
-
-
-	public Page<AirplaneGetResponse> getAirplaneList(Pageable pageable) {
+	public Page<AirplaneGetResponse> findAirplaneList(Pageable pageable) {
 		Page<Airplane> airplaneList = airplaneRepository.findAll(pageable);
 		return airplaneList.map(airplane -> new AirplaneGetResponse(airplane.getId(), airplane.getName()));
 	}

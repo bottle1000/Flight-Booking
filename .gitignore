@@ -41,5 +41,4 @@ application.yml
 .DS_Store
 
 ### Properties Files ###
-*.properties
-!*.properties.example
+src/main/resources/application.properties
