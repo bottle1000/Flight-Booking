@@ -4,10 +4,11 @@ import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.common.entity.exception.ResponseCode;
 import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
 import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
-import flight_booking.demo.domain.user.entity.Role;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.utils.UserUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,49 +37,36 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public void updateRoleMe(UpdateRoleRequestDto requestDto) {
-        String userId = UserUtil.getCurrentUserId();
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
+    public void updateRoleMe(UpdateRoleRequestDto requestDto, HttpServletRequest request, HttpServletResponse response) {
+        User findUser = UserUtil.getCurrentUser();
+        if (findUser == null) {
             throw new CustomException(ResponseCode.USER_NOT_FOUND);
         }
-        User findUser = optionalUser.get();
         findUser.updateRole(requestDto.getRole());
         userRepository.save(findUser);
     }
 
     //OWNER 전용
-    public void updateRole(UpdateRoleRequestDto requestDto, String userId) {
-        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
-            throw new CustomException(ResponseCode.ID_MISMATCH);
-        }
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
+    public void updateRole(UpdateRoleRequestDto requestDto, String userId, HttpServletRequest request, HttpServletResponse response) {
+        User findUser = UserUtil.getCurrentUser();
+        if (findUser == null) {
             throw new CustomException(ResponseCode.USER_NOT_FOUND);
         }
-        User findUser = optionalUser.get();
         findUser.updateRole(requestDto.getRole());
         userRepository.save(findUser);
     }
 
     //OWNER 전용
-    public void updateMemberShip(UpdateMemberShipRequestDto requestDto, String userId) {
-        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
-            throw new CustomException(ResponseCode.ID_MISMATCH);
-        }
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
+    public void updateMemberShip(UpdateMemberShipRequestDto requestDto, String userId, HttpServletRequest request, HttpServletResponse response) {
+        User findUser = UserUtil.getCurrentUser();
+        if (findUser == null) {
             throw new CustomException(ResponseCode.USER_NOT_FOUND);
         }
-        User findUser = optionalUser.get();
         findUser.updateMembership(requestDto.getMemberShip());
         userRepository.save(findUser);
     }
 
     public List<User> findUserAll() {
-        if (Role.valueOf(UserUtil.getCurrentRole()) != Role.ADMIN) {
-            throw new CustomException(ResponseCode.ID_MISMATCH);
-        }
         return userRepository.findAll();
     }
 }

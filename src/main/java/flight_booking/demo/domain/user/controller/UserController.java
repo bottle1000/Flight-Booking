@@ -6,6 +6,8 @@ import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.service.UserService;
 import flight_booking.demo.security.utils.UserUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,52 +19,19 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
-
-    //CUSTOMER 전용
-    @GetMapping("/email")
-    public String findEmail() {
-        return UserUtil.getCurrentUserEmail();
-    }
-
-    @GetMapping("/username")
-    public String findUserName() {
-        return UserUtil.getCurrentUserName();
-    }
-
-    @GetMapping("/id")
-    public String findId() {
-        return UserUtil.getCurrentUserId();
-    }
-
-    @GetMapping("/role")
-    public String findMembership() {
-        return UserUtil.getCurrentMemberShip();
+    @GetMapping("/me")
+    public User findEmail() {
+        return UserUtil.getCurrentUser();
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@RequestBody DeleteUserRequestDto requestDto) {
         userService.deleteUser(requestDto.getEmail());
     }
+
     @PatchMapping("/role")
-    public void updateRoleMe(@RequestBody UpdateRoleRequestDto requestDto){
-        userService.updateRoleMe(requestDto);
+    public void updateRoleMe(@RequestBody UpdateRoleRequestDto requestDto, HttpServletRequest request, HttpServletResponse response){
+        userService.updateRoleMe(requestDto,request,response);
     }
-
-
-    //OWNER전용
-    @GetMapping("/")
-    public List<User> findUsersAll(){
-       return userService.findUserAll();
-    }
-    @PatchMapping("/role/{userId}")
-    public void updateRole(@RequestBody UpdateRoleRequestDto requestDto, @PathVariable String userId){
-        userService.updateRole(requestDto, userId);
-    }
-    @PatchMapping("/membership/{userId}")
-    public void updateMemberShip(@RequestBody UpdateMemberShipRequestDto requestDto, @PathVariable String userId) {
-        userService.updateMemberShip(requestDto,userId);
-    }
-
 }

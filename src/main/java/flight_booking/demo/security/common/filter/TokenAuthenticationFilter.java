@@ -38,8 +38,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("가져온 accessToken: " + accessToken);
 
         if (accessToken != null && tokenProvider.validToken(accessToken)) {
-            Authentication authentication = tokenProvider.getAuthentication(accessToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+               Authentication authentication = tokenProvider.getAuthentication(accessToken);
+               SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             System.out.println(" 유효하지 않은 accessToken, refreshToken 검토 중...");
 
@@ -67,7 +67,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                         accessTokenCookie.setHttpOnly(true);
                         accessTokenCookie.setMaxAge((int) OAuth2SuccessHandler.ACCESS_TOKEN_DURATION.toSeconds());
                         response.addCookie(accessTokenCookie);
-
                         // 5️ 새로운 access_token으로 인증 설정
                         Authentication authentication = tokenProvider.getAuthentication(newAccessToken);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
