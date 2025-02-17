@@ -1,6 +1,6 @@
 package flight_booking.demo.domain.order.service;
 
-import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.SeatState;
 import flight_booking.demo.domain.airplane.entity.Ticket;
 import flight_booking.demo.domain.airplane.repository.TicketRepository;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static flight_booking.demo.common.entity.exception.ResponseCode.*;
+import static flight_booking.demo.common.exception.ResponseCode.*;
 
 @Service
 @RequiredArgsConstructor

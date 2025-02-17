@@ -21,10 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
-
     @Id
     private String id;
-
 
     @Column(length = 20)
     private String name;
@@ -46,8 +44,6 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.CUSTOMER;
-
-
 
     @Builder
     public User(String name, String email, String password, MemberShip membership) {

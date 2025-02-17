@@ -36,6 +36,12 @@ import lombok.Getter;
  * ResponseEntity<ApiResponse.success("Some message", Page<SomethingDto>)>
  *     -> ApiResponse 에서 메시지와 데이터 이외의 어떠한 데이터를 담고 있는지, 필수불가결한지 알 수 없습니다.
  */
+
+/**
+ * @Deprecated
+ * @param <T>
+ */
+@Deprecated(since = "추후 확장을 고려하여 남겨두나 현재는 사용되지 않습니다.")
 @Getter
 public class ApiResponse<T> {
     private final boolean success;

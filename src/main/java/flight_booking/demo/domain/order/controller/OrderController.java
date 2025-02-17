@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderService service;
 
+    // 검색 조건 추가
     @GetMapping
     public ResponseEntity<Page<OrderResponseDto>> findAll(PageQuery pageQuery) {
         return ResponseEntity.ok(service.findAll(pageQuery));

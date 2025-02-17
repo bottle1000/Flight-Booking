@@ -35,7 +35,7 @@ public class AirplaneController {
 		AirplaneCreateResponse response = airplaneService.create(request);
 		return ResponseEntity.ok(ApiResponse.success("항공기가 성공적으로 등록되었습니다.", response));
 	}
-
+	
 	@PostMapping("/{airplane_id}/flight-plans")
 	public ResponseEntity<ApiResponse<FlightPlanCreateResponse>> createFlightPlan(
 		@PathVariable("airplane_id") Long airplaneId,

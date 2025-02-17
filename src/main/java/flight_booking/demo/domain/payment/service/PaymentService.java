@@ -2,8 +2,8 @@ package flight_booking.demo.domain.payment.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import flight_booking.demo.common.entity.exception.CustomException;
-import flight_booking.demo.common.entity.exception.ResponseCode;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ResponseCode;
 import flight_booking.demo.domain.invoice.entity.Invoice;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
 import flight_booking.demo.domain.payment.entity.Payment;

@@ -1,7 +1,7 @@
 package flight_booking.demo.domain.user.service;
 
-import flight_booking.demo.common.entity.exception.CustomException;
-import flight_booking.demo.common.entity.exception.ResponseCode;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ResponseCode;
 import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
 import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
 import flight_booking.demo.domain.user.entity.Role;

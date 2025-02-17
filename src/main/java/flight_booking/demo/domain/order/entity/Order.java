@@ -1,7 +1,7 @@
 package flight_booking.demo.domain.order.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
-import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.SeatState;
 import flight_booking.demo.domain.airplane.entity.Ticket;
 import flight_booking.demo.domain.payment.entity.Payment;
@@ -11,8 +11,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 
 
 @Getter
