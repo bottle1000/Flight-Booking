@@ -13,4 +13,32 @@ public class UserUtil {
         return (User) principal;
     }
 
+    // 현재 로그인된 사용자의 ID 가져오기
+    public static String getCurrentUserId() {
+        User user = getCurrentUser();
+        return (user != null) ? user.getId() : null;
+    }
+
+    // 현재 로그인된 사용자의 이메일 가져오기
+    public static String getCurrentUserEmail() {
+        User user = getCurrentUser();
+        return (user != null) ? user.getEmail() : null;
+    }
+
+    // 현재 로그인된 사용자의 이름 가져오기
+    public static String getCurrentUserName() {
+        User user = getCurrentUser();
+        return (user != null) ? user.getName() : null;
+    }
+
+    // 현재 로그인된 사용자의 권한(Role) 가져오기
+    public static String getCurrentMemberShip() {
+        User user = getCurrentUser();
+        return (user != null) ? user.getMembership().name() : null;
+    }
+    public static String getCurrentRole() {
+        User user = getCurrentUser();
+        return (user != null) ? user.getRole().name() : null;
+    }
+
 }
