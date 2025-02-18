@@ -1,14 +1,12 @@
 package flight_booking.demo.domain.payment.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import flight_booking.demo.domain.payment.dto.PaymentRes;
 import flight_booking.demo.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
 
     private final PaymentService paymentService;
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<PaymentRes> findOrderForToss(@PathVariable Long orderId) {
+        return new ResponseEntity<>(paymentService.findOrderUid(orderId), HttpStatus.OK);
+    }
 
     @GetMapping("/success")
     public ResponseEntity<JsonNode> success(
