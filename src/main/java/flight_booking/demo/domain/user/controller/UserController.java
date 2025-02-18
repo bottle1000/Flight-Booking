@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
     @GetMapping("/me")
     public User findUserMe() {
         return UserUtil.getCurrentUser();
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @PatchMapping("/role/me")
-    public void updateRoleMe(@RequestBody UpdateRoleRequestDto requestDto){
+    public void updateRoleMe(@RequestBody UpdateRoleRequestDto requestDto) {
         userService.updateRoleMe(requestDto);
     }
 }
