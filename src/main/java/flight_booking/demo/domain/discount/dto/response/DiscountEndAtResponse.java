@@ -6,7 +6,7 @@ import flight_booking.demo.domain.discount.entity.DiscountType;
 import java.time.LocalDateTime;
 
 public record DiscountEndAtResponse(
-        int id,
+        Long id,
         DiscountType discountType,
         int rate,
         int amount,

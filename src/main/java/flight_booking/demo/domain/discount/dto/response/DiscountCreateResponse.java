@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * 통합 바랍니다.
  */
 public record DiscountCreateResponse(
-        int id,
+        Long id,
         DiscountType discountType,
         int rate,
         int amount,
