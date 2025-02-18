@@ -19,6 +19,7 @@ import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.entity.QFlightPlan;
 import flight_booking.demo.domain.flight.entity.QTicket;
+import flight_booking.demo.domain.flight.entity.Ticket;
 import flight_booking.demo.utils.QuerydslUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -50,21 +51,12 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 	}
 
 	@Override
-	public List<FlightPlanGetResponse> findTicketInfoByFlightPlanId(Long flightPlanId) {
+	public List<Ticket> findTicketInfoByFlightPlanId(Long flightPlanId) {
 
 		return queryFactory
-			.select(Projections.constructor(FlightPlanGetResponse.class,
-
-				(Expression<?>)JPAExpressions.selectFrom(ticket)
-					.where(ticket.flightPlan.id.eq(flightPlanId))
-					.fetch(),
-
-				JPAExpressions.select(ticket.count())
-					.from(ticket)
-					.where(ticket.flightPlan.id.eq(flightPlanId)
-						.and(ticket.state.eq(SeatState.IDLE)))
-			))
-			.from(ticket)
+			.selectFrom(ticket)
+			.leftJoin(ticket.flightPlan).fetchJoin()
+			.leftJoin(ticket.flightPlan.airplane).fetchJoin()
 			.where(ticket.flightPlan.id.eq(flightPlanId))
 			.fetch();
 	}

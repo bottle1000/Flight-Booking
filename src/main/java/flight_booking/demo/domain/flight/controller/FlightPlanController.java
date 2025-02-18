@@ -62,14 +62,14 @@ public class FlightPlanController {
 	 */
 	@GetMapping("/flight-plans/{flight-plans_id}")
 	public ResponseEntity<List<FlightPlanGetResponse>> findFlightPlan(
-		@PathVariable("flight-plan_id") Long flightPlanId) {
+		@PathVariable("flight-plans_id") Long flightPlanId) {
 		List<FlightPlanGetResponse> response = flightPlanService.findFlightPlan(flightPlanId);
 		return ResponseEntity.ok(response);
 	}
 
-	@PutMapping("admin/flight-plans/{flight-plan_id}")
+	@PutMapping("admin/flight-plans/{flight-plans_id}")
 	public ResponseEntity<FlightPlaneUpdateResponse> updateFlightPlan(
-		@PathVariable("flight-plan_id") Long flightPlanId,
+		@PathVariable("flight-plans_id") Long flightPlanId,
 		@Valid @RequestBody FlightPlanUpdateRequest flightPlanUpdateRequest
 	) {
 		FlightPlaneUpdateResponse response = flightPlanService.updateFlightPlan(flightPlanId, flightPlanUpdateRequest);

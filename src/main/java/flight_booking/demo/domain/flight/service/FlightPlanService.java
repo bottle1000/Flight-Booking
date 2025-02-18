@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.entity.SeatColumn;
+import flight_booking.demo.domain.airplane.entity.SeatState;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanCreateRequest;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanGetRequest;
@@ -64,6 +65,7 @@ public class FlightPlanService {
 		return FlightPlanCreateResponse.from(savedFlightPlan);
 	}
 
+
 	public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
 		PageQuery pageQuery
@@ -78,8 +80,14 @@ public class FlightPlanService {
 		return Page.from(page.map(FlightPlanGetListResponse::from));
 	}
 
+
 	public List<FlightPlanGetResponse> findFlightPlan(Long flightPlanId) {
-		return flightPlanRepository.findTicketInfoByFlightPlanId(flightPlanId);
+		List<Ticket> ticketList = flightPlanRepository.findTicketInfoByFlightPlanId(flightPlanId);
+		int idleTicketCount = (int) ticketList.stream()
+			.filter(t -> t.getState() == SeatState.IDLE)
+			.count();
+
+		return List.of(FlightPlanGetResponse.from(ticketList, idleTicketCount));
 	}
 
 	@Transactional
