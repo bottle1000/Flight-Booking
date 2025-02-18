@@ -5,15 +5,22 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.support.PageableExecutionUtils;
 
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import flight_booking.demo.domain.airplane.entity.SeatState;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.entity.QFlightPlan;
+import flight_booking.demo.domain.flight.entity.QTicket;
+import flight_booking.demo.domain.flight.entity.Ticket;
+import flight_booking.demo.utils.QuerydslUtil;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -21,9 +28,13 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
 	private final QFlightPlan flightPlan = QFlightPlan.flightPlan;
+	private final QTicket ticket = QTicket.ticket;
 
 	@Override
-	public Page<FlightPlan> findByFilters(Airport departure, Airport arrival, LocalDateTime boardingAt,
+	public Page<FlightPlan> findByFilters(
+		Airport departure,
+		Airport arrival,
+		LocalDateTime boardingAt,
 		LocalDateTime landingAt,
 		Pageable pageable) {
 
@@ -32,19 +43,22 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 			.and(boardingAtGoe(boardingAt))
 			.and(landingAtLoe(landingAt));
 
-		List<FlightPlan> results = queryFactory
+		JPQLQuery<FlightPlan> query = queryFactory
 			.selectFrom(flightPlan)
-			.where(conditions)
-			.orderBy(flightPlan.createdAt.asc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		JPAQuery<Long> countQuery = queryFactory
-			.select(flightPlan.count())
-			.from(flightPlan)
 			.where(conditions);
-		return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
+
+		return QuerydslUtil.fetchPage(query, flightPlan, pageable);
+	}
+
+	@Override
+	public List<Ticket> findTicketInfoByFlightPlanId(Long flightPlanId) {
+
+		return queryFactory
+			.selectFrom(ticket)
+			.leftJoin(ticket.flightPlan).fetchJoin()
+			.leftJoin(ticket.flightPlan.airplane).fetchJoin()
+			.where(ticket.flightPlan.id.eq(flightPlanId))
+			.fetch();
 	}
 
 	private BooleanExpression departureEq(Airport departure) {

@@ -2,8 +2,8 @@ package flight_booking.demo.domain.order.service;
 
 import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.SeatState;
-import flight_booking.demo.domain.airplane.entity.Ticket;
-import flight_booking.demo.domain.airplane.repository.TicketRepository;
+import flight_booking.demo.domain.flight.entity.Ticket;
+import flight_booking.demo.domain.flight.repository.TicketRepository;
 import flight_booking.demo.domain.discount.entity.Discount;
 import flight_booking.demo.domain.discount.repository.DiscountRepository;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
