@@ -55,6 +55,9 @@ public enum ResponseCode {
     RATE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "할인 비율은 0~100 사이여야 합니다."),
     AMOUNT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "금액은 0 이상의 숫자여야합니다."),
     INVALID_END_AT(HttpStatus.BAD_REQUEST, "종료일은 시작일과 같거나 앞설 수 없습니다."),
+    MEMBERSHIP_DISCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "멤버쉽 할인이 존재하지 않습니다."),
+    INVALID_MEMBERSHIP_DISCOUNT(HttpStatus.BAD_REQUEST, "유효한 멤버쉽 할인이 없거나 여러개입니다."),
+    DISCOUNT_EXPIRED(HttpStatus.BAD_REQUEST, "유효기간이 만료된 할인입니다."),
 
     // 주문 관련
     CANNOT_FIND_ORDER(HttpStatus.NOT_FOUND, "요청하신 주문내역은 존재하지 않습니다."),

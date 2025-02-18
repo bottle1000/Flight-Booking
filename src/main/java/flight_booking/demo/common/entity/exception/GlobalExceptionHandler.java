@@ -1,6 +1,5 @@
 package flight_booking.demo.common.entity.exception;
 
-import flight_booking.demo.common.entity.exception.ResponseCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

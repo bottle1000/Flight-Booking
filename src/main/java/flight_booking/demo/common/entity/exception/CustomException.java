@@ -1,6 +1,5 @@
 package flight_booking.demo.common.entity.exception;
 
-import flight_booking.demo.common.entity.exception.ResponseCode;
 import lombok.Getter;
 
 @Getter
