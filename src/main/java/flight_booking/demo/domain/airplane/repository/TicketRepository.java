@@ -1,8 +1,7 @@
 package flight_booking.demo.domain.airplane.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import flight_booking.demo.domain.airplane.entity.Ticket;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * SINWOO

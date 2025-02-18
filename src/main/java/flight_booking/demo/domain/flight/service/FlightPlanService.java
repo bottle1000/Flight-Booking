@@ -1,10 +1,5 @@
 package flight_booking.demo.domain.flight.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
@@ -17,6 +12,10 @@ import flight_booking.demo.domain.flight.dto.response.FlightPlaneUpdateResponse;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.repository.FlightPlanRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

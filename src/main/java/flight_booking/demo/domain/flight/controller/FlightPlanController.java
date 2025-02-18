@@ -1,25 +1,18 @@
 package flight_booking.demo.domain.flight.controller;
 
-import flight_booking.demo.domain.flight.service.FlightPlanService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import flight_booking.demo.common.ApiResponse;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanGetRequest;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanUpdateRequest;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlaneUpdateResponse;
+import flight_booking.demo.domain.flight.service.FlightPlanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/flight-plans")

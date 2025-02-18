@@ -1,12 +1,11 @@
 package flight_booking.demo.domain.flight.dto.request;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import flight_booking.demo.domain.flight.entity.Airport;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
 
 /**
  * SINWOO

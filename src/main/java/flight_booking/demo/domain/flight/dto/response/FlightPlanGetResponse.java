@@ -1,8 +1,9 @@
 package flight_booking.demo.domain.flight.dto.response;
 
-import java.time.LocalDateTime;
-import org.springframework.data.domain.Page;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
+import org.springframework.data.domain.Page;
+
+import java.time.LocalDateTime;
 
 public record FlightPlanGetResponse(
 	Long id,

@@ -1,7 +1,7 @@
 package flight_booking.demo.domain.flight.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FlightPlanRepository extends JpaRepository<FlightPlan, Long>, FlightPlanRepositoryCustom {
 }

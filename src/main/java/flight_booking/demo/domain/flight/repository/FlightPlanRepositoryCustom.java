@@ -1,12 +1,11 @@
 package flight_booking.demo.domain.flight.repository;
 
-import java.time.LocalDateTime;
-
+import flight_booking.demo.domain.flight.entity.Airport;
+import flight_booking.demo.domain.flight.entity.FlightPlan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import flight_booking.demo.domain.flight.entity.Airport;
-import flight_booking.demo.domain.flight.entity.FlightPlan;
+import java.time.LocalDateTime;
 
 public interface FlightPlanRepositoryCustom {
 	Page<FlightPlan> findByFilters(

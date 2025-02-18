@@ -1,9 +1,9 @@
 package flight_booking.demo.domain.flight.dto.response;
 
-import java.time.LocalDateTime;
-
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
+
+import java.time.LocalDateTime;
 
 /**
  * SINWOO
