@@ -1,5 +1,6 @@
-package flight_booking.demo.security;
+package flight_booking.demo.user.comtroller;
 
+import flight_booking.demo.BaseTest;
 import flight_booking.demo.domain.user.entity.MemberShip;
 import flight_booking.demo.domain.user.entity.Role;
 import flight_booking.demo.domain.user.entity.User;
@@ -22,7 +23,8 @@ import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class OauthTest {
+@WithMockUser
+public class OauthTest extends BaseTest {
 
     @Autowired
     private MockMvc mockMvc;
