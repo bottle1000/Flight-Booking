@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @RequiredArgsConstructor
+@EnableMethodSecurity // Role 검증을 위한 어노테이션
 @Configuration
 public class WebOauthSecurityConfig {
 
@@ -57,11 +59,11 @@ public class WebOauthSecurityConfig {
 
         // 접근 권한 설정
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/token").permitAll()
-                .requestMatchers("/users/me").authenticated()
-                .requestMatchers("/users/**").authenticated()
-                .requestMatchers("/**").permitAll()
-                .anyRequest().permitAll()
+                .requestMatchers("/api/token").permitAll()  // 토큰 발급은 누구나 가능
+                .requestMatchers("/users/me").authenticated()  // 인증된 사용자만 접근 가능
+                .requestMatchers("/admin/**").hasRole("ADMIN")  // ROLE_ADMIN만 접근 가능
+                .requestMatchers("/**").permitAll()  // 그 외 모든 요청 허용
+                .anyRequest().authenticated()  // 나머지 모든 요청은 인증된 사용자만 접근 가능
         );
 
         // OAuth2 로그인 설정

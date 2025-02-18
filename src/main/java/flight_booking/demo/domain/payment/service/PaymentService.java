@@ -6,6 +6,7 @@ import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.common.exception.ResponseCode;
 import flight_booking.demo.domain.invoice.entity.Invoice;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
+import flight_booking.demo.domain.order.entity.OrderState;
 import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
@@ -78,7 +79,7 @@ public class PaymentService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(responseEntity.getBody());
 
-            payment.getOrder().updateOrderStatus("PAID"); //오더 상태 업데이트
+            payment.getOrder().updateState(OrderState.PAID); //오더 상태 업데이트
             payment.updatePaymentStatus("COMPLETE");
 
             //최종 승인 났으면 결제 정보 DB에 저장하기
@@ -86,7 +87,7 @@ public class PaymentService {
 
             return ResponseEntity.status(responseEntity.getStatusCode()).body(jsonNode);
         } else {
-            payment.getOrder().updateOrderStatus("CANCELED");
+            payment.getOrder().updateState(OrderState.CANCELED);
             payment.updatePaymentStatus("FAIL");
             //TODO: 토스 예외처리 만들기
             throw new IllegalStateException("토스 페이 최종 결제 실패 : " + responseEntity.getStatusCode());
@@ -97,7 +98,7 @@ public class PaymentService {
     public void userFail(String orderId) {
         Payment payment = paymentRepository.findByUid(orderId)
                 .orElseThrow(() -> new CustomException(ResponseCode.ORDER_UUID_NOT_FOUND));
-        payment.getOrder().updateOrderStatus("CANCELED");
+        payment.getOrder().updateState(OrderState.CANCELED);
         payment.updatePaymentStatus("FAIL");
     }
 }
