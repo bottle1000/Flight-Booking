@@ -1,4 +1,4 @@
-package flight_booking.demo.common.entity.exception;
+package flight_booking.demo.common.exception;
 
 import org.springframework.http.HttpStatus;
 import lombok.Getter;

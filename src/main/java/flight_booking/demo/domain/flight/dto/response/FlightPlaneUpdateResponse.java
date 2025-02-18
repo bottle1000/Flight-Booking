@@ -1,11 +1,10 @@
 package flight_booking.demo.domain.flight.dto.response;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
+
+import java.time.LocalDateTime;
 
 public record FlightPlaneUpdateResponse(
 	Long id,

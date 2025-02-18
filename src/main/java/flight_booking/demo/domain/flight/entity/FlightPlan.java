@@ -29,6 +29,9 @@ public class FlightPlan extends BaseEntity {
 	private Long id;
 
 	@Column(nullable = false)
+	private String name;
+
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Airport departure;
 
@@ -46,14 +49,10 @@ public class FlightPlan extends BaseEntity {
 	@JoinColumn(name = "airplane_id")
 	private Airplane airplane;
 
-	/**
-	 * SINWOO
-	 * 현재 결제 정보에서 결제 상품명을 FlightPlan 의 Description + Ticket 의 Seat 정보를 합쳐서 만들고 있습니다.
-	 * FlightPlan 에 어떤 비행스케줄인지에 대한 Description 혹은 FlightPlan 의 Name 을 추가해 주시기 바랍니다.
-	 */
 
-	private FlightPlan(Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
+	private FlightPlan(String name, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
 		LocalDateTime landingAt, Airplane airplane) {
+		this.name = name;
 		this.departure = departure;
 		this.arrival = arrival;
 		this.price = price;
@@ -62,9 +61,9 @@ public class FlightPlan extends BaseEntity {
 		this.airplane = airplane;
 	}
 
-	public static FlightPlan create(Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
+	public static FlightPlan create(String name, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
 		LocalDateTime landingAt, Airplane airplane) {
-		return new FlightPlan(departure, arrival, price, boardingAt, landingAt, airplane);
+		return new FlightPlan(name, departure, arrival, price, boardingAt, landingAt, airplane);
 	}
 
 	public void update(Airport departure, Airport arrival, LocalDateTime boardingAt, LocalDateTime landingAt) {
