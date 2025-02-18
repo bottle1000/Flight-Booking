@@ -1,6 +1,7 @@
 package flight_booking.demo.domain.user.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
+import flight_booking.demo.utils.Page;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -55,6 +56,7 @@ public class User extends BaseEntity implements UserDetails {
         this.password = password;
         this.membership = membership;
     }
+
 
     public User(User user) {
         this.id = user.getId();
