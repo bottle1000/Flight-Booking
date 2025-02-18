@@ -8,8 +8,6 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.lang.reflect.Member;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,7 +46,6 @@ public class User extends BaseEntity implements UserDetails {
     private Role role = Role.CUSTOMER;
 
 
-
     @Builder
     public User(String name, String email, String password, MemberShip membership) {
         this.name = name;
@@ -57,11 +54,23 @@ public class User extends BaseEntity implements UserDetails {
         this.membership = membership;
     }
 
+
+    public User(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.membership = user.getMembership();
+        this.profile_url = user.getProfile_url();
+        this.role = user.getRole();
+    }
+
     public void updateMembership(MemberShip newMembershipType) {
         if (newMembershipType != null && !this.membership.equals(newMembershipType)) {
             this.membership = newMembershipType;
         }
     }
+
     public void updateRole(Role newRole) {
         if (newRole != null && !this.role.equals(newRole)) {
             this.role = newRole;

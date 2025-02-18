@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * 어떠한 의도에서 해당 네이밍으로 정했는지 확인이 필요합니다.
  */
 public record DiscountListResponse(
-        int id,
+        Long id,
         DiscountType discountType,
         int rate,
         int amount,

@@ -1,5 +1,7 @@
 package flight_booking.demo.security.jwt;
 
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ResponseCode;
 import flight_booking.demo.domain.user.entity.MemberShip;
 import flight_booking.demo.domain.user.entity.Role;
 import flight_booking.demo.domain.user.entity.User;
@@ -29,6 +31,7 @@ import java.util.Set;
 public class TokenProvider {
 
     private final JwtProperties jwtProperties;
+    private final UserRepository userRepository;
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
 
@@ -85,48 +88,21 @@ public class TokenProvider {
 
         try {
             Claims claims = getClaims(token); // JWT 토큰에서 Claims(페이로드) 추출
-            String email = claims.getSubject(); // 토큰에서 이메일(subject) 추출
             String id = claims.get("id", String.class);
-            String name = claims.get("username", String.class);
-            String membership = claims.get("membership", String.class); //  JWT에서 membership 가져오기
-            String role = claims.get("role", String.class);
-
-            if (email == null || email.isEmpty() || id == null || name == null || membership == null) {
-                return null; //  필수 정보가 없으면 null 반환
-            }
-
-            //  JWT에서 가져온 정보로 User 객체 생성 (DB 조회 X)
-            User user = new User();
-            user.setId(id);
-            user.setEmail(email);
-            user.setName(name);
-            user.setMembership(MemberShip.valueOf(membership)); // Enum 변환
-            user.setRole(Role.valueOf(role));
-
+            User findUser = userRepository.findById(id).orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
             //  사용자 역할(Role) 설정
             Set<SimpleGrantedAuthority> authorities = Collections.singleton(
-                    new SimpleGrantedAuthority("ROLE_" + role)
+                    new SimpleGrantedAuthority("ROLE_" + findUser.getRole().name())
             );
 
             //  SecurityContextHolder에 저장할 Authentication 객체 생성
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user, token, authorities);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(findUser, token, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication); //  SecurityContextHolder에 저장
 
             return authentication;
         } catch (Exception e) {
             return null; //  토큰이 유효하지 않거나 에러 발생 시 null 반환
         }
-    }
-
-    //토큰 기반으로 유저 ID를 가져오는 메서드
-    public String getUserId(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("id", String.class);
-    }
-
-    public String getUsernameFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims.get("userName", String.class);
     }
 
     public Claims getClaims(String token) {
