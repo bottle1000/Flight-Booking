@@ -1,7 +1,7 @@
 package flight_booking.demo.domain.discount.entity;
 
-import flight_booking.demo.common.entity.exception.CustomException;
-import flight_booking.demo.common.entity.exception.ResponseCode;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ResponseCode;
 
 public enum DiscountType {
     NONE(0),
