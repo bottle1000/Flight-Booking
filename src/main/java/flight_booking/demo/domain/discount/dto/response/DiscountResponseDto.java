@@ -5,24 +5,24 @@ import flight_booking.demo.domain.discount.entity.DiscountType;
 
 import java.time.LocalDateTime;
 
-public record DiscountEndAtResponse(
+public record DiscountResponseDto(
         Long id,
         DiscountType discountType,
         int rate,
         int amount,
         String description,
-        LocalDateTime started_at,
-        LocalDateTime end_at
+        LocalDateTime startAt,
+        LocalDateTime endAt
 ) {
-    public static DiscountEndAtResponse from(Discount discount) {
-        return new DiscountEndAtResponse(
+    public static DiscountResponseDto from(Discount discount) {
+        return new DiscountResponseDto(
                 discount.getId(),
                 discount.getDiscountType(),
                 discount.getRate(),
                 discount.getAmount(),
                 discount.getDescription(),
-                discount.getStart_at(),
-                discount.getEnd_at()
+                discount.getStartAt(),
+                discount.getEndAt()
         );
     }
 }

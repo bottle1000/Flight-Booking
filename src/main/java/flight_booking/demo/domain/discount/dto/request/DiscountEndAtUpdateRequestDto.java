@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record DiscountEndAtUpdateRequest(
+public record DiscountEndAtUpdateRequestDto(
         @NotNull
-        LocalDateTime end_at
+        LocalDateTime endAt
 ) {
 }
