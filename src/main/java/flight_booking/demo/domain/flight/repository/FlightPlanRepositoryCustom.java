@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
-import flight_booking.demo.domain.flight.entity.Ticket;
 
 public interface FlightPlanRepositoryCustom {
 	Page<FlightPlan> findByFilters(

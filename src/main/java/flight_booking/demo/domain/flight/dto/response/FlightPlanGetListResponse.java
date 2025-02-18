@@ -13,15 +13,15 @@ public record FlightPlanGetListResponse(
 	int price
 ) {
 
-	public static Page<FlightPlanGetListResponse> from(Page<FlightPlan> flightPlan) {
-		//todo PageImpl 직렬화 문제 있음.
-		return flightPlan.map(plan -> new FlightPlanGetListResponse(
-			plan.getId(),
-			plan.getDeparture().getCode(),
-			plan.getArrival().getCode(),
-			plan.getBoardingAt(),
-			plan.getLandingAt(),
-			plan.getPrice()
-		));
+	public static FlightPlanGetListResponse from(FlightPlan flightPlan) {
+
+		return new FlightPlanGetListResponse(
+			flightPlan.getId(),
+			flightPlan.getDeparture().getCode(),
+			flightPlan.getArrival().getCode(),
+			flightPlan.getBoardingAt(),
+			flightPlan.getLandingAt(),
+			flightPlan.getPrice()
+		);
 	}
 }

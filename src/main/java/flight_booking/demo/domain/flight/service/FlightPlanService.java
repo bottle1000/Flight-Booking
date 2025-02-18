@@ -4,8 +4,6 @@ import static flight_booking.demo.common.entity.exception.ResponseCode.*;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,17 +11,19 @@ import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.entity.SeatColumn;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
-import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
-import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
-import flight_booking.demo.domain.flight.entity.Ticket;
-import flight_booking.demo.domain.flight.repository.TicketRepository;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanCreateRequest;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanGetRequest;
 import flight_booking.demo.domain.flight.dto.request.FlightPlanUpdateRequest;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanCreateResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlanGetListResponse;
+import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.dto.response.FlightPlaneUpdateResponse;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
+import flight_booking.demo.domain.flight.entity.Ticket;
 import flight_booking.demo.domain.flight.repository.FlightPlanRepository;
+import flight_booking.demo.domain.flight.repository.TicketRepository;
+import flight_booking.demo.utils.Page;
+import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -64,26 +64,23 @@ public class FlightPlanService {
 		return FlightPlanCreateResponse.from(savedFlightPlan);
 	}
 
-
 	public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
-		Pageable pageable
+		PageQuery pageQuery
 	) {
-		Page<FlightPlan> flightPlan = flightPlanRepository.findByFilters(
+		org.springframework.data.domain.Page<FlightPlan> page = flightPlanRepository.findByFilters(
 			flightPlanGetRequest.departure(),
 			flightPlanGetRequest.arrival(),
 			flightPlanGetRequest.boardingAt(),
 			flightPlanGetRequest.landingAt(),
-			pageable
+			pageQuery.toPageable()
 		);
-		return FlightPlanGetListResponse.from(flightPlan);
+		return Page.from(page.map(FlightPlanGetListResponse::from));
 	}
-
 
 	public List<FlightPlanGetResponse> findFlightPlan(Long flightPlanId) {
 		return flightPlanRepository.findTicketInfoByFlightPlanId(flightPlanId);
 	}
-
 
 	@Transactional
 	public FlightPlaneUpdateResponse updateFlightPlan(Long flightPlanId,
@@ -98,15 +95,4 @@ public class FlightPlanService {
 		);
 		return FlightPlaneUpdateResponse.from(foundFlightPlan);
 	}
-
-	/**
-	 * SIN WOO
-	 * 사용되지 않는 메소드는 삭제 바랍니다.
-	 */
-	private void existsOverlappingSchedule(
-		Airplane foundAirplane,
-		FlightPlanCreateRequest flightPlanCreateRequest
-	) {
-	}
-
 }
