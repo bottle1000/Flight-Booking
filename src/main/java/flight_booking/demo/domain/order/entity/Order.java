@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static flight_booking.demo.common.exception.ResponseCode.*;
+
 
 @Getter
 @Entity

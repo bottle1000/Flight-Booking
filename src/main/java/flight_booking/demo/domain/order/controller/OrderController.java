@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderService service;
 
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponseDto> find(@PathVariable Long orderId) {
+        return ResponseEntity.ok(service.find(orderId));
+    }
+
     // 검색 조건 추가
     @GetMapping
     public ResponseEntity<Page<OrderResponseDto>> findAll(PageQuery pageQuery) {
