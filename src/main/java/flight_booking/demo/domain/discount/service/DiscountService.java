@@ -1,7 +1,7 @@
 package flight_booking.demo.domain.discount.service;
 
-import flight_booking.demo.common.entity.exception.CustomException;
-import flight_booking.demo.common.entity.exception.ResponseCode;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ResponseCode;
 import flight_booking.demo.domain.discount.dto.request.DiscountCreateRequestDto;
 import flight_booking.demo.domain.discount.dto.request.DiscountEndAtUpdateRequestDto;
 import flight_booking.demo.domain.discount.dto.response.DiscountResponseDto;
