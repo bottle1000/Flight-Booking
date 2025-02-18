@@ -1,28 +1,14 @@
 package flight_booking.demo.domain.flight.dto.response;
 
-import flight_booking.demo.domain.flight.entity.FlightPlan;
-import org.springframework.data.domain.Page;
+import java.util.List;
 
-import java.time.LocalDateTime;
+import flight_booking.demo.domain.flight.entity.Ticket;
 
 public record FlightPlanGetResponse(
-	Long id,
-	String departure,
-	String arrival,
-	LocalDateTime boardingAt,
-	LocalDateTime landingAt,
-	int price
+	List<Ticket> ticketList,
+	int ticketCount
 ) {
-
-	public static Page<FlightPlanGetResponse> from(Page<FlightPlan> flightPlan) {
-		//todo PageImpl 직렬화 문제 있음.
-		return flightPlan.map(plan -> new FlightPlanGetResponse(
-			plan.getId(),
-			plan.getDeparture().getCode(),
-			plan.getArrival().getCode(),
-			plan.getBoardingAt(),
-			plan.getLandingAt(),
-			plan.getPrice()
-		));
+	public static FlightPlanGetResponse from(List<Ticket> ticketList, int idleTicketCount) {
+		return new FlightPlanGetResponse(ticketList, idleTicketCount);
 	}
 }

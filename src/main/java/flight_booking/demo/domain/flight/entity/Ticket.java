@@ -1,21 +1,22 @@
-package flight_booking.demo.domain.airplane.entity;
+package flight_booking.demo.domain.flight.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
-import flight_booking.demo.domain.flight.entity.FlightPlan;
-import jakarta.persistence.*;
+import flight_booking.demo.domain.airplane.entity.SeatState;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * SINWOO
- * 1.
- * Ticket 은 FlightPlan 에 종속됩니다.
- * FlightPlan Entity 폴더에 있어야 합니다.
- *
- * 2. 사용되지 않는 메소드는 삭제바랍니다.
- */
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,11 +39,6 @@ public class Ticket extends BaseEntity {
 	public Ticket(String seat, FlightPlan flightPlan) {
 		this.seat = seat;
 		this.flightPlan = flightPlan;
-	}
-
-	// 주문 취소 시 좌석을 "이용 가능" 상태로 변경하는 메서드
-	public void makeAvailable() {
-		this.state = SeatState.IDLE;
 	}
 
 	public void updateState(SeatState to) {

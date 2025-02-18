@@ -3,7 +3,7 @@ package flight_booking.demo.domain.order.entity;
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.SeatState;
-import flight_booking.demo.domain.airplane.entity.Ticket;
+import flight_booking.demo.domain.flight.entity.Ticket;
 import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.user.entity.User;

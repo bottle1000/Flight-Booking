@@ -14,6 +14,5 @@ public record FlightPlanGetRequest(
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	LocalDateTime boardingAt,
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime landingAt) {
-
-}
+	LocalDateTime landingAt
+) { }

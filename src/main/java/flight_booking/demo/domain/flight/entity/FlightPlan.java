@@ -1,14 +1,23 @@
 package flight_booking.demo.domain.flight.entity;
 
+import java.time.LocalDateTime;
+
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.domain.airplane.entity.Airplane;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -18,6 +27,9 @@ public class FlightPlan extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(nullable = false)
+	private String name;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -37,20 +49,10 @@ public class FlightPlan extends BaseEntity {
 	@JoinColumn(name = "airplane_id")
 	private Airplane airplane;
 
-	/**
-	 * SINWOO
-	 * 현재 결제 정보에서 결제 상품명을 FlightPlan 의 Description + Ticket 의 Seat 정보를 합쳐서 만들고 있습니다.
-	 * FlightPlan 에 어떤 비행스케줄인지에 대한 Description 혹은 FlightPlan 의 Name 을 추가해 주시기 바랍니다.
-	 */
 
-	private FlightPlan(
-			Airport departure,
-			Airport arrival,
-			int price,
-			LocalDateTime boardingAt,
-			LocalDateTime landingAt,
-			Airplane airplane
-	) {
+	private FlightPlan(String name, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
+		LocalDateTime landingAt, Airplane airplane) {
+		this.name = name;
 		this.departure = departure;
 		this.arrival = arrival;
 		this.price = price;
@@ -59,29 +61,12 @@ public class FlightPlan extends BaseEntity {
 		this.airplane = airplane;
 	}
 
-	public static FlightPlan create(
-			Airport departure,
-			Airport arrival,
-			int price,
-			LocalDateTime boardingAt,
-			LocalDateTime landingAt,
-			Airplane airplane
-	) {
-		return new FlightPlan(
-				departure,
-				arrival,
-				price,
-				boardingAt,
-				landingAt,
-				airplane);
+	public static FlightPlan create(String name, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
+		LocalDateTime landingAt, Airplane airplane) {
+		return new FlightPlan(name, departure, arrival, price, boardingAt, landingAt, airplane);
 	}
 
-	public void update(
-			Airport departure,
-			Airport arrival,
-			LocalDateTime boardingAt,
-			LocalDateTime landingAt
-	) {
+	public void update(Airport departure, Airport arrival, LocalDateTime boardingAt, LocalDateTime landingAt) {
 		this.departure = departure;
 		this.arrival = arrival;
 		this.boardingAt = boardingAt;
