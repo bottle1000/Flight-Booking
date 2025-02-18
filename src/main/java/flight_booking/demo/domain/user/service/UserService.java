@@ -2,7 +2,6 @@ package flight_booking.demo.domain.user.service;
 
 import flight_booking.demo.common.entity.exception.CustomException;
 import flight_booking.demo.common.entity.exception.ResponseCode;
-import flight_booking.demo.domain.order.dto.response.OrderResponseDto;
 import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
 import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
 import flight_booking.demo.domain.user.dto.response.FindAllUserResponseDto;
@@ -11,10 +10,7 @@ import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.token.entity.RefreshToken;
 import flight_booking.demo.security.token.repository.RefreshTokenRepository;
 import flight_booking.demo.security.utils.UserUtil;
-
 import flight_booking.demo.utils.PageQuery;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
