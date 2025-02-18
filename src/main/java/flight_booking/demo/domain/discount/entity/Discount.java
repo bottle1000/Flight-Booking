@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Discount extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private DiscountType discountType;
