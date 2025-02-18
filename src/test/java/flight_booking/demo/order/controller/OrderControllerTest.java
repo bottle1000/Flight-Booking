@@ -1,11 +1,11 @@
 package flight_booking.demo.order.controller;
 
 import flight_booking.demo.BaseTest;
+import flight_booking.demo.domain.flight.entity.Ticket;
+import flight_booking.demo.domain.flight.repository.TicketRepository;
 import mockuser.WithMockUser;
 import flight_booking.demo.domain.airplane.entity.Airplane;
-import flight_booking.demo.domain.airplane.entity.Ticket;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
-import flight_booking.demo.domain.airplane.repository.TicketRepository;
 import flight_booking.demo.domain.discount.repository.DiscountRepository;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
@@ -59,6 +59,7 @@ class OrderControllerTest extends BaseTest {
         userRepository.save(userA);
 
         flightPlan = FlightPlan.create(
+                "일본 나리타행 새벽발",
                 Airport.ICN,
                 Airport.NRT,
                 10000,
