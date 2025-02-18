@@ -25,7 +25,6 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-application.yml
 
 ### NetBeans ###
 /nbproject/private/
@@ -39,3 +38,6 @@ application.yml
 
 ### Mac OS ###
 .DS_Store
+!src/main/resources/application.properties
+!src/main/resources/application-ci.properties
+!src/main/resources/application-local.properties
