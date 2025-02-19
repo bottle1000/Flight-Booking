@@ -7,10 +7,19 @@ on:
     branches:
       - feature/CI
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: flight_booking
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping -h localhost" --health-interval=10s --health-timeout=5s --health-retries=5
+
     steps:
       - uses: actions/checkout@v3
 
@@ -23,5 +32,21 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
+      - name: Wait for MySQL to be ready
+        run: |
+          echo "Waiting for MySQL to be ready..."
+          for i in {30..0}; do
+            if mysql -h 127.0.0.1 -u root -prootpassword -e "SELECT 1;" &> /dev/null; then
+              echo "MySQL is up!"
+              break
+            fi
+            echo 'MySQL is unavailable - sleeping'
+            sleep 1
+          done
+
       - name: Build with Gradle (Using CI Profile)
         run: ./gradlew clean build -Dspring.profiles.active=ci
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/flight_booking
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: rootpassword
