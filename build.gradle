@@ -94,3 +94,8 @@ clean.doLast {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+//빌드시 plain이라는 접미사가 붙은 jar파일 안생기게 함(CD시 필요)
+jar {
+    enabled = false
+}
