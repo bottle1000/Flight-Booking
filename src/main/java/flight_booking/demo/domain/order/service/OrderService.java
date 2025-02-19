@@ -1,13 +1,14 @@
 package flight_booking.demo.domain.order.service;
 
-import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.common.event.PaymentRefundEvent;
+import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.SeatState;
-import flight_booking.demo.domain.flight.entity.Ticket;
-import flight_booking.demo.domain.flight.repository.TicketRepository;
 import flight_booking.demo.domain.discount.entity.Discount;
+import flight_booking.demo.domain.discount.entity.DiscountType;
 import flight_booking.demo.domain.discount.repository.DiscountRepository;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
+import flight_booking.demo.domain.flight.entity.Ticket;
+import flight_booking.demo.domain.flight.repository.TicketRepository;
 import flight_booking.demo.domain.order.dto.request.OrderCreateRequestDto;
 import flight_booking.demo.domain.order.dto.request.OrderUpdateRequestDto;
 import flight_booking.demo.domain.order.dto.response.OrderResponseDto;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static flight_booking.demo.common.exception.ResponseCode.*;
 
@@ -54,22 +57,17 @@ public class OrderService {
 
         Ticket ticket = ticketRepository.findById(dto.ticketId())
                 .orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
-        if(ticket.getState() == SeatState.UNAVAILABLE)
+        if (ticket.getState() == SeatState.UNAVAILABLE)
             throw new CustomException(UNAVAILABLE_SEAT);
 
         FlightPlan flightPlan = ticket.getFlightPlan();
 
-        /**
-         * TODO
-         * User 의 Membership 등급 할인이 적용되어야 합니다.
-         * DiscountRepository 에 등급검색이 존재하지 않습니다.
-         *
-         * Discount membershipDiscount = discountRepository.findByDiscountType(DiscountType.GRADE);
-         */
-        List<Discount> discounts = dto.discountIds().stream()
+        Set<Discount> discounts = dto.discountIds().stream()
                 .map(discountRepository::findById)
                 .map(discount -> discount.orElseThrow(() -> new CustomException(DISCOUNT_NOT_FOUND)))
-                .toList();
+                .collect(Collectors.toSet());
+
+        discounts.add(getUserMembershipDiscount(user));
 
         Order order = new Order(
                 user,
@@ -88,7 +86,7 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER));
 
-        if(order.getState() == OrderState.CANCELED)
+        if (order.getState() == OrderState.CANCELED)
             throw new CustomException(ALREADY_CANCELED);
 
         Ticket ticketForChange = ticketRepository.findById(dto.ticketId())
@@ -100,7 +98,7 @@ public class OrderService {
         return OrderResponseDto.from(order);
     }
 
-    private int calculatePrice(int price, List<Discount> discounts) {
+    private int calculatePrice(int price, Set<Discount> discounts) {
         int totalDiscountRate = 0;
         int totalDiscountAmount = 0;
         int discountedPrice = price;
@@ -111,10 +109,23 @@ public class OrderService {
         }
 
         if (totalDiscountRate > 0) {
-            discountedPrice = Double.valueOf(price*(1-(totalDiscountRate/100.0))).intValue();
+            discountedPrice = Double.valueOf(price * (1 - (totalDiscountRate / 100.0))).intValue();
         }
 
         return discountedPrice - totalDiscountAmount;
+    }
+
+    private Discount getUserMembershipDiscount(User user) {
+        DiscountType type;
+        switch (user.getMembership()) {
+            case BASIC -> type = DiscountType.BASIC;
+            case PREMIUM -> type = DiscountType.PREMIUM;
+            case VIP -> type = DiscountType.VIP;
+            default -> throw new CustomException(MEMBERSHIP_NOT_FOUND);
+        }
+
+        return discountRepository.findByGrade(type)
+                .orElseThrow(() -> new CustomException(DISCOUNT_NOT_FOUND));
     }
 
     @Transactional

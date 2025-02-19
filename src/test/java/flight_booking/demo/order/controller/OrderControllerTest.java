@@ -72,7 +72,7 @@ class OrderControllerTest extends BaseTest {
         airplaneRepository.save(airplane);
 
         discount = new Discount(
-                DiscountType.GRADE,
+                DiscountType.BASIC,
                 0,
                 5000,
                 "DISCOUNT BY GRADE",
