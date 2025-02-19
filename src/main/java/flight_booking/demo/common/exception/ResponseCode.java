@@ -12,6 +12,7 @@ public enum ResponseCode {
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "입력하신 이메일을 찾을 수 없습니다. 다시 확인해주세요."),
     USER_ALREADY_DELETE(HttpStatus.BAD_REQUEST, "이미 탈퇴 처리된 회원입니다."),
     ID_MISMATCH(HttpStatus.UNAUTHORIZED, "권한이 존재하지 않습니다."),
+    MEMBERSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, "회원의 등급을 찾을 수 없습니다."),
 
     //  비행기 예매 관련
     FLIGHT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 항공편을 찾을 수 없습니다."),
