@@ -5,8 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record OrderUpdateRequestDto (
         @NotNull
-        long ticketId,
-        @NotNull
-        OrderState orderState
+        long ticketId
 ){
 }

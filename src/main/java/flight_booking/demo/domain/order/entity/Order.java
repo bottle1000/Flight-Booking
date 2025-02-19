@@ -64,7 +64,6 @@ public class Order extends BaseEntity {
         if (this.state == OrderState.CANCELED)
             throw new CustomException(ALREADY_CANCELED);
 
-        //TODO: 결제 Flow 의 완벽한 파악이 필요합니다. 아직 미완성된 처리입니다.
         if (this.state != OrderState.PAID && orderState == OrderState.PAID)
             if (this.payment.getState() != PaymentState.COMPLETE)
                 throw new CustomException(NOT_PAID);
