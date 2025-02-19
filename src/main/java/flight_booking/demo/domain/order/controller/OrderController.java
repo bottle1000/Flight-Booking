@@ -7,6 +7,7 @@ import flight_booking.demo.domain.order.service.OrderService;
 import flight_booking.demo.utils.Page;
 import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,5 +39,11 @@ public class OrderController {
             @RequestBody OrderUpdateRequestDto dto
     ) {
         return ResponseEntity.ok(service.update(orderId, dto));
+    }
+
+    @GetMapping("/{orderId}/cancel")
+    public ResponseEntity<Void> cancel(@PathVariable Long orderId){
+        service.cancel(orderId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,6 +1,7 @@
 package flight_booking.demo.domain.order.service;
 
 import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.event.PaymentRefundEvent;
 import flight_booking.demo.domain.airplane.entity.SeatState;
 import flight_booking.demo.domain.flight.entity.Ticket;
 import flight_booking.demo.domain.flight.repository.TicketRepository;
@@ -11,12 +12,14 @@ import flight_booking.demo.domain.order.dto.request.OrderCreateRequestDto;
 import flight_booking.demo.domain.order.dto.request.OrderUpdateRequestDto;
 import flight_booking.demo.domain.order.dto.response.OrderResponseDto;
 import flight_booking.demo.domain.order.entity.Order;
+import flight_booking.demo.domain.order.entity.OrderState;
 import flight_booking.demo.domain.order.repository.OrderRepository;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.security.utils.UserUtil;
 import flight_booking.demo.utils.Page;
 import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final DiscountRepository discountRepository;
     private final TicketRepository ticketRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public OrderResponseDto find(long id) {
         return OrderResponseDto.from(
@@ -78,19 +82,19 @@ public class OrderService {
         return OrderResponseDto.from(orderRepository.save(order));
     }
 
-    //결제취소 및 좌석변경
+    //좌석변경
     @Transactional
     public OrderResponseDto update(Long id, OrderUpdateRequestDto dto) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER));
 
+        if(order.getState() == OrderState.CANCELED)
+            throw new CustomException(ALREADY_CANCELED);
+
         Ticket ticketForChange = ticketRepository.findById(dto.ticketId())
                 .orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
 
         order.changeTicket(ticketForChange);
-
-        //TODO: 결제정보 변경(결제 취소 등)은 EventHandler 로 작업해야 합니다. Payment 병합 후 작업예정입니다.
-        order.updateState(dto.orderState());
 
         order = orderRepository.save(order);
         return OrderResponseDto.from(order);
@@ -99,7 +103,7 @@ public class OrderService {
     private int calculatePrice(int price, List<Discount> discounts) {
         int totalDiscountRate = 0;
         int totalDiscountAmount = 0;
-        int discountedPrice = 0;
+        int discountedPrice = price;
 
         for (Discount discount : discounts) {
             totalDiscountRate += discount.getRate();
@@ -111,5 +115,14 @@ public class OrderService {
         }
 
         return discountedPrice - totalDiscountAmount;
+    }
+
+    @Transactional
+    public void cancel(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ORDER_ID_NOT_FOUND));
+        order.updateState(OrderState.CANCELING);
+
+        eventPublisher.publishEvent(new PaymentRefundEvent(order.getPayment().getUid()));
     }
 }
