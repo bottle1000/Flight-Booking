@@ -1,5 +1,8 @@
 package flight_booking.demo.domain.payment.entity;
 
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ResponseCode;
+
 import java.util.Arrays;
 
 public enum PaymentState {
@@ -19,7 +22,6 @@ public enum PaymentState {
         return Arrays.stream(PaymentState.values())
                 .filter(o -> o.toString().equalsIgnoreCase(code))
                 .findFirst()
-                //TODO: GlobalHandlerException
-                .orElseThrow(() -> new IllegalArgumentException("결제 상태가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ResponseCode.INVALID_PAYMENT_STATE));
     }
 }

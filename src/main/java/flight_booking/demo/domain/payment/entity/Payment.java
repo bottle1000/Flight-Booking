@@ -52,14 +52,13 @@ public class Payment extends BaseEntity {
     public Payment(Order order) {
         this.order = order;
         this.uid = UUID.randomUUID().toString();
-        //TODO: this.name = order.getTicket().getFlightPlan().getName() + order.getTicket().getSeat() + " 좌석";
-        this.name = "This is DUMMY name";
+        this.name = order.getTicket().getFlightPlan().getName() + order.getTicket().getSeat();
         this.state = PaymentState.IN_PROGRESS;
         this.amount = order.getPrice();
     }
 
-    public void updatePaymentStatus(String string) {
-        this.state = PaymentState.from(string);
+    public void updatePaymentStatus(PaymentState paymentState) {
+        this.state = paymentState;
     }
 
 }
