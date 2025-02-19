@@ -1,13 +1,13 @@
 package flight_booking.demo.domain.flight.service;
 
-import static flight_booking.demo.common.entity.exception.ResponseCode.*;
+import static flight_booking.demo.common.exception.ResponseCode.*;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import flight_booking.demo.common.entity.exception.CustomException;
+import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.entity.SeatColumn;
 import flight_booking.demo.domain.airplane.entity.SeatState;

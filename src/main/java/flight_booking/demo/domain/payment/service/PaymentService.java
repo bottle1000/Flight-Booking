@@ -2,8 +2,8 @@ package flight_booking.demo.domain.payment.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import flight_booking.demo.common.entity.exception.CustomException;
-import flight_booking.demo.common.entity.exception.ResponseCode;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ResponseCode;
 import flight_booking.demo.common.event.PaymentRefundEvent;
 import flight_booking.demo.domain.invoice.entity.Invoice;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
@@ -29,7 +29,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import static flight_booking.demo.domain.invoice.entity.QInvoice.invoice;
 
 @Service
 @RequiredArgsConstructor

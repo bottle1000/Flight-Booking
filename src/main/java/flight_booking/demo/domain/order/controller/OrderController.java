@@ -41,7 +41,7 @@ public class OrderController {
         return ResponseEntity.ok(service.update(orderId, dto));
     }
 
-    @GetMapping("/{orderId}")
+    @GetMapping("/{orderId}/cancel")
     public ResponseEntity<Void> cancel(@PathVariable Long orderId){
         service.cancel(orderId);
         return new ResponseEntity<>(HttpStatus.OK);

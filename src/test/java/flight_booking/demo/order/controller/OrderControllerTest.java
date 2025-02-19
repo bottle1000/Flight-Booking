@@ -1,11 +1,12 @@
 package flight_booking.demo.order.controller;
 
 import flight_booking.demo.BaseTest;
+import flight_booking.demo.domain.flight.entity.Ticket;
+import flight_booking.demo.domain.flight.repository.TicketRepository;
+import flight_booking.demo.domain.payment.entity.Payment;
 import mockuser.WithMockUser;
 import flight_booking.demo.domain.airplane.entity.Airplane;
-import flight_booking.demo.domain.airplane.entity.Ticket;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
-import flight_booking.demo.domain.airplane.repository.TicketRepository;
 import flight_booking.demo.domain.discount.repository.DiscountRepository;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
@@ -59,15 +60,16 @@ class OrderControllerTest extends BaseTest {
         userRepository.save(userA);
 
         flightPlan = FlightPlan.create(
+                "나리타행 새벽 비행기",
                 Airport.ICN,
                 Airport.NRT,
                 10000,
                 LocalDateTime.of(2026, 1,1,1,1),
-                LocalDateTime.of(2026, 1,1,1,1),
+                LocalDateTime.of(2026, 1,2,1,1),
                 airplane);
         flightPlanRepository.save(flightPlan);
 
-        Ticket ticket = new Ticket("1A", flightPlan);
+        ticket = new Ticket("1A", flightPlan);
         ticketRepository.save(ticket);
 
         order = new Order(UserUtil.getCurrentUser(), ticket, flightPlan.getPrice());
