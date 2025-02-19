@@ -4,17 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record FlightPlaneUpdateResponse(
 	Long id,
 	String airplaneName,
 	Airport departure,
 	Airport arrival,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime boardingAt,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime landingAt,
+	ZonedDateTime boardingAt,
+	ZonedDateTime landingAt,
 	int price
 ) {
 	public static FlightPlaneUpdateResponse from(FlightPlan foundFlightPlan) {

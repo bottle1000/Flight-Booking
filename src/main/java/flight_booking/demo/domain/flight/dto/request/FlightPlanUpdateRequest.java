@@ -1,6 +1,6 @@
 package flight_booking.demo.domain.flight.dto.request;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -15,10 +15,7 @@ public record FlightPlanUpdateRequest(
 	@NotNull(message = "도착지는 필수입니다")
 	Airport arrival,
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	@Future(message = "탑승 시간은 미래 시간이어야 합니다")
-	LocalDateTime boardingAt,
-
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime landingAt) {
+	ZonedDateTime boardingAt,
+	ZonedDateTime landingAt) {
 }

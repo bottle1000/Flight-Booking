@@ -1,20 +1,15 @@
 package flight_booking.demo.domain.flight.repository;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Projections;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import flight_booking.demo.domain.airplane.entity.SeatState;
-import flight_booking.demo.domain.flight.dto.response.FlightPlanGetResponse;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 import flight_booking.demo.domain.flight.entity.QFlightPlan;
@@ -34,8 +29,8 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 	public Page<FlightPlan> findByFilters(
 		Airport departure,
 		Airport arrival,
-		LocalDateTime boardingAt,
-		LocalDateTime landingAt,
+		ZonedDateTime boardingAt,
+		ZonedDateTime landingAt,
 		Pageable pageable) {
 
 		BooleanExpression conditions = departureEq(departure)
@@ -69,11 +64,11 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 		return arrival != null ? flightPlan.arrival.eq(arrival) : null;
 	}
 
-	private BooleanExpression boardingAtGoe(LocalDateTime boardingAt) {
+	private BooleanExpression boardingAtGoe(ZonedDateTime boardingAt) {
 		return boardingAt != null ? flightPlan.boardingAt.goe(boardingAt) : null;
 	}
 
-	private BooleanExpression landingAtLoe(LocalDateTime landingAt) {
+	private BooleanExpression landingAtLoe(ZonedDateTime landingAt) {
 		return landingAt != null ? flightPlan.landingAt.loe(landingAt) : null;
 	}
 }

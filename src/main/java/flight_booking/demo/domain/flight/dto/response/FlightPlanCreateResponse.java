@@ -1,6 +1,6 @@
 package flight_booking.demo.domain.flight.dto.response;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -13,10 +13,8 @@ public record FlightPlanCreateResponse(
 	String airplaneName,
 	Airport departure,
 	Airport arrival,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime boardingAt,
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime landingAt,
+	ZonedDateTime boardingAt,
+	ZonedDateTime landingAt,
 	int price,
 	String name
 ) {

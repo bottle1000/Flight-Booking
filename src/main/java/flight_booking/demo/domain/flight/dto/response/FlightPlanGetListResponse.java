@@ -1,15 +1,17 @@
 package flight_booking.demo.domain.flight.dto.response;
 
-import java.time.LocalDateTime;
-import org.springframework.data.domain.Page;
+import java.time.ZonedDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 
 public record FlightPlanGetListResponse(
 	Long id,
 	String departure,
 	String arrival,
-	LocalDateTime boardingAt,
-	LocalDateTime landingAt,
+	ZonedDateTime boardingAt,
+	ZonedDateTime landingAt,
 	int price
 ) {
 
