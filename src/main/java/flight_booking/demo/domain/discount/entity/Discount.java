@@ -24,26 +24,26 @@ public class Discount extends BaseEntity {
     private int rate;
     private int amount;
     private String description;
-    private LocalDateTime start_at;
-    private LocalDateTime end_at = null;
+    private LocalDateTime startAt;
+    private LocalDateTime endAt;
 
     public Discount(
             DiscountType discountType,
             int rate,
             int amount,
             String description,
-            LocalDateTime start_at,
-            LocalDateTime end_at
+            LocalDateTime startAt,
+            LocalDateTime endAt
     ) {
         this.discountType = discountType;
         this.rate = rate;
         this.amount = amount;
         this.description = description;
-        this.start_at = start_at;
-        this.end_at = end_at;
+        this.startAt = startAt;
+        this.endAt = endAt;
     }
 
-    public void closeAt(LocalDateTime end_at) {
-        this.end_at = end_at;
+    public void closeAt(LocalDateTime endAt) {
+        this.endAt = endAt;
     }
 }
