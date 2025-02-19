@@ -37,6 +37,4 @@ out/
 
 ### Mac OS ###
 .DS_Store
-!src/main/resources/application.properties
-!src/main/resources/application-ci.properties
-!src/main/resources/application-local.properties
+src/main/resources/application.properties
