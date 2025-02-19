@@ -7,7 +7,9 @@ public enum DiscountType {
     NONE(0),
     ADMIN(1),
     EVENT(2),
-    GRADE(3);
+    BASIC(3),
+    PREMIUM(4),
+    VIP(5);
 
     public final int id;
 
