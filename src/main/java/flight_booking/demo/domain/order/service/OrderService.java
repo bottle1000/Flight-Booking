@@ -103,7 +103,7 @@ public class OrderService {
     private int calculatePrice(int price, List<Discount> discounts) {
         int totalDiscountRate = 0;
         int totalDiscountAmount = 0;
-        int discountedPrice = 0;
+        int discountedPrice = price;
 
         for (Discount discount : discounts) {
             totalDiscountRate += discount.getRate();
