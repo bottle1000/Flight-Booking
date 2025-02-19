@@ -1,6 +1,7 @@
 package flight_booking.demo.domain.airplane.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,19 +19,19 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("admin/airplanes")
+@RequestMapping
 public class AirplaneController {
 
 	private final AirplaneService airplaneService;
 
-	@PostMapping
+	@PostMapping("/admin/airplanes")
 	public ResponseEntity<AirplaneCreateResponse> createAirplane(
 		@Valid @RequestBody AirplaneCreateRequest request) {
 		AirplaneCreateResponse response = airplaneService.create(request);
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping
+	@GetMapping("/admin/airplanes")
 	public ResponseEntity<Page<AirplaneGetListResponse>> findAirplaneList(PageQuery pageQuery	) {
 		Page<AirplaneGetListResponse> response = airplaneService.findAirplaneList(pageQuery);
 		return ResponseEntity.ok(response);

@@ -28,13 +28,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping//("/flight-plans")
+@RequestMapping
 @RequiredArgsConstructor
 public class FlightPlanController {
 
 	private final FlightPlanService flightPlanService;
 
-	@PostMapping("admin/airplanes/{airplane_id}/flight-plans")
+	@PostMapping("/admin/airplanes/{airplane_id}/flight-plans")
 	public ResponseEntity<FlightPlanCreateResponse> createFlightPlan(
 		@PathVariable("airplane_id") Long airplaneId,
 		@Valid @RequestBody FlightPlanCreateRequest flightPlanCreateRequest
@@ -67,7 +67,7 @@ public class FlightPlanController {
 		return ResponseEntity.ok(response);
 	}
 
-	@PutMapping("admin/flight-plans/{flight-plans_id}")
+	@PutMapping("/admin/flight-plans/{flight-plans_id}")
 	public ResponseEntity<FlightPlaneUpdateResponse> updateFlightPlan(
 		@PathVariable("flight-plans_id") Long flightPlanId,
 		@Valid @RequestBody FlightPlanUpdateRequest flightPlanUpdateRequest
