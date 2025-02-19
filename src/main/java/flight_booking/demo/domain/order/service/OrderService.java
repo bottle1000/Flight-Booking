@@ -82,18 +82,19 @@ public class OrderService {
         return OrderResponseDto.from(orderRepository.save(order));
     }
 
-    //결제취소 및 좌석변경
+    //좌석변경
     @Transactional
     public OrderResponseDto update(Long id, OrderUpdateRequestDto dto) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER));
 
+        if(order.getState() == OrderState.CANCELED)
+            throw new CustomException(ALREADY_CANCELED);
+
         Ticket ticketForChange = ticketRepository.findById(dto.ticketId())
                 .orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
 
         order.changeTicket(ticketForChange);
-
-        order.updateState(dto.orderState());
 
         order = orderRepository.save(order);
         return OrderResponseDto.from(order);
