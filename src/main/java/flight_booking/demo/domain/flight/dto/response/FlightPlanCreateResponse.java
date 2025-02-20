@@ -2,11 +2,8 @@ package flight_booking.demo.domain.flight.dto.response;
 
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
-
 
 public record FlightPlanCreateResponse(
 	Long id,
