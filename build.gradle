@@ -1,9 +1,31 @@
+//sentry buildscript가 plugins보다 앞에 와야함
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.2'
     id 'io.spring.dependency-management' version '1.1.7'
+    id "io.sentry.jvm.gradle" version "5.2.0"//sentry
 }
-
+sourceSets {
+    main {
+        java.srcDirs("build/generated/querydsl")
+    }
+}
+//sentry task.name가 plugins보다 뒤에 있어야함
+tasks.named("generateSentryBundleIdJava").configure {
+    dependsOn tasks.named("compileJava")
+}
+tasks.named("sentryCollectSourcesJava").configure {
+    dependsOn tasks.named("compileJava")
+}
+tasks.named("sentryCollectSourcesJava").configure {
+    dependsOn tasks.named("compileTestJava")
+}
 group = 'flight-booking'
 version = '0.0.1-SNAPSHOT'
 
@@ -72,6 +94,9 @@ dependencies {
     testImplementation "org.testcontainers:mysql:1.19.3"
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //sentry
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.2.0'
 }
 
 // QueryDSL 설정
@@ -92,3 +117,17 @@ clean.doLast {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+//빌드시 plain이라는 접미사가 붙은 jar파일 안생기게 함(CD시 필요)
+jar {
+    enabled = false
+}
+
+
+//sentry
+sentry {
+    includeSourceContext = true
+
+    org = "none-ddm"
+    projectName = "java-spring-boot"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN") }
