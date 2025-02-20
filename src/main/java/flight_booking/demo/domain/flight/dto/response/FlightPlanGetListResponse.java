@@ -17,8 +17,8 @@ public record FlightPlanGetListResponse(
 
 		return new FlightPlanGetListResponse(
 			flightPlan.getId(),
-			flightPlan.getDeparture().getCode(),
-			flightPlan.getArrival().getCode(),
+			flightPlan.getDeparture().getOfficialName(),
+			flightPlan.getArrival().getOfficialName(),
 			flightPlan.getBoardingAt(),
 			flightPlan.getLandingAt(),
 			flightPlan.getPrice()
