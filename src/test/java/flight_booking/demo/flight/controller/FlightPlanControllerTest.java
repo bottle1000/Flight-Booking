@@ -68,7 +68,7 @@ public class FlightPlanControllerTest extends BaseTest {
 		userRepository.save(userA);
 
 		flightPlan = FlightPlan.create(
-			"ICNGMP1922",
+			"ICNGMP2999",
 			Airport.ICN,
 			Airport.NRT,
 			10000,

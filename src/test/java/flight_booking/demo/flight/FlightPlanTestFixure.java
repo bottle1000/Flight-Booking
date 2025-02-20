@@ -12,7 +12,7 @@ public class FlightPlanTestFixure {
 	// 테스트용 요청 객체 생성 메서드
 	public static FlightPlanCreateRequest createFlightPlanRequest() {
 		return new FlightPlanCreateRequest(
-			"ICNGMP1922",
+			"ICNGMP3000",
 			Airport.ICN,
 			Airport.GMP,
 			ZonedDateTime.of(
