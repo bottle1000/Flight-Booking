@@ -12,9 +12,11 @@ import flight_booking.demo.domain.flight.entity.Ticket;
 import flight_booking.demo.domain.flight.repository.FlightPlanRepository;
 import flight_booking.demo.domain.flight.repository.TicketRepository;
 import flight_booking.demo.domain.order.entity.Order;
+import flight_booking.demo.domain.order.entity.OrderState;
 import flight_booking.demo.domain.order.repository.OrderRepository;
 import flight_booking.demo.domain.order.service.OrderService;
 import flight_booking.demo.domain.payment.entity.Payment;
+import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
@@ -22,10 +24,17 @@ import flight_booking.demo.security.utils.UserUtil;
 import mockuser.WithMockUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @WithMockUser // 설정 하려면 추가 가능()
 @Transactional
+@ExtendWith(MockitoExtension.class)
 class PaymentServiceTest extends BaseTest {
 
     @Autowired
@@ -50,9 +60,11 @@ class PaymentServiceTest extends BaseTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private PaymentService paymentService;
-    @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private PaymentService paymentService;
+    @MockitoSpyBean
+    private PaymentApprovalService paymentApprovalService;
 
     private Airplane airplane;
     private FlightPlan flightPlan;
@@ -62,6 +74,7 @@ class PaymentServiceTest extends BaseTest {
 
     @BeforeEach
     public void setUp() {
+        System.out.println("Mock 객체 확인 : " + paymentApprovalService);
         airplane = Airplane.from("test airplane");
         airplaneRepository.save(airplane);
 
@@ -111,4 +124,70 @@ class PaymentServiceTest extends BaseTest {
 
         assertEquals(ResponseCode.PAYMENT_AMOUNT_MISMATCH, exception.getResponseCode());
     }
+
+    @Test
+    void 결제_승인시_결제와_주문_상태_업데이트() throws Exception {
+        //given
+        String paymentKey = "tgen_20250220154039uPz26";
+        String orderUid = payment.getUid();
+        int price = order.getPrice();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String json = "{\n" +
+                "  \"mId\": \"tgen_docs\",\n" +
+                "  \"lastTransactionKey\": \"txrd_a01jmh1e8sgq0mwjggh8xtty32f\",\n" +
+                "  \"paymentKey\": \"tgen_20250220154039uPz26\",\n" +
+                "  \"orderId\": \""+orderUid+"\",\n" +
+                "  \"orderName\": \"아 일본여행마렵네1A\",\n" +
+                "  \"status\": \"DONE\",\n" +
+                "  \"secret\": \"ps_GjLJoQ1aVZqeOMvpG0yA3w6KYe2R\",\n" +
+                "  \"easyPay\": {\n" +
+                "    \"provider\": \"토스페이\",\n" +
+                "    \"amount\": "+ price + ",\n" +
+                "    \"discountAmount\": 0\n" +
+                "  },\n" +
+                "  \"currency\": \"KRW\",\n" +
+                "  \"totalAmount\": 1000000,\n" +
+                "  \"metadata\": null\n" +
+                "}";
+
+        JsonNode approvedPayment = objectMapper.readTree(json);
+
+        Mockito.doReturn(approvedPayment)
+                .when(paymentApprovalService)
+                .approvePayment(paymentKey, orderUid, price);
+
+        // When
+        ResponseEntity<JsonNode> response = paymentService.confirm(paymentKey, orderUid, price);
+
+        // Then
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(approvedPayment, response.getBody());
+        assertEquals(OrderState.PAID, order.getState());
+        assertEquals(PaymentState.COMPLETE, payment.getState());
+    }
+
+
+    @Test
+    void 결제_실패시_결제와_주문_상태_업데이트() throws Exception {
+        //given
+        String paymentKey = "tgen_20250220154039uPz26";
+        String orderUid = payment.getUid();
+        int price = order.getPrice();
+
+        Mockito.doThrow(new RuntimeException("HTTP 400~500번대 오류 발생"))
+                .when(paymentApprovalService)
+                .approvePayment(paymentKey, orderUid, price);
+
+        //when & then
+        assertThrows(RuntimeException.class, () -> {
+            paymentService.confirm(paymentKey, orderUid, price);
+        });
+
+        assertEquals(OrderState.CANCELED, order.getState());
+        assertEquals(PaymentState.FAIL, payment.getState());
+    }
+
+
 }

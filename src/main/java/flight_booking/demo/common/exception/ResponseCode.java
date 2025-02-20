@@ -50,6 +50,7 @@ public enum ResponseCode {
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.PAYMENT_REQUIRED, "결제 금액 불일치: 요청된 금액과 저장된 금액이 다릅니다."),
     INVALID_PAYMENT_STATE(HttpStatus.BAD_REQUEST, "유효하지 않은 결제 상태 요청입니다"),
+    PROVIDER_ERROR(HttpStatus.BAD_REQUEST, "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요."),
 
     // 할인 정보 관련
     DISCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 할인 정보를 찾을 수 없습니다."),
