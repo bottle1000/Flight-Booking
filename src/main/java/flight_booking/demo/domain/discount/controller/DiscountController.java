@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.*;
 public class DiscountController {
     private final DiscountService discountService;
 
-    @PostMapping("/discounts")
+    @PostMapping("/admin/discounts")
     public ResponseEntity<DiscountResponseDto> createDiscountEvent(
             @Valid @RequestBody DiscountCreateRequestDto request
     ) {
         return ResponseEntity.ok(discountService.createEvent(request));
     }
 
-    @PatchMapping("/discounts/{discountId}")
+    @PatchMapping("/admin/discounts/{discountId}")
     public ResponseEntity<DiscountResponseDto> updateEventEndAt(
             @PathVariable Long discountId,
             @Valid @RequestBody DiscountEndAtUpdateRequestDto request
