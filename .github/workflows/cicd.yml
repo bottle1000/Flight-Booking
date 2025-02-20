@@ -16,7 +16,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
           MYSQL_DATABASE: flight_booking
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping -h localhost" --health-interval=10s --health-timeout=5s --health-retries=5
@@ -51,6 +50,7 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/flight_booking
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: rootpassword
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.2
