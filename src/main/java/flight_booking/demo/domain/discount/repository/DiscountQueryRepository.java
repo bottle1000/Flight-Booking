@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface DiscountQueryRepository {
     Page<Discount> findAllByPageQueryAndDiscountType(Pageable pageable, DiscountType discountType);
 
-    Optional<Discount> findByGrade(DiscountType discountType);
+    Discount findByGrade(DiscountType discountType);
 }
