@@ -1,6 +1,5 @@
 package flight_booking.demo.domain.flight.entity;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 import flight_booking.demo.common.entity.BaseEntity;
@@ -50,7 +49,6 @@ public class FlightPlan extends BaseEntity {
 	@JoinColumn(name = "airplane_id")
 	private Airplane airplane;
 
-
 	private FlightPlan(String name, Airport departure, Airport arrival, int price, ZonedDateTime boardingAt,
 		ZonedDateTime landingAt, Airplane airplane) {
 		this.name = name;
@@ -62,7 +60,8 @@ public class FlightPlan extends BaseEntity {
 		this.airplane = airplane;
 	}
 
-	public static FlightPlan create(String name, Airport departure, Airport arrival, int price, ZonedDateTime boardingAt,
+	public static FlightPlan create(String name, Airport departure, Airport arrival, int price,
+		ZonedDateTime boardingAt,
 		ZonedDateTime landingAt, Airplane airplane) {
 		return new FlightPlan(name, departure, arrival, price, boardingAt, landingAt, airplane);
 	}

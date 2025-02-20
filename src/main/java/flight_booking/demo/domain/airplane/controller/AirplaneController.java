@@ -1,7 +1,6 @@
 package flight_booking.demo.domain.airplane.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +31,7 @@ public class AirplaneController {
 	}
 
 	@GetMapping("/admin/airplanes")
-	public ResponseEntity<Page<AirplaneGetListResponse>> findAirplaneList(PageQuery pageQuery	) {
+	public ResponseEntity<Page<AirplaneGetListResponse>> findAirplaneList(PageQuery pageQuery) {
 		Page<AirplaneGetListResponse> response = airplaneService.findAirplaneList(pageQuery);
 		return ResponseEntity.ok(response);
 	}
