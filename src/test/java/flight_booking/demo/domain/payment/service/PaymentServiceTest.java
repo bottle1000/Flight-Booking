@@ -1,8 +1,8 @@
 package flight_booking.demo.domain.payment.service;
 
 import flight_booking.demo.BaseTest;
-import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
+import flight_booking.demo.common.exception.payment.PaymentErrorResponseCode;
+import flight_booking.demo.common.exception.payment.PaymentException;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
 import flight_booking.demo.domain.discount.repository.DiscountRepository;
@@ -119,10 +119,10 @@ class PaymentServiceTest extends BaseTest {
         int incorrectAmount = payment.getAmount() + 1000;
 
         // when & then
-        CustomException exception = assertThrows(CustomException.class,
+        PaymentException exception = assertThrows(PaymentException.class,
                 () -> paymentService.verifyRequest(orderId, incorrectAmount));
 
-        assertEquals(ResponseCode.PAYMENT_AMOUNT_MISMATCH, exception.getResponseCode());
+        assertEquals(PaymentErrorResponseCode.PAYMENT_AMOUNT_MISMATCH, exception.getCode());
     }
 
     @Test

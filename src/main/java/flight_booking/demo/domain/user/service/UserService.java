@@ -1,7 +1,7 @@
 package flight_booking.demo.domain.user.service;
 
 import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.domain.user.dto.request.UpdateMemberShipRequestDto;
 import flight_booking.demo.domain.user.dto.request.UpdateRoleRequestDto;
 import flight_booking.demo.domain.user.dto.response.FindAllUserResponseDto;
@@ -26,7 +26,7 @@ public class UserService {
     public User findById(String userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new CustomException(ResponseCode.ID_MISMATCH);
+            throw new CustomException(ServerErrorResponseCode.ID_MISMATCH);
         }
         return user.get();
     }
@@ -34,20 +34,20 @@ public class UserService {
     public void deleteUser(String userId) {
         // 사용자 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ServerErrorResponseCode.USER_NOT_FOUND));
        RefreshToken refreshToken = refreshTokenRepository.findByUserId(userId);
        refreshTokenRepository.delete(refreshToken);
         userRepository.delete(user);
     }
 
     public void updateRole(UpdateRoleRequestDto requestDto, String userId) {
-        User findUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(ServerErrorResponseCode.USER_NOT_FOUND));
         findUser.updateRole(requestDto.getRole());
         userRepository.save(findUser);
     }
 
     public void updateMemberShip(UpdateMemberShipRequestDto requestDto, String userId) {
-        User findUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
+        User findUser = userRepository.findById(userId).orElseThrow(() -> new CustomException(ServerErrorResponseCode.USER_NOT_FOUND));
         findUser.updateMembership(requestDto.getMemberShip());
         userRepository.save(findUser);
     }
@@ -55,7 +55,7 @@ public class UserService {
     public void updateRoleMe(UpdateRoleRequestDto requestDto) {
         User findUser = UserUtil.getCurrentUser();
         if (findUser == null) {
-            throw new CustomException(ResponseCode.USER_NOT_FOUND);
+            throw new CustomException(ServerErrorResponseCode.USER_NOT_FOUND);
         }
         findUser.updateRole(requestDto.getRole());
         userRepository.save(findUser);
@@ -64,7 +64,7 @@ public class UserService {
     public void updateMemberShipMe(UpdateMemberShipRequestDto requestDto) {
         User findUser = UserUtil.getCurrentUser();
         if (findUser == null) {
-            throw new CustomException(ResponseCode.USER_NOT_FOUND);
+            throw new CustomException(ServerErrorResponseCode.USER_NOT_FOUND);
         }
         findUser.updateMembership(requestDto.getMemberShip());
         userRepository.save(findUser);

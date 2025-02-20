@@ -4,7 +4,7 @@ import flight_booking.demo.common.exception.CustomException;
 
 import java.util.Arrays;
 
-import static flight_booking.demo.common.exception.ResponseCode.INVALID_ORDER_STATE;
+import static flight_booking.demo.common.exception.ServerErrorResponseCode.INVALID_ORDER_STATE;
 
 public enum OrderState {
     NONE("NONE"),

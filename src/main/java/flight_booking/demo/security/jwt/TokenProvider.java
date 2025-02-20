@@ -1,9 +1,7 @@
 package flight_booking.demo.security.jwt;
 
 import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
-import flight_booking.demo.domain.user.entity.MemberShip;
-import flight_booking.demo.domain.user.entity.Role;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -13,7 +11,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -89,7 +85,7 @@ public class TokenProvider {
         try {
             Claims claims = getClaims(token); // JWT 토큰에서 Claims(페이로드) 추출
             String id = claims.get("id", String.class);
-            User findUser = userRepository.findById(id).orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
+            User findUser = userRepository.findById(id).orElseThrow(() -> new CustomException(ServerErrorResponseCode.USER_NOT_FOUND));
             //  사용자 역할(Role) 설정
             Set<SimpleGrantedAuthority> authorities = Collections.singleton(
                     new SimpleGrantedAuthority("ROLE_" + findUser.getRole().name())

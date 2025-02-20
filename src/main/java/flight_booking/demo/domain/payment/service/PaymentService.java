@@ -1,23 +1,26 @@
 package flight_booking.demo.domain.payment.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
 import flight_booking.demo.common.event.PaymentRefundEvent;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
+import flight_booking.demo.common.exception.payment.PaymentErrorResponseCode;
+import flight_booking.demo.common.exception.payment.PaymentException;
+import flight_booking.demo.common.exception.payment.client.ClientPaymentException;
 import flight_booking.demo.domain.invoice.entity.Invoice;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
-import flight_booking.demo.domain.order.entity.Order;
 import flight_booking.demo.domain.order.entity.OrderState;
 import flight_booking.demo.domain.payment.dto.PaymentRes;
 import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import static flight_booking.demo.common.exception.ServerErrorResponseCode.INTERNAL_SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -34,38 +37,45 @@ public class PaymentService {
      */
     public void verifyRequest(String orderId, int amount) {
         Payment payment = paymentRepository.findByUid(orderId)
-                .orElseThrow(() -> new CustomException(ResponseCode.ORDER_UUID_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ServerErrorResponseCode.ORDER_UUID_NOT_FOUND));
         if (payment.getAmount() != amount) {
-            throw new CustomException(ResponseCode.PAYMENT_AMOUNT_MISMATCH);
+            throw new PaymentException(PaymentErrorResponseCode.PAYMENT_AMOUNT_MISMATCH);
+        }
+    }
+
+    public ResponseEntity<JsonNode> confirm(String paymentKey, String orderId, int amount) {
+        verifyRequest(orderId, amount);
+
+        Payment payment = paymentRepository.findByUid(orderId)
+                .orElseThrow(() -> new CustomException(ServerErrorResponseCode.ORDER_UUID_NOT_FOUND));
+
+        try {
+            JsonNode approvedPayment = paymentApprovalService.approvePayment(paymentKey, orderId, amount);
+            processPayment(payment, approvedPayment);
+
+            return ResponseEntity.ok(approvedPayment);
+        } catch (ClientPaymentException e) {
+            cancelPayment(payment);
+            throw e;
+        } catch (PaymentException e) {
+            cancelPayment(payment);
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(INTERNAL_SERVER_ERROR);
         }
     }
 
     @Transactional
-    public ResponseEntity<JsonNode> confirm(String paymentKey, String orderId, int amount) {
-        // 검증
-        verifyRequest(orderId, amount);
+    protected void processPayment(Payment payment, JsonNode tossDto) {
+        payment.updatePaymentStatus(PaymentState.COMPLETE);
+        payment.getOrder().updateState(OrderState.PAID);
+        invoiceRepository.save(new Invoice(tossDto, payment));
+    }
 
-        Payment payment = paymentRepository.findByUid(orderId)
-                .orElseThrow(() -> new CustomException(ResponseCode.ORDER_UUID_NOT_FOUND));
-
-        // TODO : @Retryable 작동 안 할것 확인해보기.
-        try {
-            JsonNode approvedPayment = paymentApprovalService.approvePayment(paymentKey, orderId, amount);
-
-            // TODO : 단위 테스트 진행 -> 토스가 200을 줬다 가능하에
-            payment.updatePaymentStatus(PaymentState.COMPLETE);
-            payment.getOrder().updateState(OrderState.PAID); //오더 상태 업데이트
-
-            //최종 승인 났으면 결제 정보 DB에 저장하기
-            invoiceRepository.save(new Invoice(approvedPayment, payment));
-
-            return ResponseEntity.status(HttpStatus.OK).body(approvedPayment);
-        } catch (Exception e) {
-            payment.getOrder().updateState(OrderState.CANCELED);
-            payment.updatePaymentStatus(PaymentState.FAIL);
-            //TODO: 토스 예외처리 만들기
-            throw new IllegalStateException("토스 페이 최종 결제 실패 : " + e.getMessage());
-        }
+    @Transactional
+    protected void cancelPayment(Payment payment) {
+        payment.getOrder().updateState(OrderState.CANCELED);
+        payment.updatePaymentStatus(PaymentState.FAIL);
     }
 
 
@@ -75,20 +85,20 @@ public class PaymentService {
     @Transactional
     public void userFail(String orderId) {
         Payment payment = paymentRepository.findByUid(orderId)
-                .orElseThrow(() -> new CustomException(ResponseCode.ORDER_UUID_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ServerErrorResponseCode.ORDER_UUID_NOT_FOUND));
         payment.getOrder().updateState(OrderState.CANCELED);
         payment.updatePaymentStatus(PaymentState.FAIL);
     }
 
     public PaymentRes findOrderUid(Long orderId) {
         Payment payment = paymentRepository.findById(orderId)
-                .orElseThrow(() -> new CustomException(ResponseCode.ORDER_ID_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ServerErrorResponseCode.ORDER_ID_NOT_FOUND));
         return new PaymentRes(payment.getUid(), payment.getAmount(), payment.getName());
     }
 
     /**
      * 주문 취소 이벤트를 처리
-     * 결제 취소 API 호ㅜㄹ
+     * 결제 취소 API 호출
      */
     @TransactionalEventListener
     public void handleOrderCancelEvent(PaymentRefundEvent event) throws Exception {
