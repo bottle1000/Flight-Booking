@@ -167,4 +167,27 @@ class PaymentServiceTest extends BaseTest {
         assertEquals(OrderState.PAID, order.getState());
         assertEquals(PaymentState.COMPLETE, payment.getState());
     }
+
+
+    @Test
+    void 결제_실패시_결제와_주문_상태_업데이트() throws Exception {
+        //given
+        String paymentKey = "tgen_20250220154039uPz26";
+        String orderUid = payment.getUid();
+        int price = order.getPrice();
+
+        Mockito.doThrow(new RuntimeException("HTTP 400~500번대 오류 발생"))
+                .when(paymentApprovalService)
+                .approvePayment(paymentKey, orderUid, price);
+
+        //when & then
+        assertThrows(RuntimeException.class, () -> {
+            paymentService.confirm(paymentKey, orderUid, price);
+        });
+
+        assertEquals(OrderState.CANCELED, order.getState());
+        assertEquals(PaymentState.FAIL, payment.getState());
+    }
+
+
 }

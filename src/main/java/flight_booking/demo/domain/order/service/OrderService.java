@@ -60,6 +60,7 @@ public class OrderService {
         if (ticket.getState() == SeatState.UNAVAILABLE)
             throw new CustomException(UNAVAILABLE_SEAT);
 
+        ticket.updateState(SeatState.BOOKED);
         FlightPlan flightPlan = ticket.getFlightPlan();
 
         Set<Discount> discounts = dto.discountIds().stream()
