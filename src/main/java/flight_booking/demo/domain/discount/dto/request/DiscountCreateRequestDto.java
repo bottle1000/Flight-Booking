@@ -15,6 +15,7 @@ public record DiscountCreateRequestDto(
         @NotNull
         LocalDateTime startAt,
         @NotNull
+        @Future(message = "종료 날짜는 지난 날짜로 설정할 수 없습니다.")
         LocalDateTime endAt
 ) {
 }

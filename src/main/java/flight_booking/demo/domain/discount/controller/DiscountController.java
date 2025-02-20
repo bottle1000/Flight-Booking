@@ -14,19 +14,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/discounts")
+@RequestMapping
 @RequiredArgsConstructor
 public class DiscountController {
     private final DiscountService discountService;
 
-    @PostMapping("/admin")
+    @PostMapping("/admin/discounts")
     public ResponseEntity<DiscountResponseDto> createDiscountEvent(
             @Valid @RequestBody DiscountCreateRequestDto request
     ) {
         return ResponseEntity.ok(discountService.createEvent(request));
     }
 
-    @PatchMapping("/admin/{discountId}")
+    @PatchMapping("/admin/discounts/{discountId}")
     public ResponseEntity<DiscountResponseDto> updateEventEndAt(
             @PathVariable Long discountId,
             @Valid @RequestBody DiscountEndAtUpdateRequestDto request
@@ -34,12 +34,14 @@ public class DiscountController {
         return ResponseEntity.ok(discountService.updateEndAt(discountId, request));
     }
 
-    @GetMapping("/grade")
-    public ResponseEntity<FindDiscountResponseDto> findDiscount() {
-        return ResponseEntity.ok(discountService.findDiscount());
+    @GetMapping("/discounts/grade")
+    public ResponseEntity<FindDiscountResponseDto> findDiscount(
+            @RequestParam DiscountType discountType
+    ) {
+        return ResponseEntity.ok(discountService.findDiscount(discountType));
     }
 
-    @GetMapping
+    @GetMapping("/discounts")
     public ResponseEntity<Page<FindDiscountResponseDto>> findAllByPageQuery(
             PageQuery pageQuery,
             @RequestParam(required = false) DiscountType discountType

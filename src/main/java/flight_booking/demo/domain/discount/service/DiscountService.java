@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,11 +40,6 @@ public class DiscountService {
         if (startAt.isEqual(endAt) || startAt.isAfter(endAt)) {
             throw new CustomException(ResponseCode.INVALID_END_AT);
         }
-    }
-
-    // 멤버쉽 할인 조회 시 유효성 검증(유효기간)
-    private static boolean isValidDiscount(Discount discount) {
-        return discount.getEndAt().isAfter(LocalDateTime.now());
     }
 
     public DiscountResponseDto createEvent(DiscountCreateRequestDto request) {
@@ -78,18 +72,9 @@ public class DiscountService {
         return Page.from(page.map(FindDiscountResponseDto::from));
     }
 
-    public FindDiscountResponseDto findDiscount() {
-        List<Discount> gradeDiscount = discountRepository.findByGrade(DiscountType.GRADE);
-        if (gradeDiscount.isEmpty()) {
-            throw new CustomException(ResponseCode.MEMBERSHIP_DISCOUNT_NOT_FOUND);
-        }
-        List<Discount> validDiscount = gradeDiscount
-                .stream()
-                .filter(DiscountService::isValidDiscount)
-                .toList();
-        if (validDiscount.size() != 1) {
-            throw new CustomException(ResponseCode.INVALID_MEMBERSHIP_DISCOUNT);
-        }
-        return FindDiscountResponseDto.from(validDiscount.get(0));
+    public FindDiscountResponseDto findDiscount(DiscountType discountType) {
+        Discount gradeDiscount = discountRepository.findByGrade(discountType)
+                .orElseThrow(() -> new CustomException(ResponseCode.MEMBERSHIP_DISCOUNT_NOT_FOUND));
+        return FindDiscountResponseDto.from(gradeDiscount);
     }
 }

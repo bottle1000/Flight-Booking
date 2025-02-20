@@ -5,10 +5,10 @@ import flight_booking.demo.domain.discount.entity.DiscountType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface DiscountQueryRepository {
     Page<Discount> findAllByPageQueryAndDiscountType(Pageable pageable, DiscountType discountType);
 
-    List<Discount> findByGrade(DiscountType discountType);
+    Optional<Discount> findByGrade(DiscountType discountType);
 }

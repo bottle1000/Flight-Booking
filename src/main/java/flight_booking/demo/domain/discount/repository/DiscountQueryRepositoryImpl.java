@@ -11,7 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static flight_booking.demo.domain.discount.entity.QDiscount.discount;
 
@@ -36,9 +37,14 @@ public class DiscountQueryRepositoryImpl implements DiscountQueryRepository {
     }
 
     @Override
-    public List<Discount> findByGrade(DiscountType discountType) {
-        return queryFactory.selectFrom(discount)
-                .where(discount.discountType.eq(discountType))
-                .fetch();
+    public Optional<Discount> findByGrade(DiscountType discountType) {
+        return Optional.ofNullable(
+                queryFactory.selectFrom(discount)
+                .where(
+                        discount.discountType.eq(discountType),
+                        discount.endAt.after(LocalDateTime.now())
+                )
+                .fetchOne()
+        );
     }
 }
