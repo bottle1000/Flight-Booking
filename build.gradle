@@ -1,9 +1,31 @@
+//sentry buildscript가 plugins보다 앞에 와야함
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.2'
     id 'io.spring.dependency-management' version '1.1.7'
+    id "io.sentry.jvm.gradle" version "5.2.0"//sentry
 }
-
+sourceSets {
+    main {
+        java.srcDirs("build/generated/querydsl")
+    }
+}
+//sentry task.name가 plugins보다 뒤에 있어야함
+tasks.named("generateSentryBundleIdJava").configure {
+    dependsOn tasks.named("compileJava")
+}
+tasks.named("sentryCollectSourcesJava").configure {
+    dependsOn tasks.named("compileJava")
+}
+tasks.named("sentryCollectSourcesJava").configure {
+    dependsOn tasks.named("compileTestJava")
+}
 group = 'flight-booking'
 version = '0.0.1-SNAPSHOT'
 
@@ -72,8 +94,8 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    //H2
-    implementation 'com.h2database:h2'
+    //sentry
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.2.0'
 }
 
 // QueryDSL 설정
@@ -99,3 +121,15 @@ tasks.named('test') {
 jar {
     enabled = false
 }
+
+
+//sentry
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org = "none-ddm"
+    projectName = "java-spring-boot"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN") }
