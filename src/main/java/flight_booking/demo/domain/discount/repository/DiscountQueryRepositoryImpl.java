@@ -13,9 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 import static flight_booking.demo.domain.discount.entity.QDiscount.discount;
 

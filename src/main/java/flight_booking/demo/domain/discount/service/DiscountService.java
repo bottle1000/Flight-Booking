@@ -73,8 +73,8 @@ public class DiscountService {
 		return Page.from(page.map(FindDiscountResponseDto::from));
 	}
 
-	public FindDiscountResponseDto findDiscount(DiscountType discountType) {
-		Discount gradeDiscount = discountRepository.findByGrade(discountType);
-		return FindDiscountResponseDto.from(gradeDiscount);
-	}
+    public FindDiscountResponseDto findDiscount(DiscountType discountType) {
+        Discount gradeDiscount = discountRepository.findByGrade(discountType);
+        return FindDiscountResponseDto.from(gradeDiscount);
+    }
 }
