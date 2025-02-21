@@ -45,12 +45,12 @@ jobs:
           done
 
       - name: Build with Gradle (Using CI Profile)
-        run: ./gradlew clean build -Dspring.profiles.active=ci
+        run: ./gradlew clean build
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/flight_booking
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: rootpassword
-          SENTRY_AUTH_TOKEN: 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
+          SENTRY_AUTH_TOKEN: ${{SENTRY_AUTH_TOKEN}}
 
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.2
