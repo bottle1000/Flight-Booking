@@ -7,6 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(staticName = "of")
 public class RegisterResponseDto {
 
-    private final String email;
+	private final String email;
 }
 

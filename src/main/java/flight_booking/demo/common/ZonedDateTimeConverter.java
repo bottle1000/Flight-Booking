@@ -1,34 +1,30 @@
 package flight_booking.demo.common;
 
+import java.sql.Timestamp;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
-import org.springframework.stereotype.Component;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.databind.util.Converter;
-
-@Component
-public class ZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+@Converter(autoApply = true)
+public class ZonedDateTimeConverter implements AttributeConverter<ZonedDateTime, Timestamp> {
+	private static final ZoneId ZONE_ID = ZoneId.of("Asia/Seoul");
 
 	@Override
-	public ZonedDateTime convert(String source) {
-		if (source == null || source.isEmpty()) {
-			return null;
-		}
-		return ZonedDateTime.parse(source, FORMATTER.withZone(ZoneId.of("Asia/Seoul")));
+	public Timestamp convertToDatabaseColumn(ZonedDateTime zonedDateTime) {
+		if (zonedDateTime == null) return null;
+		return Timestamp.valueOf(zonedDateTime
+			.withZoneSameInstant(ZONE_ID)
+			.truncatedTo(ChronoUnit.SECONDS)  // 나노초 제거
+			.toLocalDateTime());
 	}
 
 	@Override
-	public JavaType getInputType(TypeFactory typeFactory) {
-		return typeFactory.constructType(ZonedDateTime.class);
-	}
-
-	@Override
-	public JavaType getOutputType(TypeFactory typeFactory) {
-		return typeFactory.constructType(ZonedDateTime.class);
+	public ZonedDateTime convertToEntityAttribute(Timestamp timestamp) {
+		if (timestamp == null) return null;
+		return timestamp.toLocalDateTime()
+			.atZone(ZONE_ID);
 	}
 }

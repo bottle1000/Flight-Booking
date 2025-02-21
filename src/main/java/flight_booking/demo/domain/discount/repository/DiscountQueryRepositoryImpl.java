@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static flight_booking.demo.domain.discount.entity.QDiscount.discount;
 
@@ -48,7 +48,7 @@ public class DiscountQueryRepositoryImpl implements DiscountQueryRepository {
         Discount foundDiscount = queryFactory.selectFrom(discount)
                 .where(
                         booleanBuilder,
-                        discount.endAt.after(LocalDateTime.now())
+                        discount.endAt.after(ZonedDateTime.now())
                 )
                 .fetchOne();
         if (foundDiscount == null) {

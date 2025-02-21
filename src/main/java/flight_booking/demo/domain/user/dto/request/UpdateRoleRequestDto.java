@@ -5,5 +5,5 @@ import lombok.Getter;
 
 @Getter
 public class UpdateRoleRequestDto {
-    private Role role;
+	private Role role;
 }

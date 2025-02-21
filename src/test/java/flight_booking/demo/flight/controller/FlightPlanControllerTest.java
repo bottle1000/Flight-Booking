@@ -106,21 +106,19 @@ public class FlightPlanControllerTest extends BaseTest {
 	@Test
 	@DisplayName("항공권 일정 검색 통합 테스트 - 성공")
 	public void findFlightPlanPage() throws Exception {
-		String departure = "ICN";
-		String arrival = "NRT";
 		LocalDate fromDate = LocalDate.of(2050, 3, 1);
 		String fromDateString = fromDate.toString();
 		LocalDate toDate = LocalDate.of(2051, 3, 1);
 		String toDateString = toDate.toString();
 
 		MvcResult result = mockMvc.perform(get("/flight-plans")
-				.param("departure", departure)
-				.param("arrival", arrival)
+				.param("departure", "ICN")
+				.param("arrival", "NRT")
 				.param("fromDate", fromDateString)
 				.param("toDate", toDateString))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.content[0].departure").value(departure))
-			.andExpect(jsonPath("$.content[0].arrival").value(arrival))
+			.andExpect(jsonPath("$.content[0].departure").value("ICN"))
+			.andExpect(jsonPath("$.content[0].arrival").value("NRT"))
 			.andExpect(jsonPath("$.content[0].boardingAt").value(containsString(fromDateString)))
 			.andExpect(jsonPath("$.content[0].landingAt").value(containsString(toDateString)))
 			.andExpect(jsonPath("$.totalCount").value(1))

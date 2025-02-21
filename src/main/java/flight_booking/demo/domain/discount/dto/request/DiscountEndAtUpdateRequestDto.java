@@ -1,11 +1,11 @@
 package flight_booking.demo.domain.discount.dto.request;
 
+import java.time.ZonedDateTime;
+
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
-
 public record DiscountEndAtUpdateRequestDto(
-        @NotNull
-        LocalDateTime endAt
+	@NotNull
+	ZonedDateTime endAt
 ) {
 }

@@ -5,5 +5,5 @@ import lombok.Getter;
 
 @Getter
 public class UpdateMemberShipRequestDto {
-   private MemberShip memberShip;
+	private MemberShip memberShip;
 }
