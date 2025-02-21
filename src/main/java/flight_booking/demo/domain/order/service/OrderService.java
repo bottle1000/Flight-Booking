@@ -124,9 +124,8 @@ public class OrderService {
 			default -> throw new CustomException(MEMBERSHIP_NOT_FOUND);
 		}
 
-		return discountRepository.findByGrade(type)
-			.orElseThrow(() -> new CustomException(DISCOUNT_NOT_FOUND));
-	}
+        return discountRepository.findByGrade(type);
+    }
 
 	@Transactional
 	public void cancel(Long id) {

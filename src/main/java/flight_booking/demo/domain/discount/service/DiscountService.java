@@ -74,8 +74,7 @@ public class DiscountService {
 	}
 
 	public FindDiscountResponseDto findDiscount(DiscountType discountType) {
-		Discount gradeDiscount = discountRepository.findByGrade(discountType)
-			.orElseThrow(() -> new CustomException(ResponseCode.MEMBERSHIP_DISCOUNT_NOT_FOUND));
+		Discount gradeDiscount = discountRepository.findByGrade(discountType);
 		return FindDiscountResponseDto.from(gradeDiscount);
 	}
 }
