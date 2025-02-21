@@ -76,12 +76,8 @@ class PaymentServiceTest extends BaseTest {
 			Airport.ICN,
 			Airport.NRT,
 			10000,
-			ZonedDateTime.of(
-				2050, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")
-			),
-			ZonedDateTime.of(
-				2051, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")
-			),
+			ZonedDateTime.of(2050, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")),
+			ZonedDateTime.of(2051, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")),
 			airplane);
 		flightPlanRepository.save(flightPlan);
 

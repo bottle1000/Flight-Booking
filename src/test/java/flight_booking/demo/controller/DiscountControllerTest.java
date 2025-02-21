@@ -24,6 +24,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,14 +53,20 @@ public class DiscountControllerTest extends BaseTest {
     int rate = 10;
     int amount = 0;
     String description = "이벤트 할인";
-    LocalDateTime startAt = LocalDateTime.of(2024, 1, 1, 0, 0);
-    LocalDateTime endAtForCreate = LocalDateTime.of(2999, 12, 31, 23, 59);
-    LocalDateTime endAtFOrUpdate = LocalDateTime.of(2025,3,1,6,0);
+    ZonedDateTime startAt = ZonedDateTime.of(2024, 1, 1, 0, 0, 0,0, ZoneId.of("Asia/Seoul"));
+    ZonedDateTime endAtForCreate = ZonedDateTime.of(2099, 1, 1, 0, 0, 0,0, ZoneId.of("Asia/Seoul"));
+    ZonedDateTime endAtFOrUpdate = ZonedDateTime.of(2026, 1, 1, 0, 0, 0,0, ZoneId.of("Asia/Seoul"));
 
     @BeforeEach
     void setUp() {
         discountType = DiscountType.of(typeValue);
-        discount = new Discount(discountType, rate, amount, description, startAt, endAtForCreate);
+        discount = new Discount(
+                discountType,
+                rate,
+                amount,
+                description,
+                startAt,
+                endAtForCreate);
         discount = discountRepository.save(discount);
         id = discount.getId();
 
