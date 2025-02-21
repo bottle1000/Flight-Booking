@@ -1,6 +1,6 @@
 package flight_booking.demo.domain.flight.entity;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.domain.airplane.entity.Airplane;
@@ -42,16 +42,15 @@ public class FlightPlan extends BaseEntity {
 	@Column(nullable = false)
 	private int price;
 
-	private LocalDateTime boardingAt;
-	private LocalDateTime landingAt;
+	private ZonedDateTime boardingAt;
+	private ZonedDateTime landingAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "airplane_id")
 	private Airplane airplane;
 
-
-	private FlightPlan(String name, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
-		LocalDateTime landingAt, Airplane airplane) {
+	private FlightPlan(String name, Airport departure, Airport arrival, int price, ZonedDateTime boardingAt,
+		ZonedDateTime landingAt, Airplane airplane) {
 		this.name = name;
 		this.departure = departure;
 		this.arrival = arrival;
@@ -61,12 +60,13 @@ public class FlightPlan extends BaseEntity {
 		this.airplane = airplane;
 	}
 
-	public static FlightPlan create(String name, Airport departure, Airport arrival, int price, LocalDateTime boardingAt,
-		LocalDateTime landingAt, Airplane airplane) {
+	public static FlightPlan create(String name, Airport departure, Airport arrival, int price,
+		ZonedDateTime boardingAt,
+		ZonedDateTime landingAt, Airplane airplane) {
 		return new FlightPlan(name, departure, arrival, price, boardingAt, landingAt, airplane);
 	}
 
-	public void update(Airport departure, Airport arrival, LocalDateTime boardingAt, LocalDateTime landingAt) {
+	public void update(Airport departure, Airport arrival, ZonedDateTime boardingAt, ZonedDateTime landingAt) {
 		this.departure = departure;
 		this.arrival = arrival;
 		this.boardingAt = boardingAt;

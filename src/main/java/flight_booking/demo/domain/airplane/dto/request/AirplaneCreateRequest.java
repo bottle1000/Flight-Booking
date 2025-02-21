@@ -7,4 +7,5 @@ public record AirplaneCreateRequest(
 	@NotNull(message = "이름은 필수입니다")
 	@NotBlank(message = "이름은 공백일 수 없습니다")
 	String name
-) {}
+) {
+}
