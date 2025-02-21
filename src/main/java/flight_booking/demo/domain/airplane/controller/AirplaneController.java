@@ -18,20 +18,20 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("admin/airplanes")
+@RequestMapping
 public class AirplaneController {
 
 	private final AirplaneService airplaneService;
 
-	@PostMapping
+	@PostMapping("/admin/airplanes")
 	public ResponseEntity<AirplaneCreateResponse> createAirplane(
 		@Valid @RequestBody AirplaneCreateRequest request) {
 		AirplaneCreateResponse response = airplaneService.create(request);
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping
-	public ResponseEntity<Page<AirplaneGetListResponse>> findAirplaneList(PageQuery pageQuery	) {
+	@GetMapping("/admin/airplanes")
+	public ResponseEntity<Page<AirplaneGetListResponse>> findAirplaneList(PageQuery pageQuery) {
 		Page<AirplaneGetListResponse> response = airplaneService.findAirplaneList(pageQuery);
 		return ResponseEntity.ok(response);
 	}
