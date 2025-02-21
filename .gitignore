@@ -1,5 +1,4 @@
 .gradle
-!src/main/resources/static
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -39,6 +38,4 @@ application.yml
 
 ### Mac OS ###
 .DS_Store
-
-### Properties Files ###
 src/main/resources/application.properties

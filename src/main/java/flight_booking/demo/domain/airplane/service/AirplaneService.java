@@ -1,7 +1,5 @@
 package flight_booking.demo.domain.airplane.service;
 
-import flight_booking.demo.utils.Page;
-import flight_booking.demo.utils.PageQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +8,8 @@ import flight_booking.demo.domain.airplane.dto.response.AirplaneCreateResponse;
 import flight_booking.demo.domain.airplane.dto.response.AirplaneGetListResponse;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
+import flight_booking.demo.utils.Page;
+import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
 
 @Service

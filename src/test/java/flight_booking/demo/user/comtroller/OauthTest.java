@@ -4,6 +4,7 @@ import flight_booking.demo.BaseTest;
 import flight_booking.demo.domain.user.entity.MemberShip;
 import flight_booking.demo.domain.user.entity.Role;
 import flight_booking.demo.domain.user.entity.User;
+import flight_booking.demo.security.utils.UserUtil;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,6 @@ public class OauthTest extends BaseTest {
                 testUser, null, List.of(new SimpleGrantedAuthority("ROLE_CUSTOMER"))
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         // MockMvc를 사용해 GET 요청 실행
         mockMvc.perform(MockMvcRequestBuilders.get("/users/me")
                         .with(SecurityMockMvcRequestPostProcessors.user(testUser)))

@@ -31,6 +31,7 @@ public enum ResponseCode {
     // 비행기, 비행기 일정 관련
     AIRPLANE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 항공기를 찾을 수 없습니다."),
     FLIGHTPLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 항공 일정을 찾을 수 없습니다."),
+    FLIGHTPLAN_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 항공편이 이미 존재합니다."),
 
     //  OAuth 2.0 관련
     OAUTH2_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "OAuth2.0 로그인에 실패했습니다."),
