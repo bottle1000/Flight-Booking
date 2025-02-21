@@ -1,24 +1,27 @@
 package flight_booking.demo.domain.user.repository;
 
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import flight_booking.demo.domain.user.entity.User;
-import flight_booking.demo.utils.QuerydslUtil;
-import lombok.RequiredArgsConstructor;
+import static flight_booking.demo.domain.user.entity.QUser.*;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import static flight_booking.demo.domain.user.entity.QUser.user;
+import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import flight_booking.demo.domain.user.entity.User;
+import flight_booking.demo.utils.QuerydslUtil;
+import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class UserQueryRepositoryImpl implements UserQueryRepository{
-    private final JPAQueryFactory queryFactory;
-    public Page<User> findAllByUserId(Pageable pageable) {
-        JPQLQuery<User> query = queryFactory
-                .selectFrom(user);
+public class UserQueryRepositoryImpl implements UserQueryRepository {
+	private final JPAQueryFactory queryFactory;
 
-        return QuerydslUtil.fetchPage(query, user, pageable);
-    }
+	public Page<User> findAllByUserId(Pageable pageable) {
+		JPQLQuery<User> query = queryFactory
+			.selectFrom(user);
+
+		return QuerydslUtil.fetchPage(query, user, pageable);
+	}
 }

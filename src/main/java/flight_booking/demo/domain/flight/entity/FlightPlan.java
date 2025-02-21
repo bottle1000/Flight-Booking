@@ -42,7 +42,10 @@ public class FlightPlan extends BaseEntity {
 	@Column(nullable = false)
 	private int price;
 
+	@Column(nullable = false, columnDefinition = "DATETIME")
 	private ZonedDateTime boardingAt;
+
+	@Column(nullable = false, columnDefinition = "DATETIME")
 	private ZonedDateTime landingAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)
