@@ -44,8 +44,17 @@ jobs:
             sleep 1
           done
       
-      - name: Debug application.properties contents
-        run: cat src/main/resources/application.properties || echo "application.properties not found!"
+      - name: Debug important environment variables
+        run: |
+          echo "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}"
+          echo "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}"
+          echo "JWT_ISSUER=${JWT_ISSUER}"
+          echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}"
+          echo "AWS_ACCESS_KEY=${AWS_ACCESS_KEY}"
+          echo "AWS_SECRET_KEY=${AWS_SECRET_KEY}"
+          echo "TOSS_CLIENT_KEY=${TOSS_CLIENT_KEY}"
+          echo "TOSS_SECRET_KEY=${TOSS_SECRET_KEY}"
+          echo "SENTRY_DSN=${SENTRY_DSN}"
 
       - name: Build with Gradle (Using CI Profile)
         run: ./gradlew clean build
@@ -54,6 +63,15 @@ jobs:
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: rootpassword
           SENTRY_AUTH_TOKEN: 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
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          TOSS_CLIENT_KEY: ${{ secrets.TOSS_CLIENT_KEY }}
+          TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.2
