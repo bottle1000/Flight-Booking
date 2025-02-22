@@ -10,6 +10,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      TOSS_CLIENT_KEY: ${{ secrets.TOSS_CLIENT_KEY }}
+      TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
     services:
       mysql:
         image: mysql:8.0
@@ -44,10 +55,10 @@ jobs:
             sleep 1
           done
 
-      - name: Check for missing environment variables
+      - name: Check for environment variables
         run: |
           VARS=("GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET" "JWT_ISSUER" "JWT_SECRET_KEY" "AWS_ACCESS_KEY" "AWS_SECRET_KEY" "TOSS_CLIENT_KEY" "TOSS_SECRET_KEY" "SENTRY_DSN")
-          ERROR_FOUND=0  # 오류 여부를 저장하는 변수
+          ERROR_FOUND=0
 
           for var in "${VARS[@]}"; do
             if [[ -z "${!var}" ]]; then
@@ -68,16 +79,7 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/flight_booking
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: rootpassword
-          SENTRY_AUTH_TOKEN: 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
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          TOSS_CLIENT_KEY: ${{ secrets.TOSS_CLIENT_KEY }}
-          TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.2
