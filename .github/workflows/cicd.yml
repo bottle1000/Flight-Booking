@@ -43,6 +43,9 @@ jobs:
             echo 'MySQL is unavailable - sleeping'
             sleep 1
           done
+      
+      - name: Debug application.properties contents
+        run: cat src/main/resources/application.properties || echo "application.properties not found!"
 
       - name: Build with Gradle (Using CI Profile)
         run: ./gradlew clean build
