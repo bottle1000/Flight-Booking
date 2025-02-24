@@ -11,20 +11,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentDiscount {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id", nullable = false)
-    private Payment payment;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "payment_id", nullable = false)
+	private Payment payment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discount_id", nullable = false)
-    private Discount discount;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "discount_id", nullable = false)
+	private Discount discount;
 
-    public PaymentDiscount(Payment payment, Discount discount) {
-        this.payment = payment;
-        this.discount = discount;
-    }
+	public PaymentDiscount(Payment payment, Discount discount) {
+		this.payment = payment;
+		this.discount = discount;
+	}
 }

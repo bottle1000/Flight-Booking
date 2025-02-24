@@ -17,48 +17,48 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Payment extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    private Order order;
+	@OneToOne(fetch = FetchType.EAGER)
+	private Order order;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentState state;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private PaymentState state;
 
-    @Column(nullable = false)
-    private String uid;
+	@Column(nullable = false)
+	private String uid;
 
-    @Column(nullable = false)
-    private String name;
+	@Column(nullable = false)
+	private String name;
 
-    @Column(nullable = false)
-    private int amount;
+	@Column(nullable = false)
+	private int amount;
 
-    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PaymentDiscount> discounts = new HashSet<>();
+	@OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<PaymentDiscount> discounts = new HashSet<>();
 
-    public void addDiscount(Discount discount) {
-        PaymentDiscount paymentDiscount = new PaymentDiscount(this, discount);
-        discounts.add(paymentDiscount);
-    }
+	public void addDiscount(Discount discount) {
+		PaymentDiscount paymentDiscount = new PaymentDiscount(this, discount);
+		discounts.add(paymentDiscount);
+	}
 
-    public void removeDiscount(Discount discount) {
-        discounts.removeIf(pd -> pd.getDiscount().equals(discount));
-    }
+	public void removeDiscount(Discount discount) {
+		discounts.removeIf(pd -> pd.getDiscount().equals(discount));
+	}
 
-    public Payment(Order order) {
-        this.order = order;
-        this.uid = UUID.randomUUID().toString();
-        this.name = order.getTicket().getFlightPlan().getName() + order.getTicket().getSeat();
-        this.state = PaymentState.IN_PROGRESS;
-        this.amount = order.getPrice();
-    }
+	public Payment(Order order) {
+		this.order = order;
+		this.uid = UUID.randomUUID().toString();
+		this.name = order.getTicket().getFlightPlan().getName() + order.getTicket().getSeat();
+		this.state = PaymentState.IN_PROGRESS;
+		this.amount = order.getPrice();
+	}
 
-    public void updatePaymentStatus(PaymentState paymentState) {
-        this.state = paymentState;
-    }
+	public void updatePaymentStatus(PaymentState paymentState) {
+		this.state = paymentState;
+	}
 
 }

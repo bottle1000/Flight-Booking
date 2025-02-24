@@ -1,5 +1,7 @@
-package flight_booking.demo.domain.payment.service;
+package flight_booking.demo.payment.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import flight_booking.demo.BaseTest;
 import flight_booking.demo.common.exception.payment.PaymentErrorResponseCode;
 import flight_booking.demo.common.exception.payment.PaymentException;
@@ -18,6 +20,8 @@ import flight_booking.demo.domain.order.service.OrderService;
 import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
+import flight_booking.demo.domain.payment.service.PaymentApprovalService;
+import flight_booking.demo.domain.payment.service.PaymentService;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.utils.UserUtil;
@@ -33,9 +37,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,51 +76,49 @@ class PaymentServiceTest extends BaseTest {
     private Order order;
     private Payment payment;
 
-    @BeforeEach
-    public void setUp() {
-        System.out.println("Mock 객체 확인 : " + paymentApprovalService);
-        airplane = Airplane.from("test airplane");
-        airplaneRepository.save(airplane);
+	@BeforeEach
+	public void setUp() {
+		airplane = Airplane.from("test airplane");
+		airplaneRepository.save(airplane);
 
-        User userA = UserUtil.getCurrentUser();
-        userRepository.save(userA);
+		User userA = UserUtil.getCurrentUser();
+		userRepository.save(userA);
 
-        flightPlan = FlightPlan.create(
-                "나리타행 새벽 비행기",
-                Airport.ICN,
-                Airport.NRT,
-                10000,
-                LocalDateTime.of(2026, 1,1,1,1),
-                LocalDateTime.of(2026, 1,2,1,1),
-                airplane);
-        flightPlanRepository.save(flightPlan);
+		flightPlan = FlightPlan.create(
+			"나리타행 새벽 비행기",
+			Airport.ICN,
+			Airport.NRT,
+			10000,
+			ZonedDateTime.of(2050, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")),
+			ZonedDateTime.of(2051, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")),
+			airplane);
+		flightPlanRepository.save(flightPlan);
 
-        ticket = new Ticket("1A", flightPlan);
-        ticketRepository.save(ticket);
+		ticket = new Ticket("1A", flightPlan);
+		ticketRepository.save(ticket);
 
-        order = new Order(UserUtil.getCurrentUser(), ticket, flightPlan.getPrice());
-        orderRepository.save(order);
+		order = new Order(UserUtil.getCurrentUser(), ticket, flightPlan.getPrice());
+		orderRepository.save(order);
 
-        payment = order.getPayment();
-        paymentRepository.save(payment);
-    }
+		payment = order.getPayment();
+		paymentRepository.save(payment);
+	}
 
+	@Test
+	void verifyRequest_성공_테스트() {
+		// given
+		String orderId = payment.getUid();
+		int amount = payment.getAmount();
 
-    @Test
-    void verifyRequest_성공_테스트() {
-        // given
-        String orderId = payment.getUid();
-        int amount = payment.getAmount();
+		// when & then
+		assertDoesNotThrow(() -> paymentService.verifyRequest(orderId, amount));
+	}
 
-        // when & then
-        assertDoesNotThrow(() -> paymentService.verifyRequest(orderId, amount));
-    }
-
-    @Test
-    void verifyRequest_금액_불일치_예외_테스트() {
-        // given
-        String orderId = payment.getUid();
-        int incorrectAmount = payment.getAmount() + 1000;
+	@Test
+	void verifyRequest_금액_불일치_예외_테스트() {
+		// given
+		String orderId = payment.getUid();
+		int incorrectAmount = payment.getAmount() + 1000;
 
         // when & then
         PaymentException exception = assertThrows(PaymentException.class,

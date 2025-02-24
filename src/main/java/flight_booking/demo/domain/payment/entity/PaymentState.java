@@ -2,23 +2,21 @@ package flight_booking.demo.domain.payment.entity;
 
 import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.common.exception.ServerErrorResponseCode;
-import flight_booking.demo.common.exception.payment.PaymentErrorResponseCode;
-import flight_booking.demo.common.exception.payment.PaymentException;
 
 import java.util.Arrays;
 
 public enum PaymentState {
-    NONE("NONE"),
-    IN_PROGRESS("IN_PROGRESS"),
-    COMPLETE("COMPLETE"),
-    FAIL("FAIL"),
-    CANCEL("CANCEL");
+	NONE("NONE"),
+	IN_PROGRESS("IN_PROGRESS"),
+	COMPLETE("COMPLETE"),
+	FAIL("FAIL"),
+	CANCEL("CANCEL");
 
+	public final String code;
 
-    public final String code;
-    PaymentState(String value) {
-        this.code = value;
-    }
+	PaymentState(String value) {
+		this.code = value;
+	}
 
     public static PaymentState from(String code) {
         return Arrays.stream(PaymentState.values())

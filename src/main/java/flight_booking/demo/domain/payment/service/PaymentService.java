@@ -7,7 +7,6 @@ import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.common.exception.payment.PaymentErrorResponseCode;
 import flight_booking.demo.common.exception.payment.PaymentException;
 import flight_booking.demo.common.exception.payment.client.ClientPaymentException;
-import flight_booking.demo.domain.invoice.entity.Invoice;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
 import flight_booking.demo.domain.order.entity.OrderState;
 import flight_booking.demo.domain.payment.dto.PaymentRes;
