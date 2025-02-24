@@ -1,5 +1,7 @@
 package flight_booking.demo.domain.payment.entity;
 
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.common.exception.payment.PaymentErrorResponseCode;
 import flight_booking.demo.common.exception.payment.PaymentException;
 
@@ -22,6 +24,6 @@ public enum PaymentState {
         return Arrays.stream(PaymentState.values())
                 .filter(o -> o.toString().equalsIgnoreCase(code))
                 .findFirst()
-                .orElseThrow(() -> new PaymentException(PaymentErrorResponseCode.INVALID_PAYMENT_STATE));
+                .orElseThrow(() -> new CustomException(ServerErrorResponseCode.INVALID_REQUEST));
     }
 }

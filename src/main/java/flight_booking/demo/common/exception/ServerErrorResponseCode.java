@@ -64,6 +64,7 @@ public enum ServerErrorResponseCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
     RESOURCE_CONFLICT(HttpStatus.CONFLICT, "요청한 리소스가 충돌합니다."),
+    NETWORK_ERROR(HttpStatus.REQUEST_TIMEOUT, "일시적인 네트워크 오류가 발생했습니다."),
 
     INVALID_ERROR_TYPE(HttpStatus.NOT_ACCEPTABLE,"해당 오류는 오류 분류가 잘못되어있습니다.");
 

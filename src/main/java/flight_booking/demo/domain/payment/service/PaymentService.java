@@ -51,32 +51,18 @@ public class PaymentService {
 
         try {
             JsonNode approvedPayment = paymentApprovalService.approvePayment(paymentKey, orderId, amount);
-            processPayment(payment, approvedPayment);
+            paymentApprovalService.processPayment(payment, approvedPayment);
 
             return ResponseEntity.ok(approvedPayment);
-        } catch (ClientPaymentException e) {
-            cancelPayment(payment);
-            throw e;
-        } catch (PaymentException e) {
-            cancelPayment(payment);
+        } catch (ClientPaymentException | PaymentException e) {
+            paymentApprovalService.cancelPayment(payment);
             throw e;
         } catch (Exception e) {
+            paymentApprovalService.cancelPayment(payment);
             throw new CustomException(INTERNAL_SERVER_ERROR);
         }
     }
 
-    @Transactional
-    protected void processPayment(Payment payment, JsonNode tossDto) {
-        payment.updatePaymentStatus(PaymentState.COMPLETE);
-        payment.getOrder().updateState(OrderState.PAID);
-        invoiceRepository.save(new Invoice(tossDto, payment));
-    }
-
-    @Transactional
-    protected void cancelPayment(Payment payment) {
-        payment.getOrder().updateState(OrderState.CANCELED);
-        payment.updatePaymentStatus(PaymentState.FAIL);
-    }
 
 
     /**
