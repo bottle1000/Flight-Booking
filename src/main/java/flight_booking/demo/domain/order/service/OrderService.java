@@ -27,113 +27,111 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static flight_booking.demo.common.exception.ServerErrorResponseCode.*;
+import static flight_booking.demo.common.exception.ResponseCode.*;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final OrderRepository orderRepository;
-    private final DiscountRepository discountRepository;
-    private final TicketRepository ticketRepository;
-    private final ApplicationEventPublisher eventPublisher;
+	private final OrderRepository orderRepository;
+	private final DiscountRepository discountRepository;
+	private final TicketRepository ticketRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
-    public OrderResponseDto find(long id) {
-        return OrderResponseDto.from(
-                orderRepository.findById(id)
-                        .orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER)));
+	public OrderResponseDto find(long id) {
+		return OrderResponseDto.from(
+			orderRepository.findById(id)
+				.orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER)));
+	}
+
+	public Page<OrderResponseDto> findAll(PageQuery pageQuery) {
+		org.springframework.data.domain.Page<Order> page =
+			orderRepository.findAllByUserId(pageQuery.toPageable(), UserUtil.getCurrentUserId());
+
+		return Page.from(page.map(OrderResponseDto::from));
+	}
+
+	@Transactional
+	public OrderResponseDto create(OrderCreateRequestDto dto) {
+		User user = UserUtil.getCurrentUser();
+
+		Ticket ticket = ticketRepository.findById(dto.ticketId())
+			.orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
+		if (ticket.getState() == SeatState.UNAVAILABLE)
+			throw new CustomException(UNAVAILABLE_SEAT);
+
+		FlightPlan flightPlan = ticket.getFlightPlan();
+
+		Set<Discount> discounts = dto.discountIds().stream()
+			.map(discountRepository::findById)
+			.map(discount -> discount.orElseThrow(() -> new CustomException(DISCOUNT_NOT_FOUND)))
+			.collect(Collectors.toSet());
+
+		discounts.add(getUserMembershipDiscount(user));
+
+		Order order = new Order(
+			user,
+			ticket,
+			calculatePrice(flightPlan.getPrice(), discounts)
+		);
+
+		discounts.forEach(discount -> order.getPayment().addDiscount(discount));
+
+		return OrderResponseDto.from(orderRepository.save(order));
+	}
+
+	//좌석변경
+	@Transactional
+	public OrderResponseDto update(Long id, OrderUpdateRequestDto dto) {
+		Order order = orderRepository.findById(id)
+			.orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER));
+
+		if (order.getState() == OrderState.CANCELED)
+			throw new CustomException(ALREADY_CANCELED);
+
+		Ticket ticketForChange = ticketRepository.findById(dto.ticketId())
+			.orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
+
+		order.changeTicket(ticketForChange);
+
+		order = orderRepository.save(order);
+		return OrderResponseDto.from(order);
+	}
+
+	private int calculatePrice(int price, Set<Discount> discounts) {
+		int totalDiscountRate = 0;
+		int totalDiscountAmount = 0;
+		int discountedPrice = price;
+
+		for (Discount discount : discounts) {
+			totalDiscountRate += discount.getRate();
+			totalDiscountAmount += discount.getAmount();
+		}
+
+		if (totalDiscountRate > 0) {
+			discountedPrice = Double.valueOf(price * (1 - (totalDiscountRate / 100.0))).intValue();
+		}
+
+		return discountedPrice - totalDiscountAmount;
+	}
+
+	private Discount getUserMembershipDiscount(User user) {
+		DiscountType type;
+		switch (user.getMembership()) {
+			case BASIC -> type = DiscountType.BASIC;
+			case PREMIUM -> type = DiscountType.PREMIUM;
+			case VIP -> type = DiscountType.VIP;
+			default -> throw new CustomException(MEMBERSHIP_NOT_FOUND);
+		}
+
+        return discountRepository.findByGrade(type);
     }
 
-    public Page<OrderResponseDto> findAll(PageQuery pageQuery) {
-        org.springframework.data.domain.Page<Order> page =
-                orderRepository.findAllByUserId(pageQuery.toPageable(), UserUtil.getCurrentUserId());
+	@Transactional
+	public void cancel(Long id) {
+		Order order = orderRepository.findById(id)
+			.orElseThrow(() -> new CustomException(ORDER_ID_NOT_FOUND));
+		order.updateState(OrderState.CANCELING);
 
-        return Page.from(page.map(OrderResponseDto::from));
-    }
-
-    @Transactional
-    public OrderResponseDto create(OrderCreateRequestDto dto) {
-        User user = UserUtil.getCurrentUser();
-
-        Ticket ticket = ticketRepository.findById(dto.ticketId())
-                .orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
-        if (ticket.getState() == SeatState.UNAVAILABLE)
-            throw new CustomException(UNAVAILABLE_SEAT);
-
-        ticket.updateState(SeatState.BOOKED);
-        FlightPlan flightPlan = ticket.getFlightPlan();
-
-        Set<Discount> discounts = dto.discountIds().stream()
-                .map(discountRepository::findById)
-                .map(discount -> discount.orElseThrow(() -> new CustomException(DISCOUNT_NOT_FOUND)))
-                .collect(Collectors.toSet());
-
-        discounts.add(getUserMembershipDiscount(user));
-
-        Order order = new Order(
-                user,
-                ticket,
-                calculatePrice(flightPlan.getPrice(), discounts)
-        );
-
-        discounts.forEach(discount -> order.getPayment().addDiscount(discount));
-
-        return OrderResponseDto.from(orderRepository.save(order));
-    }
-
-    //좌석변경
-    @Transactional
-    public OrderResponseDto update(Long id, OrderUpdateRequestDto dto) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new CustomException(CANNOT_FIND_ORDER));
-
-        if (order.getState() == OrderState.CANCELED)
-            throw new CustomException(ALREADY_CANCELED);
-
-        Ticket ticketForChange = ticketRepository.findById(dto.ticketId())
-                .orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
-
-        order.changeTicket(ticketForChange);
-
-        order = orderRepository.save(order);
-        return OrderResponseDto.from(order);
-    }
-
-    private int calculatePrice(int price, Set<Discount> discounts) {
-        int totalDiscountRate = 0;
-        int totalDiscountAmount = 0;
-        int discountedPrice = price;
-
-        for (Discount discount : discounts) {
-            totalDiscountRate += discount.getRate();
-            totalDiscountAmount += discount.getAmount();
-        }
-
-        if (totalDiscountRate > 0) {
-            discountedPrice = Double.valueOf(price * (1 - (totalDiscountRate / 100.0))).intValue();
-        }
-
-        return discountedPrice - totalDiscountAmount;
-    }
-
-    private Discount getUserMembershipDiscount(User user) {
-        DiscountType type;
-        switch (user.getMembership()) {
-            case BASIC -> type = DiscountType.BASIC;
-            case PREMIUM -> type = DiscountType.PREMIUM;
-            case VIP -> type = DiscountType.VIP;
-            default -> throw new CustomException(MEMBERSHIP_NOT_FOUND);
-        }
-
-        return discountRepository.findByGrade(type)
-                .orElseThrow(() -> new CustomException(DISCOUNT_NOT_FOUND));
-    }
-
-    @Transactional
-    public void cancel(Long id) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ORDER_ID_NOT_FOUND));
-        order.updateState(OrderState.CANCELING);
-
-        eventPublisher.publishEvent(new PaymentRefundEvent(order.getPayment().getUid()));
-    }
+		eventPublisher.publishEvent(new PaymentRefundEvent(order.getPayment().getUid()));
+	}
 }

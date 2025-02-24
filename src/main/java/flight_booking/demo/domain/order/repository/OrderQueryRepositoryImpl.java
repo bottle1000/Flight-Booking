@@ -14,14 +14,13 @@ import static flight_booking.demo.domain.order.entity.QOrder.order;
 @Repository
 @RequiredArgsConstructor
 public class OrderQueryRepositoryImpl implements OrderQueryRepository {
-    private final JPAQueryFactory queryFactory;
+	private final JPAQueryFactory queryFactory;
 
+	public Page<Order> findAllByUserId(Pageable pageable, String userId) {
+		JPQLQuery<Order> query = queryFactory
+			.selectFrom(order)
+			.where(order.user.id.eq(userId));
 
-    public Page<Order> findAllByUserId(Pageable pageable, String userId) {
-        JPQLQuery<Order> query = queryFactory
-                .selectFrom(order)
-                .where(order.user.id.eq(userId));
-
-        return QuerydslUtil.fetchPage(query, order, pageable);
-    }
+		return QuerydslUtil.fetchPage(query, order, pageable);
+	}
 }

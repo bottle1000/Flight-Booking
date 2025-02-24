@@ -3,6 +3,8 @@ package flight_booking.demo.domain.discount.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ResponseCode;
 import flight_booking.demo.domain.discount.entity.Discount;
 import flight_booking.demo.domain.discount.entity.DiscountType;
 import flight_booking.demo.utils.QuerydslUtil;
@@ -11,8 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.time.ZonedDateTime;
 
 import static flight_booking.demo.domain.discount.entity.QDiscount.discount;
 
@@ -37,14 +38,22 @@ public class DiscountQueryRepositoryImpl implements DiscountQueryRepository {
     }
 
     @Override
-    public Optional<Discount> findByGrade(DiscountType discountType) {
-        return Optional.ofNullable(
-                queryFactory.selectFrom(discount)
+    public Discount findByGrade(DiscountType discountType) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (discountType == DiscountType.BASIC || discountType == DiscountType.PREMIUM || discountType == DiscountType.VIP) {
+            booleanBuilder.and(discount.discountType.eq(discountType));
+        } else {
+            throw new CustomException(ResponseCode.FILTER_NOT_ALLOWED);
+        }
+        Discount foundDiscount = queryFactory.selectFrom(discount)
                 .where(
-                        discount.discountType.eq(discountType),
-                        discount.endAt.after(LocalDateTime.now())
+                        booleanBuilder,
+                        discount.endAt.after(ZonedDateTime.now())
                 )
-                .fetchOne()
-        );
+                .fetchOne();
+        if (foundDiscount == null) {
+            throw new CustomException(ResponseCode.MEMBERSHIP_DISCOUNT_NOT_FOUND);
+        }
+        return foundDiscount;
     }
 }

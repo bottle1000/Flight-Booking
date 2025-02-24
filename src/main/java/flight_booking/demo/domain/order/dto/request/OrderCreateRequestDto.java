@@ -4,8 +4,9 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record OrderCreateRequestDto (
-        @NotNull
-        Long ticketId,
-        List<Long> discountIds
-){}
+public record OrderCreateRequestDto(
+	@NotNull
+	Long ticketId,
+	List<Long> discountIds
+) {
+}

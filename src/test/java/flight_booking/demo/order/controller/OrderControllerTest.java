@@ -1,27 +1,27 @@
 package flight_booking.demo.order.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import flight_booking.demo.BaseTest;
+import flight_booking.demo.domain.airplane.entity.Airplane;
 import flight_booking.demo.domain.airplane.entity.SeatState;
+import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
 import flight_booking.demo.domain.discount.entity.Discount;
 import flight_booking.demo.domain.discount.entity.DiscountType;
-import flight_booking.demo.domain.flight.entity.Ticket;
-import flight_booking.demo.domain.flight.repository.TicketRepository;
-import flight_booking.demo.domain.order.dto.request.OrderCreateRequestDto;
-import flight_booking.demo.domain.order.dto.request.OrderUpdateRequestDto;
-import flight_booking.demo.domain.order.entity.OrderState;
-import mockuser.WithMockUser;
-import flight_booking.demo.domain.airplane.entity.Airplane;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import flight_booking.demo.domain.airplane.repository.AirplaneRepository;
 import flight_booking.demo.domain.discount.repository.DiscountRepository;
 import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
+import flight_booking.demo.domain.flight.entity.Ticket;
 import flight_booking.demo.domain.flight.repository.FlightPlanRepository;
+import flight_booking.demo.domain.flight.repository.TicketRepository;
+import flight_booking.demo.domain.order.dto.request.OrderCreateRequestDto;
+import flight_booking.demo.domain.order.dto.request.OrderUpdateRequestDto;
 import flight_booking.demo.domain.order.entity.Order;
+import flight_booking.demo.domain.order.entity.OrderState;
 import flight_booking.demo.domain.order.repository.OrderRepository;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.utils.UserUtil;
+import mockuser.WithMockUser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,10 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -76,8 +78,14 @@ class OrderControllerTest extends BaseTest {
                 0,
                 5000,
                 "DISCOUNT BY GRADE",
-                LocalDateTime.of(2020, 1,1,1,1),
-                LocalDateTime.of(2099, 1,1,1,1));
+                ZonedDateTime.of(
+                        2050, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")
+                ),
+                ZonedDateTime.of(
+                        2051, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")
+                )
+
+        );
         discountRepository.save(discount);
 
         User userA = UserUtil.getCurrentUser();
@@ -88,8 +96,8 @@ class OrderControllerTest extends BaseTest {
                 Airport.ICN,
                 Airport.NRT,
                 10000,
-                LocalDateTime.of(2026, 1,1,1,1),
-                LocalDateTime.of(2026, 1,1,1,1),
+                ZonedDateTime.of(2050, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")),
+                ZonedDateTime.of(2051, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")),
                 airplane);
         flightPlanRepository.save(flightPlan);
 
@@ -107,15 +115,22 @@ class OrderControllerTest extends BaseTest {
 
     @Test
     void createOrder() throws Exception {
-        OrderCreateRequestDto requestDto = new OrderCreateRequestDto(ticketForCreate.getId(), List.of(discount.getId()));
+        OrderCreateRequestDto requestDto = new OrderCreateRequestDto(ticketForCreate.getId(),
+                List.of(discount.getId()));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/orders")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderState").value(OrderState.NOT_PAID.toString()))
                 .andExpect(jsonPath("$.ticketId").value(ticketForCreate.getId()))
-                .andExpect(jsonPath("$.price").value(flightPlan.getPrice() - discount.getAmount()));
+                .andExpect(jsonPath("$.price").value(flightPlan.getPrice() - discount.getAmount()))
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        System.out.println("Response: " + responseBody);
+
+
     }
 
     @Test

@@ -1,5 +1,11 @@
 package flight_booking.demo.security.common.filter;
 
+import java.io.IOException;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.jwt.TokenProvider;
@@ -12,75 +18,65 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+	private final TokenProvider tokenProvider;
+	private final RefreshTokenRepository refreshTokenRepository;
+	private final UserRepository userRepository;
 
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+		throws ServletException, IOException {
 
+		System.out.println("TokenAuthenticationFilter 실행됨: " + request.getRequestURI());
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+		// 1️ access_token 가져오기
+		String accessToken = tokenProvider.getAccessToken(request);
+		System.out.println("가져온 accessToken: " + accessToken);
 
-        System.out.println("TokenAuthenticationFilter 실행됨: " + request.getRequestURI());
+		if (accessToken != null && tokenProvider.validToken(accessToken)) {
+			Authentication authentication = tokenProvider.getAuthentication(accessToken);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+		} else {
+			System.out.println(" 유효하지 않은 accessToken, refreshToken 검토 중...");
 
-        // 1️ access_token 가져오기
-        String accessToken = tokenProvider.getAccessToken(request);
-        System.out.println("가져온 accessToken: " + accessToken);
+			// 2️ refresh_token 가져오기
+			String refreshToken = tokenProvider.getRefreshToken(request);
+			System.out.println(" 가져온 refreshToken: " + refreshToken);
 
-        if (accessToken != null && tokenProvider.validToken(accessToken)) {
-               Authentication authentication = tokenProvider.getAuthentication(accessToken);
-               SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
-            System.out.println(" 유효하지 않은 accessToken, refreshToken 검토 중...");
+			if (refreshToken != null) {
+				RefreshToken storedRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
 
-            // 2️ refresh_token 가져오기
-            String refreshToken = tokenProvider.getRefreshToken(request);
-            System.out.println(" 가져온 refreshToken: " + refreshToken);
+				if (storedRefreshToken != null) {
+					System.out.println(" 유효한 refreshToken 확인됨!");
 
-            if (refreshToken != null) {
-                RefreshToken storedRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
+					// 3 유저 정보 가져와서 새로운 access_token 발급
+					User user = userRepository.findById(storedRefreshToken.getUserId()).orElse(null);
 
-                if (storedRefreshToken != null) {
-                    System.out.println(" 유효한 refreshToken 확인됨!");
+					if (user != null) {
+						String newAccessToken = tokenProvider.generateToken(user,
+							OAuth2SuccessHandler.ACCESS_TOKEN_DURATION);
+						System.out.println(" 새로운 accessToken 발급됨!");
 
-                    // 3 유저 정보 가져와서 새로운 access_token 발급
-                    User user = userRepository.findById(storedRefreshToken.getUserId()).orElse(null);
+						// 4️ 새로운 access_token을 쿠키에 저장
+						Cookie accessTokenCookie = new Cookie("access_token", newAccessToken);
+						accessTokenCookie.setPath("/");
+						accessTokenCookie.setHttpOnly(true);
+						accessTokenCookie.setMaxAge((int)OAuth2SuccessHandler.ACCESS_TOKEN_DURATION.toSeconds());
+						response.addCookie(accessTokenCookie);
+						// 5️ 새로운 access_token으로 인증 설정
+						Authentication authentication = tokenProvider.getAuthentication(newAccessToken);
+						SecurityContextHolder.getContext().setAuthentication(authentication);
+					}
+				} else {
+					System.out.println("refreshToken이 없거나 유효하지 않음.");
+				}
+			}
+		}
 
-
-                    if (user != null) {
-                        String newAccessToken = tokenProvider.generateToken(user, OAuth2SuccessHandler.ACCESS_TOKEN_DURATION);
-                        System.out.println(" 새로운 accessToken 발급됨!");
-
-                        // 4️ 새로운 access_token을 쿠키에 저장
-                        Cookie accessTokenCookie = new Cookie("access_token", newAccessToken);
-                        accessTokenCookie.setPath("/");
-                        accessTokenCookie.setHttpOnly(true);
-                        accessTokenCookie.setMaxAge((int) OAuth2SuccessHandler.ACCESS_TOKEN_DURATION.toSeconds());
-                        response.addCookie(accessTokenCookie);
-                        // 5️ 새로운 access_token으로 인증 설정
-                        Authentication authentication = tokenProvider.getAuthentication(newAccessToken);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
-                } else {
-                    System.out.println("refreshToken이 없거나 유효하지 않음.");
-                }
-            }
-        }
-
-        filterChain.doFilter(request, response);
-    }
-
-
-
+		filterChain.doFilter(request, response);
+	}
 
 }

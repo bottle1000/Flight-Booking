@@ -1,15 +1,16 @@
 package flight_booking.demo.domain.flight.dto.response;
 
-import java.time.LocalDateTime;
-import org.springframework.data.domain.Page;
+import java.time.ZonedDateTime;
+
+import flight_booking.demo.domain.flight.entity.Airport;
 import flight_booking.demo.domain.flight.entity.FlightPlan;
 
 public record FlightPlanGetListResponse(
 	Long id,
-	String departure,
-	String arrival,
-	LocalDateTime boardingAt,
-	LocalDateTime landingAt,
+	Airport departure,
+	Airport arrival,
+	ZonedDateTime boardingAt,
+	ZonedDateTime landingAt,
 	int price
 ) {
 
@@ -17,8 +18,8 @@ public record FlightPlanGetListResponse(
 
 		return new FlightPlanGetListResponse(
 			flightPlan.getId(),
-			flightPlan.getDeparture().getCode(),
-			flightPlan.getArrival().getCode(),
+			flightPlan.getDeparture(),
+			flightPlan.getArrival(),
 			flightPlan.getBoardingAt(),
 			flightPlan.getLandingAt(),
 			flightPlan.getPrice()
