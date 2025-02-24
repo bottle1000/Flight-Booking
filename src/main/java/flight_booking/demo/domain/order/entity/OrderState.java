@@ -1,10 +1,10 @@
 package flight_booking.demo.domain.order.entity;
 
-import flight_booking.demo.common.exception.CustomException;
+import static flight_booking.demo.common.exception.ResponseCode.*;
 
 import java.util.Arrays;
 
-import static flight_booking.demo.common.exception.ResponseCode.*;
+import flight_booking.demo.common.exception.CustomException;
 
 public enum OrderState {
 	NONE("NONE"),
