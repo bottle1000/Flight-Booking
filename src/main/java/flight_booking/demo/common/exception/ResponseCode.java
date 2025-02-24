@@ -76,7 +76,8 @@ public enum ResponseCode {
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
-    RESOURCE_CONFLICT(HttpStatus.CONFLICT, "요청한 리소스가 충돌합니다.");
+    RESOURCE_CONFLICT(HttpStatus.CONFLICT, "요청한 리소스가 충돌합니다."),
+    LOCK_CONFLICT(HttpStatus.LOCKED, "Lock 획득을 시도하였으나 실패하였습니다. Thread ID: " + Thread.currentThread().getId());
 
     private final HttpStatus status;
     private final String message;
