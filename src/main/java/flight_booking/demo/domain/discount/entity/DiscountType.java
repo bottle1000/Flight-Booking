@@ -1,7 +1,7 @@
 package flight_booking.demo.domain.discount.entity;
 
 import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 
 public enum DiscountType {
     NONE(0),
@@ -23,6 +23,6 @@ public enum DiscountType {
                 return type;
             }
         }
-        throw new CustomException(ResponseCode.DISCOUNT_TYPE_NOT_FOUND);
+        throw new CustomException(ServerErrorResponseCode.DISCOUNT_TYPE_NOT_FOUND);
     }
 }

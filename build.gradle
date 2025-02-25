@@ -97,6 +97,10 @@ dependencies {
     //sentry
     implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.2.0'
 
+    // Spring-Retry
+    implementation 'org.springframework.retry:spring-retry'
+
+
     //redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
 }
