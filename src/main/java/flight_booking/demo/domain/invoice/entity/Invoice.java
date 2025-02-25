@@ -23,12 +23,8 @@ public class Invoice extends BaseEntity {
     @Column(nullable = false)
     private String paymentKey;
 
-    @Column(columnDefinition = "json")
-    private String meta;
-
     public Invoice(JsonNode jsonNode, Payment payment) {
         this.paymentKey = jsonNode.get("paymentKey").asText();
-        this.meta = String.valueOf(jsonNode);
         this.payment = payment;
     }
 }
