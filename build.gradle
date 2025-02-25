@@ -100,6 +100,9 @@ dependencies {
     // Spring-Retry
     implementation 'org.springframework.retry:spring-retry'
 
+    //S3
+    implementation 'software.amazon.awssdk:s3:2.20.29'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     //redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
