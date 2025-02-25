@@ -42,7 +42,6 @@ public class PaymentApprovalService {
      */
 
     private final ObjectMapper objectMapper;
-    private final InvoiceRepository invoiceRepository;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     @Value("${payment.toss.test_client_api_key}")
@@ -72,19 +71,6 @@ public class PaymentApprovalService {
         } catch (HttpStatusCodeException | ResourceAccessException e) {
             throw new CustomException(ServerErrorResponseCode.NETWORK_ERROR);
         }
-    }
-
-    @Transactional
-    protected void processPayment(Payment payment, JsonNode tossDto) {
-        payment.updatePaymentStatus(PaymentState.COMPLETE);
-        payment.getOrder().updateState(OrderState.PAID);
-        invoiceRepository.save(new Invoice(tossDto, payment));
-    }
-
-    @Transactional
-    protected void cancelPayment(Payment payment) {
-        payment.getOrder().updateState(OrderState.CANCELED);
-        payment.updatePaymentStatus(PaymentState.FAIL);
     }
 
     /**
