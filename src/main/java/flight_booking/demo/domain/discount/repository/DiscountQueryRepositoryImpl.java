@@ -4,7 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.domain.discount.entity.Discount;
 import flight_booking.demo.domain.discount.entity.DiscountType;
 import flight_booking.demo.utils.QuerydslUtil;
@@ -43,7 +43,7 @@ public class DiscountQueryRepositoryImpl implements DiscountQueryRepository {
         if (discountType == DiscountType.BASIC || discountType == DiscountType.PREMIUM || discountType == DiscountType.VIP) {
             booleanBuilder.and(discount.discountType.eq(discountType));
         } else {
-            throw new CustomException(ResponseCode.FILTER_NOT_ALLOWED);
+            throw new CustomException(ServerErrorResponseCode.FILTER_NOT_ALLOWED);
         }
         Discount foundDiscount = queryFactory.selectFrom(discount)
                 .where(
@@ -52,7 +52,7 @@ public class DiscountQueryRepositoryImpl implements DiscountQueryRepository {
                 )
                 .fetchOne();
         if (foundDiscount == null) {
-            throw new CustomException(ResponseCode.MEMBERSHIP_DISCOUNT_NOT_FOUND);
+            throw new CustomException(ServerErrorResponseCode.MEMBERSHIP_DISCOUNT_NOT_FOUND);
         }
         return foundDiscount;
     }

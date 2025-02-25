@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 import org.springframework.stereotype.Service;
 
 import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.domain.discount.dto.request.DiscountCreateRequestDto;
 import flight_booking.demo.domain.discount.dto.request.DiscountEndAtUpdateRequestDto;
 import flight_booking.demo.domain.discount.dto.response.DiscountResponseDto;
@@ -26,20 +26,20 @@ public class DiscountService {
 	// 생성시 requestDto 검증 -> 예외처리
 	private static void validParams(int rate, int amount, ZonedDateTime startAt, ZonedDateTime endAt) {
 		if (rate < 0 || rate > 100) {
-			throw new CustomException(ResponseCode.RATE_BAD_REQUEST);
+			throw new CustomException(ServerErrorResponseCode.RATE_BAD_REQUEST);
 		}
 		if (amount < 0) {
-			throw new CustomException(ResponseCode.AMOUNT_BAD_REQUEST);
+			throw new CustomException(ServerErrorResponseCode.AMOUNT_BAD_REQUEST);
 		}
 		if (startAt.isEqual(endAt) || startAt.isAfter(endAt)) {
-			throw new CustomException(ResponseCode.INVALID_END_AT);
+			throw new CustomException(ServerErrorResponseCode.INVALID_END_AT);
 		}
 	}
 
 	// 종료일 수정 시 requestDto 검증 -> 예외처리
 	private static void validDate(ZonedDateTime startAt, ZonedDateTime endAt) {
 		if (startAt.isEqual(endAt) || startAt.isAfter(endAt)) {
-			throw new CustomException(ResponseCode.INVALID_END_AT);
+			throw new CustomException(ServerErrorResponseCode.INVALID_END_AT);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class DiscountService {
 
 	public DiscountResponseDto updateEndAt(Long id, DiscountEndAtUpdateRequestDto request) {
 		Discount foundEvent = discountRepository.findById(id)
-			.orElseThrow(() -> new CustomException(ResponseCode.DISCOUNT_NOT_FOUND));
+			.orElseThrow(() -> new CustomException(ServerErrorResponseCode.DISCOUNT_NOT_FOUND));
 		validDate(foundEvent.getStartAt(), request.endAt());
 		foundEvent.closeAt(request.endAt());
 		Discount savedEvent = discountRepository.save(foundEvent);

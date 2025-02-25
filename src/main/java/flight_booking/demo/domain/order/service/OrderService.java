@@ -1,6 +1,6 @@
 package flight_booking.demo.domain.order.service;
 
-import static flight_booking.demo.common.exception.ResponseCode.*;
+import static flight_booking.demo.common.exception.ServerErrorResponseCode.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
