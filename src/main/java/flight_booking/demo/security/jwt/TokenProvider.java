@@ -1,10 +1,13 @@
 package flight_booking.demo.security.jwt;
 
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -41,6 +44,8 @@ public class TokenProvider {
 	//페이로드?
 	private String makeToken(Date expiry, User user) {
 		Date now = new Date();
+		Key secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
+
 		return Jwts.builder()
 			.setHeaderParam(Header.TYPE, Header.JWT_TYPE) //헤더 typ : JWT
 			//내용 iss: ajufresh@gamil.com(propertise 파일에서 설정한 값)
@@ -54,7 +59,7 @@ public class TokenProvider {
 			.claim("role", user.getRole())
 
 			// 서명 : 비밀값과 함께 해시값을 HS256 방식으로 암호화
-			.signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
+			.signWith(secretKey, SignatureAlgorithm.HS256)
 			.compact();
 	}
 
@@ -85,7 +90,7 @@ public class TokenProvider {
 			Claims claims = getClaims(token); // JWT 토큰에서 Claims(페이로드) 추출
 			String id = claims.get("id", String.class);
 			User findUser = userRepository.findById(id)
-				.orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
+				.orElseThrow(() -> new CustomException(ServerErrorResponseCode.USER_NOT_FOUND));
 			//  사용자 역할(Role) 설정
 			Set<SimpleGrantedAuthority> authorities = Collections.singleton(
 				new SimpleGrantedAuthority("ROLE_" + findUser.getRole().name())

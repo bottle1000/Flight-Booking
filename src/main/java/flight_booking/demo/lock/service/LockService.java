@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.function.Supplier;
 
-import static flight_booking.demo.common.exception.ResponseCode.LOCK_CONFLICT;
+import static flight_booking.demo.common.exception.ServerErrorResponseCode.LOCK_CONFLICT;
 
 @Service
 @RequiredArgsConstructor

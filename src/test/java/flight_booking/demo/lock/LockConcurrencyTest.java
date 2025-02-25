@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.*;
 
-import static flight_booking.demo.common.exception.ResponseCode.LOCK_CONFLICT;
+import static flight_booking.demo.common.exception.ServerErrorResponseCode.LOCK_CONFLICT;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -42,7 +42,7 @@ class LockConcurrencyTest {
                         return null;
                     });
                 } catch (CustomException e) {
-                    assertEquals(LOCK_CONFLICT, e.getResponseCode());
+                    assertEquals(LOCK_CONFLICT, e.getServerErrorResponseCode());
                 } finally {
                     latch.countDown();
                 }
