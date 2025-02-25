@@ -20,6 +20,8 @@ jobs:
       TOSS_CLIENT_KEY: ${{ secrets.TOSS_CLIENT_KEY }}
       TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
       SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      SPRING_DATA_REDIS_HOST: localhost
+      SPRING_DATA_REDIS_PORT: 6379
 
     services:
       mysql:
@@ -30,6 +32,11 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping -h localhost" --health-interval=10s --health-timeout=5s --health-retries=5
+
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
 
     steps:
       - uses: actions/checkout@v3
@@ -62,10 +69,10 @@ jobs:
 
           for var in "${VARS[@]}"; do
             if [[ -z "${!var}" ]]; then
-              echo "‼️‼️ ERROR: Cannot found [ $var ] ‼️‼️"
+              echo "ERROR: Cannot found [ $var ]"
               ERROR_FOUND=1
             else
-              echo "✅✅ Checked success [ $var ] ✅✅"
+              echo "Checked success [ $var ]"
             fi
           done
 
@@ -80,6 +87,8 @@ jobs:
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: rootpassword
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SPRING_DATA_REDIS_HOST: localhost
+          SPRING_DATA_REDIS_PORT: 6379
 
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.2
