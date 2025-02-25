@@ -103,6 +103,10 @@ dependencies {
 
     //redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
+
+    //Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 // QueryDSL 설정
