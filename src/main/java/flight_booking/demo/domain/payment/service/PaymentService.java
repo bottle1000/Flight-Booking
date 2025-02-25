@@ -26,6 +26,7 @@ import static flight_booking.demo.common.exception.ServerErrorResponseCode.INTER
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final PaymentStateService paymentStateService;
     private final PaymentApprovalService paymentApprovalService;
     private final InvoiceRepository invoiceRepository;
 
@@ -50,14 +51,14 @@ public class PaymentService {
 
         try {
             JsonNode approvedPayment = paymentApprovalService.approvePayment(paymentKey, orderId, amount);
-            paymentApprovalService.processPayment(payment, approvedPayment);
+            paymentStateService.processPayment(payment, approvedPayment);
 
             return ResponseEntity.ok(approvedPayment);
         } catch (ClientPaymentException | PaymentException e) {
-            paymentApprovalService.cancelPayment(payment);
+            paymentStateService.cancelPayment(payment);
             throw e;
         } catch (Exception e) {
-            paymentApprovalService.cancelPayment(payment);
+            paymentStateService.cancelPayment(payment);
             throw new CustomException(INTERNAL_SERVER_ERROR);
         }
     }
