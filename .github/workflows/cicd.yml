@@ -10,6 +10,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      TOSS_CLIENT_KEY: ${{ secrets.TOSS_CLIENT_KEY }}
+      TOSS_SECRET_KEY: ${{ secrets.TOSS_SECRET_KEY }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+      SPRING_DATA_REDIS_HOST: localhost
+      SPRING_DATA_REDIS_PORT: 6379
+
     services:
       mysql:
         image: mysql:8.0
@@ -19,6 +32,11 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping -h localhost" --health-interval=10s --health-timeout=5s --health-retries=5
+
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
 
     steps:
       - uses: actions/checkout@v3
@@ -44,13 +62,33 @@ jobs:
             sleep 1
           done
 
+      - name: Check for environment variables
+        run: |
+          VARS=("GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET" "JWT_ISSUER" "JWT_SECRET_KEY" "AWS_ACCESS_KEY" "AWS_SECRET_KEY" "TOSS_CLIENT_KEY" "TOSS_SECRET_KEY" "SENTRY_DSN")
+          ERROR_FOUND=0
+
+          for var in "${VARS[@]}"; do
+            if [[ -z "${!var}" ]]; then
+              echo "ERROR: Cannot found [ $var ]"
+              ERROR_FOUND=1
+            else
+              echo "Checked success [ $var ]"
+            fi
+          done
+
+          if [[ $ERROR_FOUND -eq 1 ]]; then
+            exit 1
+          fi
+
       - name: Build with Gradle (Using CI Profile)
-        run: ./gradlew clean build -Dspring.profiles.active=ci
+        run: ./gradlew clean build
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/flight_booking
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: rootpassword
-          SENTRY_AUTH_TOKEN: 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
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SPRING_DATA_REDIS_HOST: localhost
+          SPRING_DATA_REDIS_PORT: 6379
 
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.2
@@ -72,3 +110,5 @@ jobs:
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
           deployment_package: ./build/libs/${{env.artifact}}
+
+

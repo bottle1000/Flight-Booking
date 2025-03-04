@@ -1,6 +1,6 @@
 package flight_booking.demo.domain.order.entity;
 
-import static flight_booking.demo.common.exception.ResponseCode.*;
+import static flight_booking.demo.common.exception.ServerErrorResponseCode.*;
 
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.common.exception.CustomException;

@@ -73,7 +73,6 @@ dependencies {
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     //JSON-Simple
@@ -97,6 +96,20 @@ dependencies {
 
     //sentry
     implementation 'io.sentry:sentry-spring-boot-starter-jakarta:8.2.0'
+
+    // Spring-Retry
+    implementation 'org.springframework.retry:spring-retry'
+
+    //S3
+    implementation 'software.amazon.awssdk:s3:2.20.29'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    //redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.27.0'
+
+    //Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 
     //opencsv (CSV 파일 생성)
     implementation 'com.opencsv:opencsv:5.6'

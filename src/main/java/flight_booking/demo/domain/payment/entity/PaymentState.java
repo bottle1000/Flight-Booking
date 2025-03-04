@@ -1,9 +1,9 @@
 package flight_booking.demo.domain.payment.entity;
 
-import java.util.Arrays;
-
 import flight_booking.demo.common.exception.CustomException;
-import flight_booking.demo.common.exception.ResponseCode;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
+
+import java.util.Arrays;
 
 public enum PaymentState {
 	NONE("NONE"),
@@ -18,10 +18,10 @@ public enum PaymentState {
 		this.code = value;
 	}
 
-	public static PaymentState from(String code) {
-		return Arrays.stream(PaymentState.values())
-			.filter(o -> o.toString().equalsIgnoreCase(code))
-			.findFirst()
-			.orElseThrow(() -> new CustomException(ResponseCode.INVALID_PAYMENT_STATE));
-	}
+    public static PaymentState from(String code) {
+        return Arrays.stream(PaymentState.values())
+                .filter(o -> o.toString().equalsIgnoreCase(code))
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ServerErrorResponseCode.INVALID_REQUEST));
+    }
 }

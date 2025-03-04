@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import lombok.Getter;
 
 @Getter
-public enum ResponseCode {
+public enum ServerErrorResponseCode {
 
     //  사용자 관련
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
@@ -40,18 +40,6 @@ public enum ResponseCode {
     OAUTH2_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "OAuth2.0 액세스 토큰이 만료되었습니다."),
     OAUTH2_REGISTRATION_REQUIRED(HttpStatus.BAD_REQUEST, "OAuth2.0 회원가입이 필요합니다."),
 
-    //  Toss 결제 관련
-    PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 처리 중 오류가 발생했습니다."),
-    PAYMENT_CANCELED(HttpStatus.BAD_REQUEST, "사용자가 결제를 취소했습니다."),
-    INVALID_PAYMENT_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 결제 요청입니다."),
-    PAYMENT_VERIFICATION_FAILED(HttpStatus.PAYMENT_REQUIRED, "결제 검증에 실패했습니다."),
-    REFUND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "환불 처리 중 오류가 발생했습니다."),
-    REFUND_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "이 결제는 환불이 불가능합니다."),
-    PAYMENT_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "이미 처리된 결제입니다."),
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
-    PAYMENT_AMOUNT_MISMATCH(HttpStatus.PAYMENT_REQUIRED, "결제 금액 불일치: 요청된 금액과 저장된 금액이 다릅니다."),
-    INVALID_PAYMENT_STATE(HttpStatus.BAD_REQUEST, "유효하지 않은 결제 상태 요청입니다"),
-
     // 할인 정보 관련
     DISCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 할인 정보를 찾을 수 없습니다."),
     DISCOUNT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "지원하지 않는 할인 유형입니다."),
@@ -76,13 +64,18 @@ public enum ResponseCode {
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근이 거부되었습니다."),
-    RESOURCE_CONFLICT(HttpStatus.CONFLICT, "요청한 리소스가 충돌합니다.");
+    RESOURCE_CONFLICT(HttpStatus.CONFLICT, "요청한 리소스가 충돌합니다."),
+    NETWORK_ERROR(HttpStatus.REQUEST_TIMEOUT, "일시적인 네트워크 오류가 발생했습니다."),
+    INVALID_ERROR_TYPE(HttpStatus.NOT_ACCEPTABLE,"해당 오류는 오류 분류가 잘못되어있습니다."),
+    LOCK_CONFLICT(HttpStatus.LOCKED, "Lock 획득을 시도하였으나 실패하였습니다. Thread ID: " + Thread.currentThread().getId());
 
     private final HttpStatus status;
     private final String message;
+    private final ErrorType type;
 
-    ResponseCode(HttpStatus status, String message) {
+    ServerErrorResponseCode(HttpStatus status, String message) {
         this.status = status;
         this.message = message;
+        this.type = ErrorType.SERVER_ERROR;
     }
 }
