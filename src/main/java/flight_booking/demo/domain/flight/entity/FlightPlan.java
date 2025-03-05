@@ -3,6 +3,8 @@ package flight_booking.demo.domain.flight.entity;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
+import com.querydsl.core.annotations.QueryProjection;
+
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.domain.airplane.entity.Airplane;
 import jakarta.persistence.Column;
@@ -65,6 +67,7 @@ public class FlightPlan extends BaseEntity {
 	}
 
 	// Querydsl 프로젝션용 생성자 추가
+	@QueryProjection
 	public FlightPlan(Long id, Airport departure, Airport arrival,
 		ZonedDateTime boardingAt, ZonedDateTime landingAt,
 		Integer price) {
@@ -74,8 +77,8 @@ public class FlightPlan extends BaseEntity {
 		this.boardingAt = boardingAt;
 		this.landingAt = landingAt;
 		this.price = price;
-		// 다른 필드는 null 또는 기본값으로 유지됨
 	}
+
 
 	public static FlightPlan create(String name, Airport departure, Airport arrival, int price,
 		ZonedDateTime boardingAt,
