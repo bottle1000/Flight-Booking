@@ -3,7 +3,6 @@ package flight_booking.demo.domain.order.service;
 import static flight_booking.demo.common.exception.ServerErrorResponseCode.*;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -37,6 +36,7 @@ public class OrderService {
 	private final DiscountRepository discountRepository;
 	private final TicketRepository ticketRepository;
 	private final ApplicationEventPublisher eventPublisher;
+	private final OrderTransactionalService transactionalService;
 
 	public OrderResponseDto find(long id) {
 		return OrderResponseDto.from(
@@ -51,22 +51,19 @@ public class OrderService {
 		return Page.from(page.map(OrderResponseDto::from));
 	}
 
-	@Transactional
 	public OrderResponseDto create(OrderCreateRequestDto dto) {
 		User user = UserUtil.getCurrentUser();
 
 		Ticket ticket = ticketRepository.findById(dto.ticketId())
 			.orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
-		if (ticket.getState() == SeatState.UNAVAILABLE)
+
+		if(ticket.getState() != SeatState.IDLE){
 			throw new CustomException(UNAVAILABLE_SEAT);
+		}
 
 		FlightPlan flightPlan = ticket.getFlightPlan();
 
-		Set<Discount> discounts = dto.discountIds().stream()
-			.map(discountRepository::findById)
-			.map(discount -> discount.orElseThrow(() -> new CustomException(DISCOUNT_NOT_FOUND)))
-			.collect(Collectors.toSet());
-
+		Set<Discount> discounts = discountRepository.findAllByIds(dto.discountIds());
 		discounts.add(getUserMembershipDiscount(user));
 
 		Order order = new Order(
@@ -75,9 +72,12 @@ public class OrderService {
 			calculatePrice(flightPlan.getPrice(), discounts)
 		);
 
-		discounts.forEach(discount -> order.getPayment().addDiscount(discount));
+		for (Discount discount : discounts) {
+			order.getPayment().addDiscount(discount);
+		}
 
-		return OrderResponseDto.from(orderRepository.save(order));
+		order = transactionalService.checkAndSaveOrder(order);
+		return OrderResponseDto.from(order);
 	}
 
 	//좌석변경

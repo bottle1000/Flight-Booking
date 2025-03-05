@@ -15,31 +15,29 @@ import java.util.concurrent.TimeUnit;
 public class LockRepository {
 
     private final RedissonClient redissonClient;
-
-    private String generateLockKey(int key) {
-        return "lock:" + key;
-    }
-
-    public Boolean lock(int key) {
-        String lockKey = generateLockKey(key);
-        RLock lock = redissonClient.getLock(lockKey);
+    public Boolean lock(String key, int retry, int timeout) {
+        RLock lock = redissonClient.getLock(key);
 
         try {
-            log.info("TRY to get LOCK: {}", Thread.currentThread().getId());
-            return lock.tryLock(3, 5, TimeUnit.SECONDS);
+            log.info("try to acquire LOCK: {}", Thread.currentThread().getId());
+            System.out.println("try to acquire LOCK: " + Thread.currentThread().getId());
+            if(lock.tryLock(retry, timeout, TimeUnit.SECONDS)){
+                log.info("lock acquired by Thread: {}", Thread.currentThread().getId());
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             Thread.currentThread().interrupt();
             return false;
         }
     }
 
-    public Boolean unlock(int key) {
-        String lockKey = generateLockKey(key);
-        RLock lock = redissonClient.getLock(lockKey);
+    public Boolean unlock(String key) {
+        RLock lock = redissonClient.getLock(key);
 
         try {
             if (lock.isLocked() && lock.isHeldByCurrentThread()) {
-                log.info("UNLOCK this lock: {}", Thread.currentThread().getId());
+                log.info("unlock: {}", Thread.currentThread().getId());
                 lock.unlock();
                 return true;
             }
