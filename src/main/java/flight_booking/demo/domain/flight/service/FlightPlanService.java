@@ -4,6 +4,8 @@ import static flight_booking.demo.common.exception.ServerErrorResponseCode.*;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import flight_booking.demo.utils.Page;
 import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -62,10 +65,15 @@ public class FlightPlanService {
 		return FlightPlanCreateResponse.from(savedFlightPlan);
 	}
 
+	@Cacheable(
+			cacheManager = "redisCacheManager",
+			value = "flight-plan"
+	)
 	public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
 		PageQuery pageQuery
 	) {
+		log.info("시작시작시작");
 		org.springframework.data.domain.Page<FlightPlan> page = flightPlanRepository.findByFilters(
 			flightPlanGetRequest.departure(),
 			flightPlanGetRequest.arrival(),

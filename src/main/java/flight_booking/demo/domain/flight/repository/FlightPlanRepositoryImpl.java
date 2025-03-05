@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -27,20 +28,27 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 
 	@Override
 	public Page<FlightPlan> findByFilters(
-		Airport departure,
-		Airport arrival,
-		ZonedDateTime boardingAt,
-		ZonedDateTime landingAt,
-		Pageable pageable) {
+			Airport departure,
+			Airport arrival,
+			ZonedDateTime boardingAt,
+			ZonedDateTime landingAt,
+			Pageable pageable) {
 
 		BooleanExpression conditions = departureEq(departure)
-			.and(arrivalEq(arrival))
-			.and(boardingAtGoe(boardingAt))
-			.and(landingAtLoe(landingAt));
+				.and(arrivalEq(arrival))
+				.and(boardingAtGoe(boardingAt))
+				.and(landingAtLoe(landingAt));
 
 		JPQLQuery<FlightPlan> query = queryFactory
-			.selectFrom(flightPlan)
-			.where(conditions);
+				.select(Projections.constructor(FlightPlan.class,
+						flightPlan.id,
+						flightPlan.departure,
+						flightPlan.arrival,
+						flightPlan.boardingAt,
+						flightPlan.landingAt,
+						flightPlan.price))
+				.from(flightPlan)
+				.where(conditions);
 
 		return QuerydslUtil.fetchPage(query, flightPlan, pageable);
 	}
@@ -49,11 +57,11 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 	public List<Ticket> findTicketInfoByFlightPlanId(Long flightPlanId) {
 
 		return queryFactory
-			.selectFrom(ticket)
-			.leftJoin(ticket.flightPlan).fetchJoin()
-			.leftJoin(ticket.flightPlan.airplane).fetchJoin()
-			.where(ticket.flightPlan.id.eq(flightPlanId))
-			.fetch();
+				.selectFrom(ticket)
+				.leftJoin(ticket.flightPlan).fetchJoin()
+				.leftJoin(ticket.flightPlan.airplane).fetchJoin()
+				.where(ticket.flightPlan.id.eq(flightPlanId))
+				.fetch();
 	}
 
 	private BooleanExpression departureEq(Airport departure) {
