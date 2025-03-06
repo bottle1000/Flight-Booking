@@ -67,11 +67,13 @@ public class TokenProvider {
 	public boolean validToken(String token) {
 		System.out.println("validToken으로 전달된 토큰: " + token);
 		try {
-			Jwts.parser()
-				.setSigningKey(jwtProperties.getSecretKey())
-				.parseClaimsJws(token);
+			Key secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
+			Jwts.parserBuilder()
+					.setSigningKey(secretKey)
+					.build()
+					.parseClaimsJws(token);
 			return true;
-		} catch (Exception e) {//복호화 과정에서 에러가 나면 유효하지 않은 토큰
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -107,10 +109,12 @@ public class TokenProvider {
 	}
 
 	public Claims getClaims(String token) {
-		return Jwts.parser()// 클래임 조회
-			.setSigningKey(jwtProperties.getSecretKey())
-			.parseClaimsJws(token)
-			.getBody();
+		Key secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
+		return Jwts.parserBuilder()
+				.setSigningKey(secretKey)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
 	}
 
 	public String getAccessToken(HttpServletRequest request) {

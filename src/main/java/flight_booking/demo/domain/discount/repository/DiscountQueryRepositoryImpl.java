@@ -14,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static flight_booking.demo.domain.discount.entity.QDiscount.discount;
 
@@ -35,6 +38,14 @@ public class DiscountQueryRepositoryImpl implements DiscountQueryRepository {
                 .where(booleanBuilder);
 
         return QuerydslUtil.fetchPage(query, discount, pageable);
+    }
+
+    @Override
+    public Set<Discount> findAllByIds(List<Long> ids) {
+        return new HashSet<>(queryFactory
+                .selectFrom(discount)
+                .where(discount.id.in(ids))
+                .fetch());
     }
 
     @Override

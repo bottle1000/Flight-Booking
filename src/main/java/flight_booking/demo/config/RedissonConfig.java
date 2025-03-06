@@ -22,10 +22,6 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer()
-                .setTimeout(6000)
-                .setConnectTimeout(10000)
-                .setRetryAttempts(4)
-                .setRetryInterval(1500)
                 .setAddress(REDISSON_HOST_PREFIX + redisHost + ":" + redisPort);
         return Redisson.create(config);
     }
