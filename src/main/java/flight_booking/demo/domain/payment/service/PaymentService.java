@@ -9,15 +9,19 @@ import flight_booking.demo.common.exception.payment.PaymentException;
 import flight_booking.demo.common.exception.payment.client.ClientPaymentException;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
 import flight_booking.demo.domain.order.entity.OrderState;
+import flight_booking.demo.domain.payment.dto.PaymentQueryDto;
 import flight_booking.demo.domain.payment.dto.PaymentRes;
 import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.util.List;
 
 import static flight_booking.demo.common.exception.ServerErrorResponseCode.INTERNAL_SERVER_ERROR;
 
@@ -97,4 +101,11 @@ public class PaymentService {
         payment.updatePaymentStatus(PaymentState.CANCEL);
         payment.getOrder().updateState(OrderState.CANCELED);
     }
+
+    @Scheduled(fixedRate = 600000)
+    public void paymentTimeoutScheduler() {
+        List<PaymentQueryDto> expiredPayments = paymentStateService.findExpiredPayments();
+        paymentStateService.cancelTimeOutPayments(expiredPayments);
+    }
+
 }
