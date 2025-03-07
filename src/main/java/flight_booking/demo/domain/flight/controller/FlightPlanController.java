@@ -2,8 +2,6 @@ package flight_booking.demo.domain.flight.controller;
 
 import java.util.List;
 
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
