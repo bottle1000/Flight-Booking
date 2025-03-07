@@ -114,11 +114,11 @@ class LockTest extends BaseTest {
     static class LockTestService {
         private int processCount = 0;
 
-        @Lock(key = "#ticketId", retry="1", timeout ="3")
+        @Lock(key = "#ticketId")
         public void processWithLock(Long ticketId) {
             processCount++;
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10000);
             } catch (InterruptedException ignored) {}
         }
 
