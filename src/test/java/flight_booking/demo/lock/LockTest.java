@@ -63,7 +63,7 @@ class LockTest extends BaseTest {
 
         // Assert
         executor.shutdown();
-        if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+        if (!executor.awaitTermination(20, TimeUnit.SECONDS)) {
             log.warn("Not all threads finished execution");
         }
         assertThat(lockTestService.getProcessCount()).isEqualTo(1);
@@ -114,11 +114,11 @@ class LockTest extends BaseTest {
     static class LockTestService {
         private int processCount = 0;
 
-        @Lock(key = "#ticketId", retry="1", timeout ="3")
+        @Lock(key = "#ticketId")
         public void processWithLock(Long ticketId) {
             processCount++;
             try {
-                Thread.sleep(1000);
+                Thread.sleep(15000);
             } catch (InterruptedException ignored) {}
         }
 

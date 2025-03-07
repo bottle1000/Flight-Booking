@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static flight_booking.demo.common.exception.ServerErrorResponseCode.UNAVAILABLE_SEAT;
 
 @Service
@@ -19,14 +21,22 @@ public class OrderTransactionalService {
     private final TicketRepository ticketRepository;
     private final OrderRepository orderRepository;
 
-    @Lock(key = "#order.getTicket().getId()")
+    @Lock(key = "#order.getOrderName()", prefix = "order_create_lock:")
     @Transactional
     public Order checkAndSaveOrder(Order order) {
-        Ticket ticket = ticketRepository.findTicketByNativeQuery(order.getTicket().getId());
-        if (ticket.getState() != SeatState.IDLE) {
+        var ids = order.getTickets().stream().map(orderTicket -> orderTicket.getTicket().getId()).toList();
+        List<Ticket> tickets = ticketRepository.findAllTicketByNativeQuery(ids);
+
+        List<Ticket> unavailableTickets = tickets.stream().filter(ticket -> ticket.getState() != SeatState.IDLE).toList();
+        if (!unavailableTickets.isEmpty())
             throw new CustomException(UNAVAILABLE_SEAT);
-        }
-        ticket.updateState(SeatState.BOOKED);
+
+        tickets.forEach(ticket -> ticket.updateState(SeatState.BOOKED));
         return orderRepository.save(order);
+    }
+
+    @Lock(key = "#ticket.getId()", prefix = "booking_ticket_lock:")
+    public Ticket checkAndSaveTicket(Ticket ticket) {
+
     }
 }

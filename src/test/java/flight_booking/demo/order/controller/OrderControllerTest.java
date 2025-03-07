@@ -103,12 +103,12 @@ class OrderControllerTest extends BaseTest {
 
         ticket = new Ticket("1A", flightPlan);
         ticketRepository.save(ticket);
-        ticketForCreate = new Ticket("2A", flightPlan);
+        ticketForCreate = new Ticket("1B", flightPlan);
         ticketRepository.save(ticketForCreate);
-        ticketForChange = new Ticket("3A", flightPlan);
+        ticketForChange = new Ticket("2B", flightPlan);
         ticketRepository.save(ticketForChange);
 
-        order = new Order(UserUtil.getCurrentUser(), ticket, flightPlan.getPrice());
+        order = new Order(UserUtil.getCurrentUser(), List.of(ticket), flightPlan.getPrice());
         ticket.updateState(SeatState.BOOKED);
         orderRepository.save(order);
     }
@@ -116,7 +116,7 @@ class OrderControllerTest extends BaseTest {
     @Test
     void createOrder() throws Exception {
         OrderCreateRequestDto requestDto = new OrderCreateRequestDto(
-                ticketForCreate.getId(),
+                List.of(ticketForCreate.getId()),
                 List.of(discount.getId()));
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/orders")
@@ -124,7 +124,7 @@ class OrderControllerTest extends BaseTest {
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderState").value(OrderState.NOT_PAID.toString()))
-                .andExpect(jsonPath("$.ticketId").value(ticketForCreate.getId()))
+                .andExpect(jsonPath("$.ticketIds[0]").value(ticketForCreate.getId()))
                 .andExpect(jsonPath("$.price").value(flightPlan.getPrice() - discount.getAmount()))
                 .andReturn();
 
@@ -138,20 +138,20 @@ class OrderControllerTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(order.getId()))
                 .andExpect(jsonPath("$.orderState").value(order.getState().toString()))
-                .andExpect(jsonPath("$.ticketId").value(order.getTicket().getId()))
+                .andExpect(jsonPath("$.ticketIds[0]").value(ticket.getId()))
                 .andExpect(jsonPath("$.price").value(order.getPrice()));
     }
 
     @Test
     void updateOrder() throws Exception {
-        OrderUpdateRequestDto requestDto = new OrderUpdateRequestDto(ticketForChange.getId());
+        OrderUpdateRequestDto requestDto = new OrderUpdateRequestDto(List.of(ticketForChange.getId()));
         mockMvc.perform(MockMvcRequestBuilders.put("/orders/" + order.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(order.getId()))
                 .andExpect(jsonPath("$.orderState").value(order.getState().toString()))
-                .andExpect(jsonPath("$.ticketId").value(ticketForChange.getId()))
+                .andExpect(jsonPath("$.ticketIds[0]").value(ticketForChange.getId()))
                 .andExpect(jsonPath("$.price").value(order.getPrice()));
     }
 
