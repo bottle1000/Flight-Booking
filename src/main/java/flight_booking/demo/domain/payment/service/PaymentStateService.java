@@ -58,7 +58,7 @@ public class PaymentStateService {
 
 
     @Transactional
-    @Lock(key = "#payment.getOrder().getId()", prefix = "paymentLock:")
+    @Lock(key = "#payment.getUid()", prefix = "payment_lock:")
     public void cancelTimeOutPayments(Payment payment) {
         Payment paymentInDB = paymentRepository.findById(payment.getId())
                 .orElseThrow();

@@ -41,7 +41,7 @@ public class PaymentService {
      * 만약 값이 다르다면 결제를 취소하고 구매자에게 알려주세요.
      */
     @Transactional
-    @Lock(key = "#orderId", prefix = "paymentLock:")
+    @Lock(key = "#orderId", prefix = "payment_lock:")
     public void verifyRequest(String orderId, int amount) {
         Payment payment = paymentRepository.findByUid(orderId)
                 .orElseThrow(() -> new CustomException(ServerErrorResponseCode.ORDER_UUID_NOT_FOUND));
