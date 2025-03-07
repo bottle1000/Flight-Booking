@@ -108,7 +108,7 @@ class OrderControllerTest extends BaseTest {
         ticketRepository.save(ticket);
         secondTicket = new Ticket("3C", flightPlan);
         ticketRepository.save(secondTicket);
-        ticketForCreate = new Ticket("1B", flightPlan);
+        ticketForCreate = new Ticket("6A", flightPlan);
         ticketRepository.save(ticketForCreate);
         ticketForChange = new Ticket("2B", flightPlan);
         ticketRepository.save(ticketForChange);
@@ -159,7 +159,6 @@ class OrderControllerTest extends BaseTest {
                 .andExpect(jsonPath("$.ticketIds[0]").value(ticketForChange.getId()))
                 .andExpect(jsonPath("$.price").value(order.getPrice()));
     }
-
 
     @Test
     void containerTestWorking() {

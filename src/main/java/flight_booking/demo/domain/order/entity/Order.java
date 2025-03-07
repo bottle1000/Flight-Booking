@@ -112,7 +112,6 @@ public class Order extends BaseEntity {
 			throw new CustomException(UNAVAILABLE_SEAT);
 		}
 
-		ticket.updateState(SeatState.BOOKED);
 		tickets.add(new OrderTicket(this, ticket));
 	}
 
