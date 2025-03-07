@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Lock {
-    String timeout() default "10";
-    String retry() default "5";
+    String timeout() default "5";
+    String retry() default "3";
     String prefix() default "default_lock:";
-    String key() default "dto.ticketId";
+    String key();
 }
