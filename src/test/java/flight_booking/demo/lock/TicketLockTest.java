@@ -91,7 +91,7 @@ public class TicketLockTest extends BaseTest {
             RLock lock = redissonClient.getLock("ticket_lock:3");
             lock.lock();
             try {
-                Thread.sleep(30000);
+                Thread.sleep(20000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } finally {
@@ -105,9 +105,10 @@ public class TicketLockTest extends BaseTest {
         Object proceedResult = new Object();
         Mockito.when(joinPoint.proceed()).thenReturn(proceedResult);
 
-        // 메인 스레드에서 TicketLockAspect를 호출하면,
-        // "ticket_lock:1"에 대해 이미 락이 선점되어 있으므로 CustomException이 발생해야 함
+        // 메인 스레드에서 TicketLockAspect 를 호출하면,
+        // "ticket_lock:1"에 대해 이미 락이 선점되어 있으므로 CustomException 이 발생해야 함
         CustomException lockException = assertThrows(CustomException.class, () -> ticketLockAspect.applyLock(joinPoint));
+        assertTrue(redissonClient.getLock("ticket_lock:3").isLocked());
         assertEquals(ServerErrorResponseCode.LOCK_CONFLICT, lockException.getServerErrorResponseCode());
         // Executor 정리
         executor.shutdownNow();

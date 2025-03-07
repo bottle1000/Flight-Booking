@@ -13,6 +13,8 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @Aspect
@@ -31,20 +33,24 @@ public class TicketLockAspect {
                 .map(argument -> (Order) argument)
                 .orElseThrow(IllegalArgumentException::new);
 
+        Set<String> locked = new HashSet<>();
         try {
             order.getTicketIds().forEach(ticketId -> {
-                if (!lockRepository.lock(prefix + ticketId, 0, 5)) {
+                String key = prefix + ticketId;
+
+                if (!lockRepository.lock(key, 0, 5)) {
                     throw new CustomException(ServerErrorResponseCode.LOCK_CONFLICT);
                 }
+                locked.add(key);
                 log.info("Ticket Lock for [ ticket_lock:{} ]", ticketId);
             });
             
             log.info("Process JoinPoint");
             return joinPoint.proceed();
         } finally {
-            order.getTicketIds().forEach(ticketId -> {
-                lockRepository.unlock(prefix + ticketId);
-                log.info("Ticket Unlock for [ ticket_lock:{} ]", ticketId);
+            locked.forEach(key -> {
+                lockRepository.unlock(key);
+                log.info("Ticket Unlock for [ {} ]", key);
             });
         }
     }
