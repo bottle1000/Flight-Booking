@@ -1,6 +1,8 @@
 package flight_booking.demo.domain.payment.entity;
 
 import flight_booking.demo.common.entity.BaseEntity;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.domain.discount.entity.Discount;
 import flight_booking.demo.domain.order.entity.Order;
 import jakarta.persistence.*;
@@ -57,7 +59,14 @@ public class Payment extends BaseEntity {
         this.amount = order.getPrice();
     }
 
-    public void updatePaymentStatus(PaymentState paymentState) {
-        this.state = paymentState;
-    }
+	public void updatePaymentStatus(PaymentState paymentState) {
+		if (this.state == PaymentState.CANCEL) {
+			throw new CustomException(ServerErrorResponseCode.ALREADY_CANCELED);
+		}
+		if (this.state != PaymentState.CONFIRMING && paymentState == PaymentState.COMPLETE) {
+			throw new CustomException(ServerErrorResponseCode.NOT_PAID);
+		}
+		this.state = paymentState;
+	}
+
 }

@@ -13,11 +13,16 @@ import flight_booking.demo.domain.payment.dto.PaymentRes;
 import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
+import flight_booking.demo.lock.Lock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+
+import java.util.List;
 
 import static flight_booking.demo.common.exception.ServerErrorResponseCode.INTERNAL_SERVER_ERROR;
 
@@ -35,17 +40,18 @@ public class PaymentService {
      * 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
      * 만약 값이 다르다면 결제를 취소하고 구매자에게 알려주세요.
      */
+    @Transactional
+    @Lock(key = "#orderId", prefix = "payment_lock:")
     public void verifyRequest(String orderId, int amount) {
         Payment payment = paymentRepository.findByUid(orderId)
                 .orElseThrow(() -> new CustomException(ServerErrorResponseCode.ORDER_UUID_NOT_FOUND));
+        payment.updatePaymentStatus(PaymentState.CONFIRMING);
         if (payment.getAmount() != amount) {
             throw new PaymentException(PaymentErrorResponseCode.PAYMENT_AMOUNT_MISMATCH);
         }
     }
 
     public ResponseEntity<JsonNode> confirm(String paymentKey, String orderId, int amount) {
-        verifyRequest(orderId, amount);
-
         Payment payment = paymentRepository.findByUid(orderId)
                 .orElseThrow(() -> new CustomException(ServerErrorResponseCode.ORDER_UUID_NOT_FOUND));
 
@@ -97,4 +103,13 @@ public class PaymentService {
         payment.updatePaymentStatus(PaymentState.CANCEL);
         payment.getOrder().updateState(OrderState.CANCELED);
     }
+
+    @Scheduled(fixedRate = 600000)
+    public void paymentTimeoutScheduler() {
+        List<Payment> payments = paymentRepository.findAllExpired(); // 10분이 지난 IN_PROGRESS 상태들을 불러옴.
+        for (Payment payment : payments) {
+            paymentStateService.cancelTimeOutPayments(payment);
+        }
+    }
+
 }
