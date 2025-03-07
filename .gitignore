@@ -37,3 +37,11 @@ out/
 
 ### Mac OS ###
 .DS_Store
+
+### application.properties ###
+application.properties
+
+
+### 부하테스트 관련 ###
+/src/test/java/performance/*
+/src/main/java/flight_booking/demo/config/AsyncConfig

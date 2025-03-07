@@ -13,6 +13,7 @@ public record FlightPlanGetRequest(
 	@NotNull(message = "출발지는 필수입니다")
 	Airport arrival,
 
+	@NotNull
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	ZonedDateTime boardingAt,
 

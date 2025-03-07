@@ -40,15 +40,15 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 				.and(landingAtLoe(landingAt));
 
 		JPQLQuery<FlightPlan> query = queryFactory
-				.select(Projections.constructor(FlightPlan.class,
-						flightPlan.id,
-						flightPlan.departure,
-						flightPlan.arrival,
-						flightPlan.boardingAt,
-						flightPlan.landingAt,
-						flightPlan.price))
-				.from(flightPlan)
-				.where(conditions);
+			.select(Projections.constructor(FlightPlan.class,
+				flightPlan.id,
+				flightPlan.departure,
+				flightPlan.arrival,
+				flightPlan.boardingAt,
+				flightPlan.landingAt,
+				flightPlan.price))
+			.from(flightPlan)
+			.where(conditions);
 
 		return QuerydslUtil.fetchPage(query, flightPlan, pageable);
 	}
@@ -57,11 +57,11 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 	public List<Ticket> findTicketInfoByFlightPlanId(Long flightPlanId) {
 
 		return queryFactory
-				.selectFrom(ticket)
-				.leftJoin(ticket.flightPlan).fetchJoin()
-				.leftJoin(ticket.flightPlan.airplane).fetchJoin()
-				.where(ticket.flightPlan.id.eq(flightPlanId))
-				.fetch();
+			.selectFrom(ticket)
+			.leftJoin(ticket.flightPlan).fetchJoin()
+			.leftJoin(ticket.flightPlan.airplane).fetchJoin()
+			.where(ticket.flightPlan.id.eq(flightPlanId))
+			.fetch();
 	}
 
 	private BooleanExpression departureEq(Airport departure) {

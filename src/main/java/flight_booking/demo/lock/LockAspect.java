@@ -36,7 +36,7 @@ public class LockAspect {
         if(!isValidExpressions(lockAnnotation))
             throw new IllegalStateException("Lock retry 혹은 timeout 설정은 음수가 될 수 없습니다.");
 
-        Long lockKeyValue = extractLockKey(signature, joinPoint.getArgs(), lockAnnotation.key());
+        String lockKeyValue = extractLockKey(signature, joinPoint.getArgs(), lockAnnotation.key());
 
         String key = lockAnnotation.prefix() + lockKeyValue;
         int retry = parseIntegerSetting(lockAnnotation.retry());
@@ -53,7 +53,7 @@ public class LockAspect {
         }
     }
 
-    private Long extractLockKey(MethodSignature signature, Object[] args, String keyExpression) {
+    private String extractLockKey(MethodSignature signature, Object[] args, String keyExpression) {
         if (keyExpression == null || keyExpression.trim().isEmpty()) {
             throw new IllegalArgumentException("Lock key 를 입력하여 주십시오.");
         }
@@ -74,10 +74,8 @@ public class LockAspect {
 
             if (key == null) {
                 throw new IllegalArgumentException("Lock key 는 null 값이 될 수 없습니다. 입력된 Key 값: " + keyExpression);}
-            if (!(key instanceof Number)) {
-                throw new IllegalArgumentException("Lock key 에는 Long 타입이 강제됩니다. 입력된 Key 값: " + keyExpression);}
 
-            return ((Number) key).longValue();
+            return key.toString();
         } catch (Exception e) {
             throw new IllegalArgumentException("Lock key 생성에 실패하였습니다. 입력된 Key 값: " + keyExpression, e);
         }
