@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -92,9 +93,10 @@ public class FlightPlanControllerTest extends BaseTest {
 		Long airplaneId = airplane.getId();
 		FlightPlanCreateRequest request = FlightPlanTestFixure.createFlightPlanRequest();
 		String requestJson = objectMapper.writeValueAsString(request);
-		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/admin/airplanes/" + airplaneId + "/flight-plans")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(requestJson)
+		MvcResult result = mockMvc.perform(
+				MockMvcRequestBuilders.post("/admin/airplanes/" + airplaneId + "/flight-plans")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(requestJson)
 			).andExpect(status().isOk())
 			.andExpect(jsonPath("$.name").value(request.name()))
 			.andReturn();
@@ -106,21 +108,21 @@ public class FlightPlanControllerTest extends BaseTest {
 	@Test
 	@DisplayName("항공권 일정 검색 통합 테스트 - 성공")
 	public void findFlightPlanPage() throws Exception {
-		LocalDate fromDate = LocalDate.of(2050, 3, 1);
-		String fromDateString = fromDate.toString();
-		LocalDate toDate = LocalDate.of(2051, 3, 1);
-		String toDateString = toDate.toString();
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+		String expectedBoardingAt = flightPlan.getBoardingAt().format(formatter);
+		String expectedLandingAt = flightPlan.getLandingAt().format(formatter);
 
 		MvcResult result = mockMvc.perform(get("/flight-plans")
 				.param("departure", "ICN")
 				.param("arrival", "NRT")
-				.param("fromDate", fromDateString)
-				.param("toDate", toDateString))
+				.param("boardingAt", expectedBoardingAt)
+				.param("landingAt", expectedLandingAt))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.content[0].departure").value("ICN"))
 			.andExpect(jsonPath("$.content[0].arrival").value("NRT"))
-			.andExpect(jsonPath("$.content[0].boardingAt").value(containsString(fromDateString)))
-			.andExpect(jsonPath("$.content[0].landingAt").value(containsString(toDateString)))
+			.andExpect(jsonPath("$.content[0].boardingAt").value("2050-03-01T01:01:01"))
+			.andExpect(jsonPath("$.content[0].landingAt").value("2051-03-01T01:01:01"))
 			.andExpect(jsonPath("$.totalCount").value(1))
 			.andReturn();
 

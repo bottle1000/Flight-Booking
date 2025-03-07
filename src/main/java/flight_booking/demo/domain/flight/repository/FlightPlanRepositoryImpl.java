@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -39,7 +40,14 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 			.and(landingAtLoe(landingAt));
 
 		JPQLQuery<FlightPlan> query = queryFactory
-			.selectFrom(flightPlan)
+			.select(Projections.constructor(FlightPlan.class,
+				flightPlan.id,
+				flightPlan.departure,
+				flightPlan.arrival,
+				flightPlan.boardingAt,
+				flightPlan.landingAt,
+				flightPlan.price))
+			.from(flightPlan)
 			.where(conditions);
 
 		return QuerydslUtil.fetchPage(query, flightPlan, pageable);
