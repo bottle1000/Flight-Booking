@@ -33,7 +33,7 @@ public class PaymentController {
 		@RequestParam String orderId,
 		@RequestParam int amount
 	) {
-		paymentService.verifyRequest(orderId, amount);
+		paymentService.verifyRequest(orderId, amount); //Confirming
 		return paymentService.confirm(paymentKey, orderId, amount);
 	}
 

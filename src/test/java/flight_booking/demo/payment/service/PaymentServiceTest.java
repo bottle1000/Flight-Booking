@@ -161,6 +161,7 @@ class PaymentServiceTest extends BaseTest {
                 .approvePayment(paymentKey, orderUid, price);
 
         // When
+        paymentService.verifyRequest(orderUid, price);
         ResponseEntity<JsonNode> response = paymentService.confirm(paymentKey, orderUid, price);
 
         // Then

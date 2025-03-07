@@ -72,7 +72,6 @@ public class Payment extends BaseEntity {
 	public void updatePaymentStatus(PaymentState paymentState) {
 		if (this.state == PaymentState.CANCEL) {
 			throw new CustomException(ServerErrorResponseCode.ALREADY_CANCELED);
-			//죄송함다
 		}
 		if (this.state != PaymentState.CONFIRMING && paymentState == PaymentState.COMPLETE) {
 			throw new CustomException(ServerErrorResponseCode.NOT_PAID);
