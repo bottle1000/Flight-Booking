@@ -1,5 +1,6 @@
 package flight_booking.demo.domain.payment.controller;
 
+import flight_booking.demo.lock.Lock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,7 @@ public class PaymentController {
 		@RequestParam String paymentKey,
 		@RequestParam String orderId,
 		@RequestParam int amount
-	) throws Exception {
+	) {
 		paymentService.verifyRequest(orderId, amount);
 		return paymentService.confirm(paymentKey, orderId, amount);
 	}

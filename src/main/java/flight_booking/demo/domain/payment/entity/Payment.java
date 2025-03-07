@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import flight_booking.demo.common.entity.BaseEntity;
+import flight_booking.demo.common.exception.CustomException;
+import flight_booking.demo.common.exception.ServerErrorResponseCode;
 import flight_booking.demo.domain.discount.entity.Discount;
 import flight_booking.demo.domain.order.entity.Order;
 import jakarta.persistence.CascadeType;
@@ -68,6 +70,13 @@ public class Payment extends BaseEntity {
 	}
 
 	public void updatePaymentStatus(PaymentState paymentState) {
+		if (this.state == PaymentState.CANCEL) {
+			throw new CustomException(ServerErrorResponseCode.ALREADY_CANCELED);
+			//죄송함다
+		}
+		if (this.state != PaymentState.CONFIRMING && paymentState == PaymentState.COMPLETE) {
+			throw new CustomException(ServerErrorResponseCode.NOT_PAID);
+		}
 		this.state = paymentState;
 	}
 

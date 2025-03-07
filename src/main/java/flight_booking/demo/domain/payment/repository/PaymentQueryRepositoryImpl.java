@@ -1,10 +1,9 @@
 package flight_booking.demo.domain.payment.repository;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import flight_booking.demo.domain.flight.entity.QTicket;
 import flight_booking.demo.domain.order.entity.QOrder;
-import flight_booking.demo.domain.payment.dto.PaymentQueryDto;
+import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.payment.entity.QPayment;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +21,18 @@ public class PaymentQueryRepositoryImpl implements PaymentQueryRepository{
     private final QOrder order = QOrder.order;
     private final QTicket ticket = QTicket.ticket;
 
+    private static final int EXPIRED_MINUTES = 10;
+
     @Override
-    public List<PaymentQueryDto> findByStateAndCreatedAtBefore(PaymentState paymentState, LocalDateTime tenMinutesAge) {
+    public List<Payment> findAllExpired() {
 
         return factory
-                .select(Projections.fields(
-                        PaymentQueryDto.class,
-                        payment.id.as("paymentId")
-                ))
-                .from(payment)
+                .selectFrom(payment)
+                .join(payment.order, order).fetchJoin()
+                .join(order.ticket, ticket).fetchJoin()
                 .where(
-                        payment.state.eq(paymentState),
-                        payment.createdAt.before(tenMinutesAge))
+                        payment.state.eq(PaymentState.IN_PROGRESS),
+                        payment.createdAt.before(LocalDateTime.now().minusMinutes(EXPIRED_MINUTES)))
                 .fetch();
     }
 }

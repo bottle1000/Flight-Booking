@@ -6,12 +6,16 @@ import flight_booking.demo.domain.airplane.entity.SeatState;
 import flight_booking.demo.domain.invoice.entity.Invoice;
 import flight_booking.demo.domain.invoice.repository.InvoiceRepository;
 import flight_booking.demo.domain.order.entity.OrderState;
-import flight_booking.demo.domain.payment.dto.PaymentQueryDto;
 import flight_booking.demo.domain.payment.entity.Payment;
 import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
+import flight_booking.demo.lock.Lock;
+import flight_booking.demo.lock.repository.LockRepository;
 import flight_booking.demo.s3.service.S3UploadService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RKeys;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +25,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentStateService {
     private final InvoiceRepository invoiceRepository;
     private final S3UploadService s3UploadService;
     private final PaymentRepository paymentRepository;
+    private final RedissonClient redissonClient;
 
     @Transactional
     public void processPayment(Payment payment, JsonNode tossDto) {
@@ -50,25 +56,19 @@ public class PaymentStateService {
         return new Invoice(tossDto, payment);
     }
 
-    @Transactional(readOnly = true)
-    public List<PaymentQueryDto> findExpiredPayments() {
-        LocalDateTime tenMinutesAgo = LocalDateTime.now().minusMinutes(10);
-
-        return paymentRepository.findByStateAndCreatedAtBefore(PaymentState.IN_PROGRESS, tenMinutesAgo);
-    }
 
     @Transactional
-    public void cancelTimeOutPayments(List<PaymentQueryDto> expiredPayments) {
+    @Lock(key = "#payment.getOrder().getId()", prefix = "paymentLock:")
+    public void cancelTimeOutPayments(Payment payment) {
+        Payment paymentInDB = paymentRepository.findById(payment.getId())
+                .orElseThrow();
 
-        List<Payment> payments = paymentRepository.findAllById(
-                expiredPayments.stream()
-                        .map(PaymentQueryDto::getPaymentId).collect(Collectors.toList())
-        );
-
-        for (Payment payment : payments) {
-            payment.updatePaymentStatus(PaymentState.CANCEL);
-            payment.getOrder().updateState(OrderState.CANCELED);
-            payment.getOrder().getTicket().updateState(SeatState.IDLE);
+        if (paymentInDB.getState() != PaymentState.IN_PROGRESS) {
+            return;
         }
+
+        payment.updatePaymentStatus(PaymentState.CANCEL);
+        payment.getOrder().updateState(OrderState.CANCELED);
+        payment.getOrder().getTicket().updateState(SeatState.IDLE);
     }
 }
