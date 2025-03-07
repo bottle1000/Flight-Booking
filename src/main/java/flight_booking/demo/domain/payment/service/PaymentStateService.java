@@ -62,6 +62,7 @@ public class PaymentStateService {
 
         payment.updatePaymentStatus(PaymentState.CANCEL);
         payment.getOrder().updateState(OrderState.CANCELED);
-        payment.getOrder().getTicket().updateState(SeatState.IDLE);
+        payment.getOrder().getTickets().forEach(orderTicket ->
+                orderTicket.getTicket().updateState(SeatState.IDLE));
     }
 }
