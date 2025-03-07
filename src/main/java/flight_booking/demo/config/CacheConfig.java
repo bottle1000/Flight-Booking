@@ -1,6 +1,8 @@
 package flight_booking.demo.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
@@ -20,7 +22,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.time.Duration;
 
 @Configuration
-@EnableCaching
 public class CacheConfig {
     @Value("${spring.data.redis.host}")
     private String host;
@@ -42,6 +43,13 @@ public class CacheConfig {
         // Jackson ObjectMapper 설정 (JavaTimeModule 추가)
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule()); // ZonedDateTime 직렬화 지원
+
+        objectMapper.activateDefaultTyping(
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY
+        ); // 역직렬화시 제네릭타입의 정보를 저장 -> page 기본생성자가 필요
+
         GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
@@ -51,11 +59,11 @@ public class CacheConfig {
                 .fromSerializer(serializer)) // 값 직렬화를 JSON 방식으로 변경
                 .entryTtl(Duration.ofHours(1L)); // 캐시 TTL 1시간 설정
 
-//        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
-//                .withCacheConfiguration("flight-plan", redisCacheConfiguration)
-//                .build();
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
-                .cacheDefaults(redisCacheConfiguration)
+                .withCacheConfiguration("flight-plan", redisCacheConfiguration)
                 .build();
+//        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
+//                .cacheDefaults(redisCacheConfiguration)
+//                .build();
     }
 }

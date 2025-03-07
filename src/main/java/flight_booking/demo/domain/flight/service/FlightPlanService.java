@@ -27,7 +27,6 @@ import flight_booking.demo.utils.Page;
 import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -69,11 +68,10 @@ public class FlightPlanService {
 			cacheManager = "redisCacheManager",
 			value = "flight-plan"
 	)
-	public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
+    public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
 		PageQuery pageQuery
 	) {
-		log.info("시작시작시작");
 		org.springframework.data.domain.Page<FlightPlan> page = flightPlanRepository.findByFilters(
 			flightPlanGetRequest.departure(),
 			flightPlanGetRequest.arrival(),

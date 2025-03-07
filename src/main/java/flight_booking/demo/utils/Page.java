@@ -3,10 +3,12 @@ package flight_booking.demo.utils;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor // jackson 역직렬화시 필요
 public class Page<T> {
 
 	private List<T> content;
