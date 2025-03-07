@@ -19,10 +19,7 @@ public class LockRepository {
         RLock lock = redissonClient.getLock(key);
 
         try {
-            log.info("try to acquire LOCK: {}", Thread.currentThread().getId());
-            System.out.println("try to acquire LOCK: " + Thread.currentThread().getId());
             if(lock.tryLock(retry, timeout, TimeUnit.SECONDS)){
-                log.info("lock acquired by Thread: {}", Thread.currentThread().getId());
                 return true;
             }
             return false;
@@ -37,7 +34,6 @@ public class LockRepository {
 
         try {
             if (lock.isLocked() && lock.isHeldByCurrentThread()) {
-                log.info("unlock: {}", Thread.currentThread().getId());
                 lock.unlock();
                 return true;
             }

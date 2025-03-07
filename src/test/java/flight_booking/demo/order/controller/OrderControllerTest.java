@@ -18,6 +18,7 @@ import flight_booking.demo.domain.order.dto.request.OrderUpdateRequestDto;
 import flight_booking.demo.domain.order.entity.Order;
 import flight_booking.demo.domain.order.entity.OrderState;
 import flight_booking.demo.domain.order.repository.OrderRepository;
+import flight_booking.demo.domain.order.service.OrderTransactionalService;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.utils.UserUtil;
@@ -53,6 +54,8 @@ class OrderControllerTest extends BaseTest {
     @Autowired
     private FlightPlanRepository flightPlanRepository;
     @Autowired
+    private OrderTransactionalService orderTransactionalService;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private DiscountRepository discountRepository;
@@ -63,6 +66,7 @@ class OrderControllerTest extends BaseTest {
 
     private FlightPlan flightPlan;
     private Ticket ticket;
+    private Ticket secondTicket;
     private Ticket ticketForChange;
     private Ticket ticketForCreate;
     private Order order;
@@ -84,7 +88,6 @@ class OrderControllerTest extends BaseTest {
                 ZonedDateTime.of(
                         2051, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")
                 )
-
         );
         discountRepository.save(discount);
 
@@ -103,6 +106,8 @@ class OrderControllerTest extends BaseTest {
 
         ticket = new Ticket("1A", flightPlan);
         ticketRepository.save(ticket);
+        secondTicket = new Ticket("3C", flightPlan);
+        ticketRepository.save(secondTicket);
         ticketForCreate = new Ticket("1B", flightPlan);
         ticketRepository.save(ticketForCreate);
         ticketForChange = new Ticket("2B", flightPlan);
@@ -154,6 +159,7 @@ class OrderControllerTest extends BaseTest {
                 .andExpect(jsonPath("$.ticketIds[0]").value(ticketForChange.getId()))
                 .andExpect(jsonPath("$.price").value(order.getPrice()));
     }
+
 
     @Test
     void containerTestWorking() {

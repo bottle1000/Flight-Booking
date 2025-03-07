@@ -7,6 +7,7 @@ import flight_booking.demo.domain.flight.repository.TicketRepository;
 import flight_booking.demo.domain.order.entity.Order;
 import flight_booking.demo.domain.order.repository.OrderRepository;
 import flight_booking.demo.lock.Lock;
+import flight_booking.demo.lock.ticketlock.TicketLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +22,10 @@ public class OrderTransactionalService {
     private final TicketRepository ticketRepository;
     private final OrderRepository orderRepository;
 
-    @Lock(key = "#order.getOrderName()", prefix = "order_create_lock:")
+    @TicketLock
     @Transactional
     public Order checkAndSaveOrder(Order order) {
-        var ids = order.getTickets().stream().map(orderTicket -> orderTicket.getTicket().getId()).toList();
-        List<Ticket> tickets = ticketRepository.findAllTicketByNativeQuery(ids);
+        List<Ticket> tickets = ticketRepository.findAllTicketByNativeQuery(order.getTicketIds());
 
         List<Ticket> unavailableTickets = tickets.stream().filter(ticket -> ticket.getState() != SeatState.IDLE).toList();
         if (!unavailableTickets.isEmpty())
@@ -33,10 +33,5 @@ public class OrderTransactionalService {
 
         tickets.forEach(ticket -> ticket.updateState(SeatState.BOOKED));
         return orderRepository.save(order);
-    }
-
-    @Lock(key = "#ticket.getId()", prefix = "booking_ticket_lock:")
-    public Ticket checkAndSaveTicket(Ticket ticket) {
-
     }
 }

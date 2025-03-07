@@ -1,5 +1,6 @@
 package flight_booking.demo.domain.flight.repository;
 
+import org.reactivestreams.Publisher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import flight_booking.demo.domain.flight.entity.Ticket;
 import org.springframework.data.jpa.repository.Query;
