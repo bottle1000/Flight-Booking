@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -97,7 +98,7 @@ class PaymentServiceTest extends BaseTest {
 		ticket = new Ticket("1A", flightPlan);
 		ticketRepository.save(ticket);
 
-		order = new Order(UserUtil.getCurrentUser(), ticket, flightPlan.getPrice());
+		order = new Order(UserUtil.getCurrentUser(), List.of(ticket), flightPlan.getPrice());
 		orderRepository.save(order);
 
 		payment = order.getPayment();
@@ -161,6 +162,7 @@ class PaymentServiceTest extends BaseTest {
                 .approvePayment(paymentKey, orderUid, price);
 
         // When
+        paymentService.verifyRequest(orderUid, price);
         ResponseEntity<JsonNode> response = paymentService.confirm(paymentKey, orderUid, price);
 
         // Then

@@ -8,6 +8,7 @@ import java.util.Arrays;
 public enum PaymentState {
 	NONE("NONE"),
 	IN_PROGRESS("IN_PROGRESS"),
+	CONFIRMING("CONFIRMING"),
 	COMPLETE("COMPLETE"),
 	FAIL("FAIL"),
 	CANCEL("CANCEL");
