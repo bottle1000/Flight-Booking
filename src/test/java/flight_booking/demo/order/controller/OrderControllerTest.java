@@ -18,6 +18,7 @@ import flight_booking.demo.domain.order.dto.request.OrderUpdateRequestDto;
 import flight_booking.demo.domain.order.entity.Order;
 import flight_booking.demo.domain.order.entity.OrderState;
 import flight_booking.demo.domain.order.repository.OrderRepository;
+import flight_booking.demo.domain.order.service.OrderTransactionalService;
 import flight_booking.demo.domain.user.entity.User;
 import flight_booking.demo.domain.user.repository.UserRepository;
 import flight_booking.demo.security.utils.UserUtil;
@@ -53,6 +54,8 @@ class OrderControllerTest extends BaseTest {
     @Autowired
     private FlightPlanRepository flightPlanRepository;
     @Autowired
+    private OrderTransactionalService orderTransactionalService;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private DiscountRepository discountRepository;
@@ -63,6 +66,7 @@ class OrderControllerTest extends BaseTest {
 
     private FlightPlan flightPlan;
     private Ticket ticket;
+    private Ticket secondTicket;
     private Ticket ticketForChange;
     private Ticket ticketForCreate;
     private Order order;
@@ -84,7 +88,6 @@ class OrderControllerTest extends BaseTest {
                 ZonedDateTime.of(
                         2051, 3, 1, 1, 1, 1, 1, ZoneId.of("Asia/Seoul")
                 )
-
         );
         discountRepository.save(discount);
 
@@ -103,12 +106,14 @@ class OrderControllerTest extends BaseTest {
 
         ticket = new Ticket("1A", flightPlan);
         ticketRepository.save(ticket);
-        ticketForCreate = new Ticket("2A", flightPlan);
+        secondTicket = new Ticket("3C", flightPlan);
+        ticketRepository.save(secondTicket);
+        ticketForCreate = new Ticket("1B", flightPlan);
         ticketRepository.save(ticketForCreate);
-        ticketForChange = new Ticket("3A", flightPlan);
+        ticketForChange = new Ticket("2B", flightPlan);
         ticketRepository.save(ticketForChange);
 
-        order = new Order(UserUtil.getCurrentUser(), ticket, flightPlan.getPrice());
+        order = new Order(UserUtil.getCurrentUser(), List.of(ticket), flightPlan.getPrice());
         ticket.updateState(SeatState.BOOKED);
         orderRepository.save(order);
     }
@@ -116,7 +121,7 @@ class OrderControllerTest extends BaseTest {
     @Test
     void createOrder() throws Exception {
         OrderCreateRequestDto requestDto = new OrderCreateRequestDto(
-                ticketForCreate.getId(),
+                List.of(ticketForCreate.getId()),
                 List.of(discount.getId()));
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/orders")
@@ -124,7 +129,7 @@ class OrderControllerTest extends BaseTest {
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderState").value(OrderState.NOT_PAID.toString()))
-                .andExpect(jsonPath("$.ticketId").value(ticketForCreate.getId()))
+                .andExpect(jsonPath("$.ticketIds[0]").value(ticketForCreate.getId()))
                 .andExpect(jsonPath("$.price").value(flightPlan.getPrice() - discount.getAmount()))
                 .andReturn();
 
@@ -138,22 +143,23 @@ class OrderControllerTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(order.getId()))
                 .andExpect(jsonPath("$.orderState").value(order.getState().toString()))
-                .andExpect(jsonPath("$.ticketId").value(order.getTicket().getId()))
+                .andExpect(jsonPath("$.ticketIds[0]").value(ticket.getId()))
                 .andExpect(jsonPath("$.price").value(order.getPrice()));
     }
 
     @Test
     void updateOrder() throws Exception {
-        OrderUpdateRequestDto requestDto = new OrderUpdateRequestDto(ticketForChange.getId());
+        OrderUpdateRequestDto requestDto = new OrderUpdateRequestDto(List.of(ticketForChange.getId()));
         mockMvc.perform(MockMvcRequestBuilders.put("/orders/" + order.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(order.getId()))
                 .andExpect(jsonPath("$.orderState").value(order.getState().toString()))
-                .andExpect(jsonPath("$.ticketId").value(ticketForChange.getId()))
+                .andExpect(jsonPath("$.ticketIds[0]").value(ticketForChange.getId()))
                 .andExpect(jsonPath("$.price").value(order.getPrice()));
     }
+
 
     @Test
     void containerTestWorking() {

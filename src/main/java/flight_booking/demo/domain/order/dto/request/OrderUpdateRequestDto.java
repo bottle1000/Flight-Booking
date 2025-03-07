@@ -1,9 +1,8 @@
 package flight_booking.demo.domain.order.dto.request;
 
-import jakarta.validation.constraints.NotNull;
+import java.util.List;
 
 public record OrderUpdateRequestDto(
-	@NotNull
-	long ticketId
+	List<Long> ticketIds
 ) {
 }

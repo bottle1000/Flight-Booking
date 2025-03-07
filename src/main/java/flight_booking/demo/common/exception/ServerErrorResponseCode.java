@@ -27,6 +27,7 @@ public enum ServerErrorResponseCode {
     USER_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "이 예약에 대한 권한이 없습니다."),
     PAYMENT_REQUIRED(HttpStatus.PAYMENT_REQUIRED, "결제를 완료해야 예약이 확정됩니다."),
     EXCEED_MAX_TICKETS(HttpStatus.BAD_REQUEST, "최대 예매 가능한 항공권 개수를 초과했습니다."),
+    TOO_MANY_FLIGHT(HttpStatus.BAD_REQUEST, "다수의 비행스케줄을 동시에 예매할 수 없습니다."),
 
     // 비행기, 비행기 일정 관련
     AIRPLANE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 항공기를 찾을 수 없습니다."),
