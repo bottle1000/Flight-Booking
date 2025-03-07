@@ -115,7 +115,8 @@ class OrderControllerTest extends BaseTest {
 
     @Test
     void createOrder() throws Exception {
-        OrderCreateRequestDto requestDto = new OrderCreateRequestDto(ticketForCreate.getId(),
+        OrderCreateRequestDto requestDto = new OrderCreateRequestDto(
+                ticketForCreate.getId(),
                 List.of(discount.getId()));
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/orders")
@@ -129,8 +130,6 @@ class OrderControllerTest extends BaseTest {
 
         String responseBody = result.getResponse().getContentAsString();
         System.out.println("Response: " + responseBody);
-
-
     }
 
     @Test
