@@ -114,6 +114,8 @@ public class PaymentService {
         List<Payment> payments = paymentRepository.findAllExpired(); // 10분이 지난 IN_PROGRESS 상태들을 불러옴.
         if(!payments.isEmpty())
             log.info(":: AUTOMATIC :: Payment ID:" + payments.get(0).getUid());
+
+
         for (Payment payment : payments) {
             paymentStateService.cancelTimeOutPayments(payment);
         }
