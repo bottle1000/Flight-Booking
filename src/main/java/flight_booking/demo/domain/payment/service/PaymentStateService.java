@@ -51,7 +51,7 @@ public class PaymentStateService {
 
 
     @Transactional
-    @Lock(key = "#payment.getUid()", prefix = "payment_lock:")
+    //@Lock(key = "#payment.getUid()", prefix = "payment_lock:")
     public void cancelTimeOutPayments(Payment payment) {
         Payment paymentInDB = paymentRepository.findById(payment.getId())
                 .orElseThrow();
@@ -59,7 +59,7 @@ public class PaymentStateService {
         if (paymentInDB.getState() != PaymentState.IN_PROGRESS) {
             return;
         }
-
+        log.info(":: AUTOMATIC :: Payment {} cancelling...", paymentInDB.getId());
         payment.updatePaymentStatus(PaymentState.CANCEL);
         payment.getOrder().updateState(OrderState.CANCELED);
         payment.getOrder().getTickets().forEach(orderTicket ->
