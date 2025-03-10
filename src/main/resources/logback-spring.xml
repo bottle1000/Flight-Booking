@@ -1,8 +1,8 @@
-
-
 <configuration>
+<!-- 환경변수를 사용하여 Loki URL 설정 (환경변수가 없으면 기본값 사용) -->
+<property name="LOKI_URL" value="${LOKI_URL:-http://10.0.0.38:3101/loki/api/v1/push}"/>
+
 <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-    <!-- JSON 형식으로 로그를 변환 -->
     <encoder class="com.github.loki4j.logback.encoder.JsonEncoder">
         <pattern>
             {
@@ -16,15 +16,17 @@
         </pattern>
     </encoder>
 
-    <!-- Loki로 로그를 전송 -->
+    <!-- Loki로 로그 전송 -->
     <sender class="com.github.loki4j.logback.sender.JavaHttpSender">
-        <url>http://10.0.0.38:3100/loki/api/v1/push</url>
-        <batchSize>10</batchSize> <!-- 일정 개수 이상 쌓이면 전송 -->
-        <batchTimeoutMs>2000</batchTimeoutMs> <!-- 2초마다 전송 -->
+        <url>${LOKI_URL}</url>
+        <lokiLabels>{"application": "spring-boot-app", "environment": "dev"}</lokiLabels>
+        <batchSize>5</batchSize>
+        <batchTimeoutMs>2000</batchTimeoutMs>
     </sender>
 </appender>
 
-<root level="info">
-    <appender-ref ref="LOKI"/>
-</root>
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOKI"/>
+    </root>
 </configuration>
