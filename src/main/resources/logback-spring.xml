@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- Spring Boot 기본 로그백 설정 포함 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!-- Loki Appender 설정 (Loki4j 1.4.0 버전용) -->
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-        <!-- Batch configuration -->
+        <!-- 배치 설정 -->
         <batchMaxItems>50</batchMaxItems>
         <batchTimeoutMs>2000</batchTimeoutMs>
 
-        <!-- Loki HTTP sender (Java HTTP client) -->
+        <!-- HTTP 전송 설정 -->
         <http class="com.github.loki4j.logback.JavaHttpSender">
             <url>http://10.0.0.38:3101/loki/api/v1/push</url>
+            <connectTimeout>5000</connectTimeout>
+            <readTimeout>10000</readTimeout>
         </http>
 
-        <!-- Log format and labels -->
+        <!-- 로그 포맷 설정 (JsonEncoder 역할) -->
         <format class="com.github.loki4j.logback.JsonEncoder">
-            <!-- Static labels for Loki logs -->
+            <!-- 라벨 설정: Loki에서 로그를 분류하는 데 사용 -->
             <label>
                 <pattern>application=spring-boot-app,environment=dev</pattern>
             </label>
-            <!-- Log message pattern (message and exception) -->
+            <!-- 로그 메시지 패턴 -->
             <message>
-                <pattern>%msg%ex</pattern>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             </message>
         </format>
     </appender>
 
-    <!-- Send all logs (INFO and above) to the Loki appender -->
-    <root level="INFO">
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="LOKI"/>
     </root>
 </configuration>
