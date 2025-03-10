@@ -1,31 +1,31 @@
 <configuration>
-    <property name="LOKI_URL" value="${LOKI_URL:-http://10.0.0.38:3101/loki/api/v1/push}"/>
+    <springProperty name="name" source="spring.application.name" />
 
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-        <encoder class="com.github.loki4j.logback.encoder.JsonEncoder">
-            <pattern>
-                {
-                "time": "%d{yyyy-MM-dd'T'HH:mm:ss.SSS}",
-                "level": "%level",
-                "thread": "%thread",
-                "logger": "%logger",
-                "message": "%msg",
-                "exception": "%exception"
-                }
-            </pattern>
-        </encoder>
-
-        <!-- Loki로 로그 전송 -->
-        <sender class="com.github.loki4j.logback.sender.JavaHttpSender">
+        <http>
             <url>http://10.0.0.38:3101/loki/api/v1/push</url>
-            <lokiLabels>{"application": "spring-boot-app", "environment": "dev"}</lokiLabels>
-            <batchSize>5</batchSize>
-            <batchTimeoutMs>2000</batchTimeoutMs>
-        </sender>
+        </http>
+        <format>
+            <label>
+                <pattern>app=${name},host=${HOSTNAME},level=%level</pattern>
+                <readMarkers>true</readMarkers>
+            </label>
+            <message>
+                <pattern>
+                    {
+                    "time": "%d{yyyy-MM-dd'T'HH:mm:ss.SSS}",
+                    "level": "%level",
+                    "thread": "%thread",
+                    "logger": "%logger",
+                    "message": "%msg",
+                    "exception": "%exception"
+                    }
+                </pattern>
+            </message>
+        </format>
     </appender>
 
-    <root level="info">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="LOKI"/>
+    <root level="INFO">
+        <appender-ref ref="LOKI" />
     </root>
 </configuration>
