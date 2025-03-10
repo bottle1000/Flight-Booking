@@ -141,6 +141,7 @@ public class OrderService {
 			discountedPrice = Double.valueOf(discountedPrice * (1 - (totalDiscountRate / 100.0))).intValue();
 		}
 
-		return discountedPrice - totalDiscountAmount;
-	}
+		int calculated = discountedPrice - totalDiscountAmount;
+        return Math.max(calculated, 0);
+    }
 }

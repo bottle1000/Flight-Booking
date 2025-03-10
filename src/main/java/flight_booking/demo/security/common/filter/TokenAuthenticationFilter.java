@@ -29,6 +29,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
+		// /actuator/prometheus 경로는 필터 처리 없이 바로 통과
+		if (request.getRequestURI().startsWith("/actuator/prometheus"))
+		{ filterChain.doFilter(request, response); return; }
 
 		System.out.println("TokenAuthenticationFilter 실행됨: " + request.getRequestURI());
 
