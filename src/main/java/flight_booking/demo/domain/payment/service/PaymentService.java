@@ -107,10 +107,13 @@ public class PaymentService {
         payment.getOrder().updateState(OrderState.CANCELED);
     }
 
-    @Scheduled(cron = "0 */3 * * * *")
+    @Scheduled(cron = "30 */1 * * * *")
     public void paymentTimeoutScheduler() {
-        log.info("::::: AUTOMATIC SCHEDULING RUN :::::" + LocalDateTime.now());
+        log.info(":: AUTOMATIC SCHEDULING RUN ::\n" + LocalDateTime.now());
+        log.info(":: AUTOMATIC :: 검사대상시간: "+ LocalDateTime.now().minusMinutes(10));
         List<Payment> payments = paymentRepository.findAllExpired(); // 10분이 지난 IN_PROGRESS 상태들을 불러옴.
+        if(!payments.isEmpty())
+            log.info(":: AUTOMATIC :: Payment ID:" + payments.get(0).getUid());
         for (Payment payment : payments) {
             paymentStateService.cancelTimeOutPayments(payment);
         }
