@@ -1,30 +1,30 @@
-
-
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-<appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-    <!-- JSON 형식으로 로그를 변환 -->
-    <encoder class="com.github.loki4j.logback.encoder.JsonEncoder">
-        <pattern>
-            {
-            "time": "%d{yyyy-MM-dd'T'HH:mm:ss.SSS}",
-            "level": "%level",
-            "thread": "%thread",
-            "logger": "%logger",
-            "message": "%msg",
-            "exception": "%exception"
-            }
-        </pattern>
-    </encoder>
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <!-- Batch configuration -->
+        <batchMaxItems>50</batchMaxItems>
+        <batchTimeoutMs>2000</batchTimeoutMs>
 
-    <!-- Loki로 로그를 전송 -->
-    <sender class="com.github.loki4j.logback.sender.JavaHttpSender">
-        <url>http://10.0.0.38:3100/loki/api/v1/push</url>
-        <batchSize>10</batchSize> <!-- 일정 개수 이상 쌓이면 전송 -->
-        <batchTimeoutMs>2000</batchTimeoutMs> <!-- 2초마다 전송 -->
-    </sender>
-</appender>
+        <!-- Loki HTTP sender (Java HTTP client) -->
+        <http class="com.github.loki4j.logback.JavaHttpSender">
+            <url>http://10.0.0.38:3101/loki/api/v1/push</url>
+        </http>
 
-<root level="info">
-    <appender-ref ref="LOKI"/>
-</root>
+        <!-- Log format and labels -->
+        <format class="com.github.loki4j.logback.JsonEncoder">
+            <!-- Static labels for Loki logs -->
+            <label>
+                <pattern>application=spring-boot-app,environment=dev</pattern>
+            </label>
+            <!-- Log message pattern (message and exception) -->
+            <message>
+                <pattern>%msg%ex</pattern>
+            </message>
+        </format>
+    </appender>
+
+    <!-- Send all logs (INFO and above) to the Loki appender -->
+    <root level="INFO">
+        <appender-ref ref="LOKI"/>
+    </root>
 </configuration>
