@@ -1,19 +1,30 @@
+
+
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+<appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+    <!-- JSON 형식으로 로그를 변환 -->
+    <encoder class="com.github.loki4j.logback.encoder.JsonEncoder">
+        <pattern>
+            {
+            "time": "%d{yyyy-MM-dd'T'HH:mm:ss.SSS}",
+            "level": "%level",
+            "thread": "%thread",
+            "logger": "%logger",
+            "message": "%msg",
+            "exception": "%exception"
+            }
+        </pattern>
+    </encoder>
 
+    <!-- Loki로 로그를 전송 -->
+    <sender class="com.github.loki4j.logback.sender.JavaHttpSender">
+        <url>http://13.125.124.220:3101/loki/api/v1/push</url>
+        <batchSize>10</batchSize> <!-- 일정 개수 이상 쌓이면 전송 -->
+        <batchTimeoutMs>2000</batchTimeoutMs> <!-- 2초마다 전송 -->
+    </sender>
+</appender>
 
-    <!-- Loki Appender 추가 -->
-    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-        <lokiUrl>http://10.0.0.38:3101/loki/api/v1/push</lokiUrl>
-        <lokiLabels>{"application": "spring-boot-app", "environment": "dev"}</lokiLabels>
-        <batchSize>50</batchSize>
-        <batchTimeout>2000</batchTimeout>
-    </appender>
-
-    <root level="info">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="SENTRY"/>
-        <appender-ref ref="LOKI"/>
-    </root>
+<root level="info">
+    <appender-ref ref="LOKI"/>
+</root>
 </configuration>
