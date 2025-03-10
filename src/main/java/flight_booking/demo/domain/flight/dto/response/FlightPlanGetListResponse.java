@@ -1,5 +1,6 @@
 package flight_booking.demo.domain.flight.dto.response;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 
 import flight_booking.demo.domain.flight.entity.Airport;
@@ -11,6 +12,7 @@ public record FlightPlanGetListResponse(
 	Airport arrival,
 	ZonedDateTime boardingAt,
 	ZonedDateTime landingAt,
+	Duration flightDuration,
 	int price
 ) {
 
@@ -22,6 +24,7 @@ public record FlightPlanGetListResponse(
 			flightPlan.getArrival(),
 			flightPlan.getBoardingAt(),
 			flightPlan.getLandingAt(),
+			flightPlan.flightDuration(flightPlan),
 			flightPlan.getPrice()
 		);
 	}

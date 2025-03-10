@@ -3,6 +3,7 @@ package flight_booking.demo.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.EqualsAndHashCode;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
@@ -11,6 +12,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@EqualsAndHashCode // 객체가 동등할 때 HashCode 같도록
 public class PageQuery {
 
 	private int page = 0;

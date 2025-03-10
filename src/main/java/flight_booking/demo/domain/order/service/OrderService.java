@@ -1,13 +1,5 @@
 package flight_booking.demo.domain.order.service;
 
-import static flight_booking.demo.common.exception.ServerErrorResponseCode.*;
-
-import java.util.Set;
-
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import flight_booking.demo.common.event.PaymentRefundEvent;
 import flight_booking.demo.common.exception.CustomException;
 import flight_booking.demo.domain.airplane.entity.SeatState;
@@ -28,6 +20,15 @@ import flight_booking.demo.security.utils.UserUtil;
 import flight_booking.demo.utils.Page;
 import flight_booking.demo.utils.PageQuery;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static flight_booking.demo.common.exception.ServerErrorResponseCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -54,22 +55,25 @@ public class OrderService {
 	public OrderResponseDto create(OrderCreateRequestDto dto) {
 		User user = UserUtil.getCurrentUser();
 
-		Ticket ticket = ticketRepository.findById(dto.ticketId())
-			.orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
+		List<Ticket> tickets = ticketRepository.findAllById(dto.ticketIds());
+		if(tickets.isEmpty())
+			throw new CustomException(SEAT_NOT_FOUND);
 
-		if(ticket.getState() != SeatState.IDLE){
+		List<Ticket> unavailableTickets = tickets.stream().filter(ticket -> ticket.getState() != SeatState.IDLE).toList();
+		if(!unavailableTickets.isEmpty())
 			throw new CustomException(UNAVAILABLE_SEAT);
-		}
 
-		FlightPlan flightPlan = ticket.getFlightPlan();
+		Set<FlightPlan> flightPlan = tickets.stream().map(Ticket::getFlightPlan).collect(Collectors.toSet());
+		if(flightPlan.size() != 1)
+			throw new CustomException(TOO_MANY_FLIGHT);
 
 		Set<Discount> discounts = discountRepository.findAllByIds(dto.discountIds());
 		discounts.add(getUserMembershipDiscount(user));
 
 		Order order = new Order(
-			user,
-			ticket,
-			calculatePrice(flightPlan.getPrice(), discounts)
+				user,
+				tickets,
+				calculatePrice(tickets, discounts)
 		);
 
 		for (Discount discount : discounts) {
@@ -89,30 +93,14 @@ public class OrderService {
 		if (order.getState() == OrderState.CANCELED)
 			throw new CustomException(ALREADY_CANCELED);
 
-		Ticket ticketForChange = ticketRepository.findById(dto.ticketId())
-			.orElseThrow(() -> new CustomException(SEAT_NOT_FOUND));
+		List<Ticket> ticketsForChange = ticketRepository.findAllById(dto.ticketIds());
+		if(ticketsForChange.isEmpty())
+			throw new CustomException(SEAT_NOT_FOUND);
 
-		order.changeTicket(ticketForChange);
+		order.updateTickets(ticketsForChange);
 
 		order = orderRepository.save(order);
 		return OrderResponseDto.from(order);
-	}
-
-	private int calculatePrice(int price, Set<Discount> discounts) {
-		int totalDiscountRate = 0;
-		int totalDiscountAmount = 0;
-		int discountedPrice = price;
-
-		for (Discount discount : discounts) {
-			totalDiscountRate += discount.getRate();
-			totalDiscountAmount += discount.getAmount();
-		}
-
-		if (totalDiscountRate > 0) {
-			discountedPrice = Double.valueOf(price * (1 - (totalDiscountRate / 100.0))).intValue();
-		}
-
-		return discountedPrice - totalDiscountAmount;
 	}
 
 	private Discount getUserMembershipDiscount(User user) {
@@ -134,5 +122,25 @@ public class OrderService {
 		order.updateState(OrderState.CANCELING);
 
 		eventPublisher.publishEvent(new PaymentRefundEvent(order.getPayment().getUid()));
+	}
+
+	private int calculatePrice(List<Ticket> tickets, Set<Discount> discounts) {
+		int eachTicketPrice = tickets.stream().findFirst().get().getFlightPlan().getPrice();
+		int initialPrice = eachTicketPrice * tickets.size();
+
+		int totalDiscountRate = 0;
+		int totalDiscountAmount = 0;
+		int discountedPrice = initialPrice;
+
+		for (Discount discount : discounts) {
+			totalDiscountRate += discount.getRate();
+			totalDiscountAmount += discount.getAmount();
+		}
+
+		if (totalDiscountRate > 0) {
+			discountedPrice = Double.valueOf(discountedPrice * (1 - (totalDiscountRate / 100.0))).intValue();
+		}
+
+		return discountedPrice - totalDiscountAmount;
 	}
 }

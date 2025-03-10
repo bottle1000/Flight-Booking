@@ -4,6 +4,7 @@ import static flight_booking.demo.common.exception.ServerErrorResponseCode.*;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +63,11 @@ public class FlightPlanService {
 		return FlightPlanCreateResponse.from(savedFlightPlan);
 	}
 
-	public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
+	@Cacheable(
+			cacheManager = "redisCacheManager",
+			value = "flight-plan"
+	)
+    public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
 		PageQuery pageQuery
 	) {

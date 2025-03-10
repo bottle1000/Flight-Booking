@@ -1,6 +1,9 @@
 package flight_booking.demo.domain.flight.entity;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
+
+import com.querydsl.core.annotations.QueryProjection;
 
 import flight_booking.demo.common.entity.BaseEntity;
 import flight_booking.demo.domain.airplane.entity.Airplane;
@@ -63,6 +66,20 @@ public class FlightPlan extends BaseEntity {
 		this.airplane = airplane;
 	}
 
+	// Querydsl 프로젝션용 생성자 추가
+	@QueryProjection
+	public FlightPlan(Long id, Airport departure, Airport arrival,
+		ZonedDateTime boardingAt, ZonedDateTime landingAt,
+		Integer price) {
+		this.id = id;
+		this.departure = departure;
+		this.arrival = arrival;
+		this.boardingAt = boardingAt;
+		this.landingAt = landingAt;
+		this.price = price;
+	}
+
+
 	public static FlightPlan create(String name, Airport departure, Airport arrival, int price,
 		ZonedDateTime boardingAt,
 		ZonedDateTime landingAt, Airplane airplane) {
@@ -74,5 +91,9 @@ public class FlightPlan extends BaseEntity {
 		this.arrival = arrival;
 		this.boardingAt = boardingAt;
 		this.landingAt = landingAt;
+	}
+
+	public Duration flightDuration(FlightPlan flightPlan) {
+		return Duration.between(flightPlan.boardingAt, flightPlan.landingAt);
 	}
 }
