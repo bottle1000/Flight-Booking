@@ -112,7 +112,7 @@ dependencies {
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
     //loki
-    implementation 'com.github.loki4j:loki-logback-appender:1.2.0'
+    implementation 'com.github.loki4j:loki-logback-appender:1.4.0'
 
     //opencsv (CSV 파일 생성)
     implementation 'com.opencsv:opencsv:5.6'
