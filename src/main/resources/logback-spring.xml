@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <property name="LOKI_URL" value="${LOKI_URL:-http://10.0.0.38:3101/loki/api/v1/push}"/>
     <!-- Spring Boot 기본 로그백 설정 포함 -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
@@ -12,7 +13,7 @@
 
         <!-- HTTP 전송 설정 -->
         <http class="com.github.loki4j.logback.JavaHttpSender">
-            <url>http://10.0.0.38:3101/loki/api/v1/push</url>
+            <url>${LOKI_URL}</url>
             <connectTimeout>5000</connectTimeout>
             <readTimeout>10000</readTimeout>
         </http>
@@ -25,7 +26,14 @@
             </label>
             <!-- 로그 메시지 패턴 -->
             <message>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                {
+                "time": "%d{yyyy-MM-dd'T'HH:mm:ss.SSS}",
+                "level": "%level",
+                "thread": "%thread",
+                "logger": "%logger",
+                "message": "%msg",
+                "exception": "%exception"
+                }
             </message>
         </format>
     </appender>
