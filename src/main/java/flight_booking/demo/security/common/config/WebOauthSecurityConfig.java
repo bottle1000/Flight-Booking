@@ -59,6 +59,7 @@ public class WebOauthSecurityConfig {
 
 		// 접근 권한 설정
 		http.authorizeHttpRequests(auth -> auth
+			.requestMatchers("/actuator/prometheus").permitAll() // 이 경로는 인증 없이 접근 허용
 			.requestMatchers("/**").permitAll()  // 그 외 모든 요청 허용
 			.anyRequest().authenticated()  // 나머지 모든 요청은 인증된 사용자만 접근 가능
 		);
