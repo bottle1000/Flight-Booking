@@ -60,8 +60,5 @@ public class CacheConfig {
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
                 .withCacheConfiguration("flight-plan", redisCacheConfiguration)
                 .build();
-//        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
-//                .cacheDefaults(redisCacheConfiguration)
-//                .build();
     }
 }
