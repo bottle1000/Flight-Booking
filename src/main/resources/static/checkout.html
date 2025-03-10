@@ -30,7 +30,10 @@
             customerKey,
         });
 
-        const response = await fetch(`/payment/1`);
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get("orderId")|| "defaultOrder";
+
+        const response = await fetch(`/payment/${orderId}`);
         console.log(response);
 
         const data = await response.json();
