@@ -5,7 +5,7 @@
 
     <!-- Loki Appender 추가 -->
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-        <lokiUrl>http://13.125.124.220:3101/loki/api/v1/push</lokiUrl>
+        <lokiUrl>http://10.0.0.38:3101/loki/api/v1/push</lokiUrl>
         <lokiLabels>{"application": "spring-boot-app", "environment": "dev"}</lokiLabels>
         <batchSize>50</batchSize>
         <batchTimeout>2000</batchTimeout>
