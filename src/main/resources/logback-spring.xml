@@ -17,7 +17,7 @@
 
         <!-- Loki로 로그 전송 -->
         <sender class="com.github.loki4j.logback.sender.JavaHttpSender">
-            <url>${LOKI_URL}</url>
+            <url>http://10.0.0.38:3101/loki/api/v1/push</url>
             <lokiLabels>{"application": "spring-boot-app", "environment": "dev"}</lokiLabels>
             <batchSize>5</batchSize>
             <batchTimeoutMs>2000</batchTimeoutMs>

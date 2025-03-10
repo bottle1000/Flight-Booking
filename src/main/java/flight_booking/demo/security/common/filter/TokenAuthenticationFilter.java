@@ -30,30 +30,25 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
 		// /actuator/prometheus 경로는 필터 처리 없이 바로 통과
-		if (request.getRequestURI().startsWith("/actuator/prometheus"))
+		if (request.getRequestURI().startsWith("/actuator/prometheus") || request.getRequestURI().startsWith("/"))
 		{ filterChain.doFilter(request, response); return; }
 
-		System.out.println("TokenAuthenticationFilter 실행됨: " + request.getRequestURI());
 
 		// 1️ access_token 가져오기
 		String accessToken = tokenProvider.getAccessToken(request);
-		System.out.println("가져온 accessToken: " + accessToken);
 
 		if (accessToken != null && tokenProvider.validToken(accessToken)) {
 			Authentication authentication = tokenProvider.getAuthentication(accessToken);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		} else {
-			System.out.println(" 유효하지 않은 accessToken, refreshToken 검토 중...");
 
 			// 2️ refresh_token 가져오기
 			String refreshToken = tokenProvider.getRefreshToken(request);
-			System.out.println(" 가져온 refreshToken: " + refreshToken);
 
 			if (refreshToken != null) {
 				RefreshToken storedRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken);
 
 				if (storedRefreshToken != null) {
-					System.out.println(" 유효한 refreshToken 확인됨!");
 
 					// 3 유저 정보 가져와서 새로운 access_token 발급
 					User user = userRepository.findById(storedRefreshToken.getUserId()).orElse(null);
@@ -61,7 +56,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 					if (user != null) {
 						String newAccessToken = tokenProvider.generateToken(user,
 							OAuth2SuccessHandler.ACCESS_TOKEN_DURATION);
-						System.out.println(" 새로운 accessToken 발급됨!");
 
 						// 4️ 새로운 access_token을 쿠키에 저장
 						Cookie accessTokenCookie = new Cookie("access_token", newAccessToken);
@@ -73,8 +67,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 						Authentication authentication = tokenProvider.getAuthentication(newAccessToken);
 						SecurityContextHolder.getContext().setAuthentication(authentication);
 					}
-				} else {
-					System.out.println("refreshToken이 없거나 유효하지 않음.");
 				}
 			}
 		}
