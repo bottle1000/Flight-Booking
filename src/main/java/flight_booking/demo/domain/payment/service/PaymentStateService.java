@@ -60,7 +60,6 @@ public class PaymentStateService {
             return;
         }
 
-        log.info(":: AUTOMATIC :: Payment {} cancelling...", paymentInDB.getId());
         paymentInDB.updatePaymentStatus(PaymentState.CANCEL);
         paymentInDB.getOrder().updateState(OrderState.CANCELED);
         paymentInDB.getOrder().getTickets().forEach(orderTicket ->
