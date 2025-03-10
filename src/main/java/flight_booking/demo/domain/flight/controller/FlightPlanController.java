@@ -30,7 +30,6 @@ public class FlightPlanController {
 
 	private final FlightPlanService flightPlanService;
 
-
 	@PostMapping("/admin/airplanes/{airplane_id}/flight-plans")
 	public ResponseEntity<FlightPlanCreateResponse> createFlightPlan(
 		@PathVariable("airplane_id") Long airplaneId,
@@ -39,7 +38,6 @@ public class FlightPlanController {
 		FlightPlanCreateResponse response = flightPlanService.createFlightPlan(airplaneId, flightPlanCreateRequest);
 		return ResponseEntity.ok(response);
 	}
-
 
 	@GetMapping("/flight-plans")
 	public ResponseEntity<Page<FlightPlanGetListResponse>> findFlightPlanPage(

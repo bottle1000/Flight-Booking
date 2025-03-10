@@ -28,16 +28,16 @@ public class FlightPlanRepositoryImpl implements FlightPlanRepositoryCustom {
 
 	@Override
 	public Page<FlightPlan> findByFilters(
-		Airport departure,
-		Airport arrival,
-		ZonedDateTime boardingAt,
-		ZonedDateTime landingAt,
-		Pageable pageable) {
+			Airport departure,
+			Airport arrival,
+			ZonedDateTime boardingAt,
+			ZonedDateTime landingAt,
+			Pageable pageable) {
 
 		BooleanExpression conditions = departureEq(departure)
-			.and(arrivalEq(arrival))
-			.and(boardingAtGoe(boardingAt))
-			.and(landingAtLoe(landingAt));
+				.and(arrivalEq(arrival))
+				.and(boardingAtGoe(boardingAt))
+				.and(landingAtLoe(landingAt));
 
 		JPQLQuery<FlightPlan> query = queryFactory
 			.select(Projections.constructor(FlightPlan.class,
