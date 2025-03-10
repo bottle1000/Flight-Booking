@@ -1,19 +1,26 @@
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+<!-- 환경변수를 사용하여 Loki URL 설정 (환경변수가 없으면 기본값 사용) -->
+<property name="LOKI_URL" value="${LOKI_URL:-http://10.0.0.38:3101/loki/api/v1/push}"/>
 
+<appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+    <!-- JSON 형식으로 로그 변환 (불필요한 공백을 제거하여 성능 최적화) -->
+    <encoder class="com.github.loki4j.logback.encoder.JsonEncoder">
+        <pattern>
+            {"time":"%d{yyyy-MM-dd'T'HH:mm:ss.SSS}","level":"%level","thread":"%thread","logger":"%logger","message":"%msg","exception":"%exception"}
+        </pattern>
+    </encoder>
 
-    <!-- Loki Appender 추가 -->
-    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
-        <lokiUrl>http://10.0.0.38:3101/loki/api/v1/push</lokiUrl>
+    <!-- Loki로 로그 전송 -->
+    <sender class="com.github.loki4j.logback.sender.JavaHttpSender">
+        <url>${LOKI_URL}</url>
         <lokiLabels>{"application": "spring-boot-app", "environment": "dev"}</lokiLabels>
-        <batchSize>50</batchSize>
-        <batchTimeout>2000</batchTimeout>
-    </appender>
+        <!-- CI/CD 환경에서 부담이 덜하도록 배치 크기 및 전송 주기를 조정 -->
+        <batchSize>5</batchSize>
+        <batchTimeoutMs>1000</batchTimeoutMs>
+    </sender>
+</appender>
 
-    <root level="info">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="SENTRY"/>
-        <appender-ref ref="LOKI"/>
-    </root>
+<root level="info">
+    <appender-ref ref="LOKI"/>
+</root>
 </configuration>
