@@ -72,7 +72,7 @@ public class Order extends BaseEntity {
 
 		String orderName = flightName + " " + String.join(", ", seatNumbers);
 
-		if (ticketList.size() > 4) {
+		if (ticketList.size() > 3) {
 			orderName += " 외 " + (ticketList.size() - 3) + "장";
 		}
 
