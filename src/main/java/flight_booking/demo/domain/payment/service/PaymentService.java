@@ -107,7 +107,7 @@ public class PaymentService {
         payment.getOrder().updateState(OrderState.CANCELED);
     }
 
-    @Scheduled(cron = "0 */10 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 */3 * * * *")
     public void paymentTimeoutScheduler() {
         log.info("::::: AUTOMATIC SCHEDULING RUN :::::" + LocalDateTime.now());
         List<Payment> payments = paymentRepository.findAllExpired(); // 10분이 지난 IN_PROGRESS 상태들을 불러옴.
