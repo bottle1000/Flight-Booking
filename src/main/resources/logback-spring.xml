@@ -1,0 +1,19 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+
+    <!-- Loki Appender 추가 -->
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <lokiUrl>http://13.125.124.220:3101/loki/api/v1/push</lokiUrl>
+        <lokiLabels>{"application": "spring-boot-app", "environment": "dev"}</lokiLabels>
+        <batchSize>50</batchSize>
+        <batchTimeout>2000</batchTimeout>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="SENTRY"/>
+        <appender-ref ref="LOKI"/>
+    </root>
+</configuration>
