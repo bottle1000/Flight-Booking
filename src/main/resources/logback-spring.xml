@@ -18,7 +18,7 @@
 
     <!-- Loki로 로그를 전송 -->
     <sender class="com.github.loki4j.logback.sender.JavaHttpSender">
-        <url>http://13.125.124.220:3101/loki/api/v1/push</url>
+        <lokiUrl>http://10.0.0.38:3101/loki/api/v1/push</lokiUrl>
         <batchSize>10</batchSize> <!-- 일정 개수 이상 쌓이면 전송 -->
         <batchTimeoutMs>2000</batchTimeoutMs> <!-- 2초마다 전송 -->
     </sender>
