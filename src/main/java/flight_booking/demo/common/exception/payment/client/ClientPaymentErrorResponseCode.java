@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Getter
 public enum ClientPaymentErrorResponseCode {
@@ -38,11 +39,9 @@ public enum ClientPaymentErrorResponseCode {
         this.type = ErrorType.CLIENT_PAYMENT_ERROR;
     }
 
-    public static ClientPaymentErrorResponseCode has(String code) {
-        ClientPaymentErrorResponseCode responseError = Arrays.stream(ClientPaymentErrorResponseCode.values())
+    public static Optional<ClientPaymentErrorResponseCode> has(String code) {
+        return Arrays.stream(ClientPaymentErrorResponseCode.values())
                 .filter(error -> error.name().equalsIgnoreCase(code))
-                .findFirst()
-                .orElseGet(null);
-        return responseError;
+                .findFirst();
     }
 }
