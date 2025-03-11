@@ -97,7 +97,7 @@ public class WebOauthSecurityConfig {
 		);
 	}
 
-
+	@Bean
 	public TokenAuthenticationFilter tokenAuthenticationFilter() {
 		return new TokenAuthenticationFilter(tokenProvider, refreshTokenRepository, userRepository);
 	}
