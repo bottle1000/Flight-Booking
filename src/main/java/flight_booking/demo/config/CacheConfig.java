@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -27,13 +29,35 @@ public class CacheConfig {
     @Value("${spring.data.redis.port}")
     private int port;
 
+//    @Bean
+//    public RedisConnectionFactory redisConnectionFactory() {
+//        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(host, port),
+//                LettuceClientConfiguration.builder()
+//                        .commandTimeout(Duration.ofSeconds(10))
+//                        .shutdownTimeout(Duration.ofSeconds(30))
+//                        .build());
+//    }
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(host, port),
-                LettuceClientConfiguration.builder()
-                        .commandTimeout(Duration.ofSeconds(10))
-                        .shutdownTimeout(Duration.ofSeconds(30))
-                        .build());
+        // Redis 서버 정보 설정 (호스트, 포트)
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
+
+        // 커넥션 풀 설정 (예시: 최대 100개, 최소 10개, 최대 50개의 유휴 커넥션)
+        GenericObjectPoolConfig<?> poolConfig = new GenericObjectPoolConfig<>();
+        poolConfig.setMaxTotal(100);   // 최대 총 커넥션 수
+        poolConfig.setMaxIdle(50);     // 최대 유휴 커넥션 수
+        poolConfig.setMinIdle(10);     // 최소 유휴 커넥션 수
+
+        // LettucePoolingClientConfiguration 생성: 커넥션 풀과 타임아웃 설정 적용
+        LettucePoolingClientConfiguration poolingConfig = LettucePoolingClientConfiguration.builder()
+                .poolConfig(poolConfig)
+                .commandTimeout(Duration.ofSeconds(10))  // Redis 명령 타임아웃 설정 (10초)
+                .shutdownTimeout(Duration.ofSeconds(30))   // 셧다운 타임아웃 설정 (30초)
+                .build();
+
+        // RedisStandaloneConfiguration과 poolingConfig를 적용한 LettuceConnectionFactory 생성
+        return new LettuceConnectionFactory(redisConfig, poolingConfig);
     }
 
     @Bean
