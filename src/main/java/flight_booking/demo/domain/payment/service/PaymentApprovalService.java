@@ -126,8 +126,12 @@ public class PaymentApprovalService {
     }
 
     private void handlingPaymentError(JsonNode responseJson){
-        String errorCodeString = responseJson.get("code").asText("");
-        String errorMessage = responseJson.get("message").asText("");
+        String errorCodeString = "";
+        String errorMessage = "";
+        if(responseJson.get("code") != null) {
+            errorCodeString = responseJson.get("code").asText();
+            errorMessage = responseJson.get("message").asText();
+        }
 
         Optional<ClientPaymentErrorResponseCode> clientEx = ClientPaymentErrorResponseCode.has(errorCodeString);
         if (!errorCodeString.isBlank()) {
