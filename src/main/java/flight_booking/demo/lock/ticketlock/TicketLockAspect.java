@@ -42,16 +42,13 @@ public class TicketLockAspect {
                     throw new CustomException(ServerErrorResponseCode.LOCK_CONFLICT);
                 }
                 locked.add(key);
-                log.info("Ticket Lock for [ ticket_lock:{} ]", ticketId);
             });
-            
-            log.info("Process JoinPoint");
+            log.info("Ticket Lock for Username: {} & Lock: [{}]", order.getUser().getName(), locked);
+
             return joinPoint.proceed();
         } finally {
-            locked.forEach(key -> {
-                lockRepository.unlock(key);
-                log.info("Ticket Unlock for [ {} ]", key);
-            });
+            locked.forEach(lockRepository::unlock);
+            log.info("Ticket Unlock for [{}]", locked);
         }
     }
 }
