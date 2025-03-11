@@ -60,6 +60,8 @@ public class PaymentService {
 
         try {
             JsonNode approvedPayment = paymentApprovalService.approvePayment(paymentKey, orderId, amount);
+            log.info("Payment approved: {}", approvedPayment);
+
             paymentStateService.processPayment(payment, approvedPayment);
 
             return ResponseEntity.ok(approvedPayment);
@@ -68,6 +70,7 @@ public class PaymentService {
             throw e;
         } catch (Exception e) {
             paymentStateService.cancelPayment(payment);
+            log.error("Payment cancelled: {}\nError Message: {}", payment, e.getMessage());
             throw new CustomException(INTERNAL_SERVER_ERROR);
         }
     }
