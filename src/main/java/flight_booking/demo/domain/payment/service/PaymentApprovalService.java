@@ -31,6 +31,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -44,7 +45,7 @@ public class PaymentApprovalService {
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    @Value("${payment.toss.test_client_api_key}")
+    @Value("${payment.toss.test_secret_api_key}")
     private String secretKey;
 
     /**
@@ -125,13 +126,17 @@ public class PaymentApprovalService {
     }
 
     private void handlingPaymentError(JsonNode responseJson){
-        String errorCodeString = responseJson.get("code").asText("");
-        String errorMessage = responseJson.get("message").asText("");
+        String errorCodeString = "";
+        String errorMessage = "";
+        if(responseJson.get("code") != null) {
+            errorCodeString = responseJson.get("code").asText();
+            errorMessage = responseJson.get("message").asText();
+        }
 
-        ClientPaymentErrorResponseCode clientEx = ClientPaymentErrorResponseCode.has(errorCodeString);
+        Optional<ClientPaymentErrorResponseCode> clientEx = ClientPaymentErrorResponseCode.has(errorCodeString);
         if (!errorCodeString.isBlank()) {
-            if (clientEx != null) {
-                throw new ClientPaymentException(clientEx);
+            if (clientEx.isPresent()) {
+                throw new ClientPaymentException(clientEx.get());
             } else {
                 PaymentErrorResponseCode paymentFailed = PaymentErrorResponseCode.setPaymentFailedMessage(errorMessage);
                 throw new PaymentException(paymentFailed);

@@ -123,6 +123,9 @@ dependencies {
 
     // Cache
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    implementation 'org.apache.commons:commons-pool2:2.11.1' // 최신 버전 확인
+
 }
 
 // QueryDSL 설정

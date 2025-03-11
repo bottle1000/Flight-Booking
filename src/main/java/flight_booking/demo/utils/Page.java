@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor // jackson 역직렬화시 필요
+@NoArgsConstructor
 public class Page<T> {
 
 	private List<T> content;
