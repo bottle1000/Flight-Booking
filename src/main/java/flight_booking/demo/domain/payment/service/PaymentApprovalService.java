@@ -58,18 +58,21 @@ public class PaymentApprovalService {
             noRetryFor = ClientPaymentException.class
     )
     public JsonNode approvePayment(String paymentKey, String orderId, int amount) throws Exception {
-        log.info("=====================결제 진행===================== ");
         String url = "https://api.tosspayments.com/v1/payments/confirm";
-
         JSONObject jsonObject = createApprovalRequestJson(paymentKey, orderId, amount);
 
         try {
             HttpResponse<String> response = executePost(url, jsonObject.toString());
+            log.info("Payment executed successfully: {}", response.body());
+
             JsonNode responseJson = objectMapper.readTree(response.body());
             handlingPaymentError(responseJson);
             return responseJson;
         } catch (HttpStatusCodeException | ResourceAccessException e) {
             throw new CustomException(ServerErrorResponseCode.NETWORK_ERROR);
+        } catch (Exception e) {
+            log.error("Payment failed: {}\n Error Trace: {}", e.getMessage(), e.getStackTrace());
+            throw e;
         }
     }
 
