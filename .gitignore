@@ -40,7 +40,7 @@ out/
 
 ### application.properties ###
 application.properties
-
+/src/main/resources/logback-spring.xml
 
 ### 부하테스트 관련 ###
 /src/test/java/performance/*

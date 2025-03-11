@@ -43,6 +43,9 @@ public class PaymentStateService {
     public void cancelPayment(Payment payment) {
         payment.getOrder().updateState(OrderState.CANCELED);
         payment.updatePaymentStatus(PaymentState.FAIL);
+        payment.getOrder().getTickets().forEach(orderTicket ->
+                orderTicket.getTicket().updateState(SeatState.IDLE));
+        paymentRepository.save(payment);
     }
 
     private Invoice createInvoice(JsonNode tossDto, Payment payment) {
