@@ -12,7 +12,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@EqualsAndHashCode // 객체가 동등할 때 HashCode 같도록
+@EqualsAndHashCode
 public class PageQuery {
 
 	private int page = 0;
