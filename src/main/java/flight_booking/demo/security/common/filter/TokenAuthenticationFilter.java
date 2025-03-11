@@ -30,7 +30,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
 		// /actuator/prometheus 경로는 필터 처리 없이 바로 통과
-		if (request.getRequestURI().startsWith("/actuator/prometheus") || request.getRequestURI().startsWith("/"))
+		if (request.getRequestURI().startsWith("/actuator/prometheus"))
 		{ filterChain.doFilter(request, response); return; }
 
 
