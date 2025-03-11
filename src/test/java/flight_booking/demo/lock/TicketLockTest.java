@@ -33,6 +33,7 @@ public class TicketLockTest extends BaseTest {
         Order order = Mockito.mock(Order.class);
         List<Long> ticketIds = Arrays.asList(1L, 2L, 3L);
         Mockito.when(order.getTicketIds()).thenReturn(ticketIds);
+        Mockito.when(order.getId()).thenReturn(1L);
 
         ProceedingJoinPoint joinPoint = Mockito.mock(ProceedingJoinPoint.class);
         Mockito.when(joinPoint.getArgs()).thenReturn(new Object[]{order});
@@ -63,7 +64,7 @@ public class TicketLockTest extends BaseTest {
             if (keys.size() == 3) {
                 break;
             }
-            Thread.sleep(100);
+            Thread.sleep(500);
         }
         assertEquals(3, keys.size(), "Expected 3 lock keys in Redisson");
 

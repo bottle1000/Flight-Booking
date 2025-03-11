@@ -37,13 +37,12 @@ public class TicketLockAspect {
         try {
             order.getTicketIds().forEach(ticketId -> {
                 String key = prefix + ticketId;
-
                 if (!lockRepository.lock(key, 0, 5)) {
                     throw new CustomException(ServerErrorResponseCode.LOCK_CONFLICT);
                 }
                 locked.add(key);
             });
-            log.info("Ticket Lock for Username: {} & Lock: [{}]", order.getUser().getName(), locked);
+            log.info("Ticket Lock for Order: {} & Lock: [{}]", order.getId(), locked);
 
             return joinPoint.proceed();
         } finally {
