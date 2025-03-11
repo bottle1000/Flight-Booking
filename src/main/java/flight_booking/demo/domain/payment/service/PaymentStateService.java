@@ -60,9 +60,10 @@ public class PaymentStateService {
             return;
         }
 
-        payment.updatePaymentStatus(PaymentState.CANCEL);
-        payment.getOrder().updateState(OrderState.CANCELED);
-        payment.getOrder().getTickets().forEach(orderTicket ->
+        paymentInDB.updatePaymentStatus(PaymentState.CANCEL);
+        paymentInDB.getOrder().updateState(OrderState.CANCELED);
+        paymentInDB.getOrder().getTickets().forEach(orderTicket ->
                 orderTicket.getTicket().updateState(SeatState.IDLE));
+        paymentRepository.save(paymentInDB);
     }
 }

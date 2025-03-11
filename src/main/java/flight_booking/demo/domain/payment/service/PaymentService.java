@@ -15,6 +15,7 @@ import flight_booking.demo.domain.payment.entity.PaymentState;
 import flight_booking.demo.domain.payment.repository.PaymentRepository;
 import flight_booking.demo.lock.Lock;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static flight_booking.demo.common.exception.ServerErrorResponseCode.INTERNAL_SERVER_ERROR;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -104,7 +107,7 @@ public class PaymentService {
         payment.getOrder().updateState(OrderState.CANCELED);
     }
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(cron = "0 */10 * * * *")
     public void paymentTimeoutScheduler() {
         List<Payment> payments = paymentRepository.findAllExpired(); // 10분이 지난 IN_PROGRESS 상태들을 불러옴.
         for (Payment payment : payments) {
