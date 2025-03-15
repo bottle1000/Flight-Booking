@@ -63,10 +63,10 @@ public class FlightPlanService {
 		return FlightPlanCreateResponse.from(savedFlightPlan);
 	}
 
-	@Cacheable(
-			cacheManager = "redisCacheManager",
-			value = "flight-plan"
-	)
+	// @Cacheable(
+	// 		cacheManager = "redisCacheManager",
+	// 		value = "flight-plan"
+	// )
     public Page<FlightPlanGetListResponse> findFilteredFlightsPlanPage(
 		FlightPlanGetRequest flightPlanGetRequest,
 		PageQuery pageQuery
