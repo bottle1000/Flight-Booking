@@ -44,7 +44,7 @@ public class DataSourceConfig {
 	public WebServerFactoryCustomizer<TomcatServletWebServerFactory> tomcatCustomizer() {
 		return factory -> {
 			factory.addConnectorCustomizers(connector -> {
-				connector.setProperty("maxThreads", "30");
+				// connector.setProperty("maxThreads", "200");
 				// connector.setProperty("minSpareThreads", "10");
 				// connector.setProperty("maxConnections", "8192");
 				// connector.setProperty("acceptCount", "100");
