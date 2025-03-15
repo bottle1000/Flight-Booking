@@ -28,18 +28,18 @@ public class CacheConfig {
     @Value("${spring.data.redis.port}")
     private int port;
 
-    // private static final int MAX_TOTAL_POOL = 100;
-    // private static final int MAX_IDLE_POOL = 50;
-    // private static final int MIN_IDLE_POOL = 10;
+    private static final int MAX_TOTAL_POOL = 100;
+    private static final int MAX_IDLE_POOL = 50;
+    private static final int MIN_IDLE_POOL = 10;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
 
         GenericObjectPoolConfig<?> poolConfig = new GenericObjectPoolConfig<>();
-        // poolConfig.setMaxTotal(MAX_TOTAL_POOL);
-        // poolConfig.setMaxIdle(MAX_IDLE_POOL);
-        // poolConfig.setMinIdle(MIN_IDLE_POOL);
+        poolConfig.setMaxTotal(MAX_TOTAL_POOL);
+        poolConfig.setMaxIdle(MAX_IDLE_POOL);
+        poolConfig.setMinIdle(MIN_IDLE_POOL);
 
         LettucePoolingClientConfiguration poolingConfig = LettucePoolingClientConfiguration.builder()
                 .poolConfig(poolConfig)
