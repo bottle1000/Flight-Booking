@@ -4,6 +4,8 @@ package flight_booking.demo.config;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -36,5 +38,17 @@ public class DataSourceConfig {
 		// config.setMinimumIdle(5);
 
 		return new HikariDataSource(config);
+	}
+
+	@Bean
+	public WebServerFactoryCustomizer<TomcatServletWebServerFactory> tomcatCustomizer() {
+		return factory -> {
+			factory.addConnectorCustomizers(connector -> {
+				connector.setProperty("maxThreads", "30");
+				// connector.setProperty("minSpareThreads", "10");
+				// connector.setProperty("maxConnections", "8192");
+				// connector.setProperty("acceptCount", "100");
+			});
+		};
 	}
 }
