@@ -593,8 +593,8 @@ RabbitMQ와 RedisMQ는 **실시간 이벤트 처리**에 유리하지만, 운영
   <details>
     <summary>Grafana를 선택한 이유</summary>
       
-    ### 선택지
-    1. **Grafana**
+### 선택지
+1. **Grafana**
     2. Kibana
     3. Datadog
     ### 비교 분석
@@ -610,8 +610,8 @@ RabbitMQ와 RedisMQ는 **실시간 이벤트 처리**에 유리하지만, 운영
   <details>
     <summary>Loki를 선택한 이유</summary>
 
-    ### 선택지
-    1. **Loki**
+### 선택지
+1. **Loki**
     2. ELK Stack (Elasticsearch, Logstash, Kibana)
     3. AWS CloudWatch Logs
 
@@ -627,38 +627,83 @@ RabbitMQ와 RedisMQ는 **실시간 이벤트 처리**에 유리하지만, 운영
   <details>
     <summary>Prometheus를 선택한 이유</summary>
 
-    ### 선택지
-    1. **Prometheus**
-    2. InfluxDB
-    3. AWS CloudWatch Metrics
+### 선택지
+1. **Prometheus**
+2. InfluxDB
+3. AWS CloudWatch Metrics
 
-    ### 비교 분석
-    - **Prometheus**: 오픈소스이며, Kubernetes 및 컨테이너 환경과 원활하게 연동됨. 커뮤니티 지원이 활발하고, Grafana와의 통합이 강력함.
-    - **InfluxDB**: 시계열 데이터베이스로 강력한 분석 기능을 제공하지만, Prometheus에 비해 커뮤니티 및 확장성이 부족함.
-    - **CloudWatch Metrics**: AWS에 최적화되어 있지만, AWS 외의 인프라에서는 활용도가 제한적이며, 비용이 증가할 가능성이 있음.
+### 비교 분석
+- **Prometheus**: 오픈소스이며, Kubernetes 및 컨테이너 환경과 원활하게 연동됨. 커뮤니티 지원이 활발하고, Grafana와의 통합이 강력함.
+- **InfluxDB**: 시계열 데이터베이스로 강력한 분석 기능을 제공하지만, Prometheus에 비해 커뮤니티 및 확장성이 부족함.
+- **CloudWatch Metrics**: AWS에 최적화되어 있지만, AWS 외의 인프라에서는 활용도가 제한적이며, 비용이 증가할 가능성이 있음.
 
-    ### 결론
-    **확장성과 커뮤니티 지원이 뛰어나고 Grafana 와의 연동이 쉬우며, 비용적인 측면에서 무료라는 점에서 Prometheus를 선택하였습니다.**
+### 결론
+**확장성과 커뮤니티 지원이 뛰어나고 Grafana 와의 연동이 쉬우며, 비용적인 측면에서 무료라는 점에서 Prometheus를 선택하였습니다.**
   </details>
 
   <details>
     <summary>Spring Actuator를 선택한 이유</summary>
 
     
-    ### 선택지
-    1. **Spring Actuator**
-    2. Micrometer
-    3. 직접 개발한 모니터링 API
+### 선택지
+1. **Spring Actuator**
+2. Micrometer
+3. 직접 개발한 모니터링 API
 
-    ### 비교 분석
-    - **Spring Actuator**: Spring Boot와 기본적으로 통합되어 있으며, 간단한 설정으로 다양한 메트릭을 제공. Prometheus 및 Grafana와 연동이 용이함.
-    - **Micrometer**: 다양한 모니터링 시스템과 연동 가능하지만, Spring Boot에 내장된 기능을 사용하지 않는다는 점에서 추가적인 설정이 필요함.
-    - **직접 개발한 API**: 커스터마이징이 가능하지만, 유지보수 비용이 높아지고, 표준적인 솔루션보다 신뢰성이 떨어질 가능성이 있음.
+### 비교 분석
+- **Spring Actuator**: Spring Boot와 기본적으로 통합되어 있으며, 간단한 설정으로 다양한 메트릭을 제공. Prometheus 및 Grafana와 연동이 용이함.
+- **Micrometer**: 다양한 모니터링 시스템과 연동 가능하지만, Spring Boot에 내장된 기능을 사용하지 않는다는 점에서 추가적인 설정이 필요함.
+- **직접 개발한 API**: 커스터마이징이 가능하지만, 유지보수 비용이 높아지고, 표준적인 솔루션보다 신뢰성이 떨어질 가능성이 있음.
 
-    ### 결론
-    **Spring Actuator는 Spring Boot 애플리케이션에 기본적으로 제공되며, Prometheus 및 Grafana와 쉽게 연동할 수 있기에 가장 적합한 선택이었습니다.**
+### 결론
+**Spring Actuator는 Spring Boot 애플리케이션에 기본적으로 제공되며, Prometheus 및 Grafana와 쉽게 연동할 수 있기에 가장 적합한 선택이었습니다.**
   </details>
 
+</details>
+
+<details>
+	<summary>어떠한 캐싱 전략을 도입해야할까?</summary>
+
+	
+ # 배경
+
+성능 테스트를 위해 약 1000만건의 데이터를 DB에 저장한 후 테스트를 진행하였습니다.
+그 결과 매우 저조한 성능(평균 검색시간 9.3초)을 보였습니다.
+
+성능개선이 필수적이라 판단되어, 인덱싱을 적용하여 DB최적화를 하였지만 테스트 결과 사용자 수(Vuser)가 늘어남에 따라 다시 성능 저하가 발생하였습니다.
+
+그렇기에 항공권 조회 API의 검색 성능 향상을 위한 캐싱 도입이 필요하다 판단하였습니다.
+
+# 선택지
+
+1. 캐싱 전략
+    - Look Aside vs Read Through
+        1. 쓰기가 없고 반복적인 읽기가 많아서 읽기 위주의 전략을 선택했음
+        2. Look Aside는 스프링부트에서 제공하는 @Cacheable기능에서 자체적으로 지원하므로 편리하게 사용 가능
+        3. Look Aside cache는 애플리케이션과 DB와 직렬로 연결되지 않고 독립적으로 존재하기에 장애가 발생하더라도 DB에 끼치는 영향이 적어 안정적이라고 생각됨
+2. 로컬 캐시 vs 글로벌 캐시
+    - 로컬 캐시
+        - 각 서버의 로컬에서 캐시 저장소를 두어 데이터를 처리함
+        - 데이터 처리속도가 빠름
+        - 서버가 다운되면 데이터가 사라질 수 있음
+        - 서버가 Scale-out되면 데이터 불일치 문제가 발생할 수 있다
+    
+    ### 글로벌 캐시
+    
+    - 캐시 저장소가 서버와 별도로 존재하고 각 서버에서 캐시 저장소에 접근하여 데이터를 처리함각 서버와 데이터 공
+    - 캐시 저장소에 접근하는 네트워크 비용이 발생하고 이에 따라 로컬 캐시 대비 처리 속도가 느림
+    - (Redis Cache) 확장성이 좋음
+    - 현재 1000만건의 데이터를 조회하는데에 있어 로컬 캐시를 사용하게 된다면 Jvm 메모리의 한계, GC의 부담이 커질 것으로 예상됨
+3. Redis vs Memcached
+    - Redis
+    - Memcached
+    - 현재 프로젝트에서 이미 Redis를 사용중
+    - 현재 사용중인 Spring 프레임워크에서 Redis를 추상화하여 사용할 수 있는 라이브러리 제공함
+    - 다양한 자료구조를 지원하고 서버를 확장할 때에 유리하다고 판단함
+
+# 결론
+
+위와 같은 근거를 통해 Look Aside 전략과 Redis Cache를 현재의 프로젝트, 항공권 조회 API에 적용하기로 하였음
 </details>
 
 --------------
