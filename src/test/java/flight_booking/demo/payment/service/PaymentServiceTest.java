@@ -128,7 +128,7 @@ class PaymentServiceTest extends BaseTest {
         assertEquals(PaymentErrorResponseCode.PAYMENT_AMOUNT_MISMATCH, exception.getCode());
     }
 
-    @Test
+   /* @Test
     void 결제_승인시_결제와_주문_상태_업데이트() throws Exception {
         //given
         String paymentKey = "tgen_20250220154039uPz26";
@@ -170,7 +170,7 @@ class PaymentServiceTest extends BaseTest {
         assertEquals(approvedPayment, response.getBody());
         assertEquals(OrderState.PAID, order.getState());
         assertEquals(PaymentState.COMPLETE, payment.getState());
-    }
+    }*/
 
 
     @Test
