@@ -33,7 +33,7 @@
 ### API 명세
 | Method | URL                                    | 설명                 | HttpStatus     | Role       | HttpHeader               |
 |--------|----------------------------------------|--------------------------------|----------------|------------|--------------------------|
-| POST   | /oauth2/authorization/google           | 회원가입 / 로그인     | 200            | CUSTOMER   | -                        |
+| POST   | /oauth2/authorization/google           | 회원가입 / 로그인            | 200            | CUSTOMER   | -                        |
 | GET    | /admin/users                           | 유저 다건 조회        | 200            | ADMIN      | {"Authorization":"token"}|
 | GET    | /users/me                              | 유저 단건 조회        | 200            | CUSTOMER   | {"Authorization":"token"}|
 | PATCH  | /user/me                               | 유저 수정             | 200            | CUSTOMER   | {"Authorization":"token"}|
